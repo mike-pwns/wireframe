@@ -3,8 +3,48 @@
 // Bienvenue a ma bibliotheque d'algebra liniaire (or however the heck its spelt i didnt take french since grade 9)
 
 #include <stdio.h>
-#include "linlib.h"
+#include "../include/linlib.h"
 #include <math.h> // TODO  i should prolly just use the pi from this?
+
+// pseudo constructors
+Vec2 vec2(float x, float y) {
+  return (Vec2) {
+    .x = x,
+    .y = y
+  };
+}
+
+Vec3 vec3(float x, float y, float z) {
+  return (Vec3) {
+    .x = x,
+    .y = y,
+    .z = z
+  };
+}
+
+Pt3 pt3(float x, float y, float z) {
+  return (Pt3) {
+    .x = x,
+    .y = y,
+    .z = z
+  };
+}
+
+Line3 line3(Vec3 dirVec, Pt3 pt) {
+  return (Line3) {
+    .dirVec = dirVec,
+    .pt = pt
+  };
+}
+
+Plane plane(Vec3 normVec, Pt3 pt) {
+  return (Plane) {
+    .normVec = normVec,
+    .pt = pt
+  };
+}
+
+// addition and base vector operations
 
 Vec2 addVec2(Vec2 vecA, Vec2 vecB) {
 
@@ -75,7 +115,7 @@ float detMat3(Vec3 mat3[]) {
 
 	Vec2 subMatA[2] = {
 						(Vec2){.x = vecB.y, .y = vecB.z},
-						(Vec2){.x = vecC.y, .y = vecC.z}
+						(Vec2){.x = vecC.y, .y = vecC.z} // TODO replace these with constructors
 					  };						
 
 	float minorA = detMat2(subMatA);
@@ -220,6 +260,113 @@ void rotateVec2(Vec2 *vecPtr, float radians) {
 		
 }
 
+// thingy
+
+Pt3 intersectionLinePlane(Line3 line, Plane plane) {
+
+  // (Cartesian eq) get d in Ax + By + Cz + d = 0
+  
+  /*
+
+  explanation:
+
+  Ax + By + Cz + d = 0
+
+  where A, B, C, are all normal vec's x, y, z
+
+  for the equation to be true (... = 0), the x, y, z must be of a point which exists on the plane.. 
+  Ahem, like the point we have from the plane. 
+
+  --> For our case this point is really just (0, 0, distance of viewport from origin/eye) 
+
+  so Ax + By + Cz can be rewritten as (normal.x)(point.x) + (normal.y)(point.y) + (normal.z)(point.z).. + d = 0
+
+  yeah thats just boring ol dp --> dotprod(normal, point)
+
+  buttt of course stuff is annoying and i cant overload funcs (nor would we really wanna do that, logically incoherent in the grand scheme of things)
+  
+  so we just hawk tuah type cast that thang and you get this the following
+
+  point -> pointToVector(point)
+
+  and just rearrange and whatever you get the jist
+
+  dotprod(normal, pointToVector(point)) + d = 0
+  d = -dotprod(normal, pointToVector(point))
+
+  */
+
+  float d = (-1) * dotVec3(plane.normVec, pt3ToVec3(plane.pt));
+
+
+  // get the parameter for vector/parametric line equation
+
+  /* idea is super simple but takes a while to follow through so buckle up
+
+
+  as of now we have 
+
+  Line --> point, and dir vector
+  Plane --> point, and normal vector --> represented by Ax + By + Cz + d = 0
+  (now we have d too!)
+
+  Pretty much we take point and dir vector, compile parametric equations:
+
+  (Line)
+  x = pt.x + (dir.x)(s)
+  y = pt.y + (dir.y)(s)
+  z = pt.z + (dir.z)(s)  
+
+  Put this into Ax By Cz as x y z
+  
+  and simplify and rearrange for s gives that which is below. I did the math on paper (might put that on the html) trust its what is below.
+
+
+  */
+  float numerator = ((-1 * d) - dotVec3(plane.normVec, pt3ToVec3(line.pt)));
+  float denominator = dotVec3(plane.normVec, line.dirVec);
+
+  // denom being 0 just means the line is parallel to the plane and not intersecting; therefore no intersection exists.
+  if (denominator == 0) { // uh oh, what if float arithmetic makes it like 0.00000002
+    return pt3(0, 0, 0);
+  }
+
+  float s =  numerator / denominator; // .."where s belongs to all real numbers" you happy teach?
+
+
+  // use param eq to build the point and return it
+  return pt3(line.pt.x + line.dirVec.x * s, line.pt.y + line.dirVec.y * s, line.pt.z + line.dirVec.z * s);
+    
+}
+
+
+// conv
+
+
+float magVec3(Vec3 vec3) {
+  return sqrt(vec3.x*vec3.x + vec3.y*vec3.y + vec3.z*vec3.z);
+}
+
+void normalizeVec3(Vec3* vec3) {
+
+  float mag = magVec3(*vec3);
+
+  vec3->x = (vec3->x / mag);
+  vec3->y = (vec3->y / mag);
+  vec3->z = (vec3->z / mag);
+
+}
+
+Vec3 pt3ToVec3(Pt3 pt3) {
+  return (Vec3) {
+    .x = pt3.x,
+    .y = pt3.y,
+    .z = pt3.z
+  };
+}
+
+
+
 
 
 // vec2 / vec3 prints
@@ -245,4 +392,9 @@ void printMat3(Vec3 mat3[]) {
 	printf("|%f %f %f|\n", mat3[0].z, mat3[1].z, mat3[2].z);		
 }
 
+
+
+void printPt3(Pt3 pt) {
+	printf("(%f, %f, %f)\n", pt.x, pt.y, pt.z);		
+}
 

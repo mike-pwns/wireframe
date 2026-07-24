@@ -29,6 +29,9 @@ typedef struct {
 	
 } Vec2;
 
+Vec2 vec2(float x, float y);
+
+
 // 3D vector.
 typedef struct {
 
@@ -37,6 +40,8 @@ typedef struct {
 	float z;
 	
 } Vec3;
+
+Vec3 vec3(float x, float y, float z);
 
 
 //  ||----------------------------------------------------
@@ -55,16 +60,38 @@ typedef struct {
 	float y;
 	float z;
 	
-} Point3;
+} Pt3;
+
+Pt3 pt3(float x, float y, float z);
 
 
 //  ||----------------------------------------------------
 //  ||
-//  || EQUATION STRUCTS  |||||||||||||||||||||||||||||||||
+//  || "LINEAR STRUCTURES" STRUCTS  ||||||||||||||||||||||
 //  || 
-//  || Structs for equations. 
+//  || Lines and Planes (may leave out 2d; dont need em
+//  || for this project) 
 //  || 
 //  ||----------------------------------------------------
+
+
+typedef struct {
+
+  Vec3 dirVec;
+  Pt3 pt;
+  
+} Line3;
+
+Line3 line3(Vec3 dirVec, Pt3 pt);
+
+typedef struct {
+
+  Vec3 normVec;
+  Pt3 pt;
+  
+} Plane; // idk maybe 4d planes exist too? hyperplanes ig 
+
+Plane plane(Vec3 normVec, Pt3 pt);
 
 
 // I'll put equation stuff here when i get to that 	
@@ -154,6 +181,39 @@ float detMat3(Vec3 mat3[]);
 
 //  ||----------------------------------------------------
 //  ||
+//  || INTERSECTIONS N STUFF |||||||||||||||||||||||||||||
+//  || 
+//  || Intersections of relevant things.
+//  || 
+//  ||----------------------------------------------------
+
+
+Pt3 intersectionLinePlane(Line3 line, Plane plane);
+
+// technically should write more for the "complete linlib collection" but honestly behh meh im not doin allat!
+
+//  ||----------------------------------------------------
+//  ||
+//  || CONVENIENT STUFF ||||||||||||||||||||||||||||||||||
+//  || 
+//  || Casting pts and vectors cuz i guess thats what we
+//  || do now??
+//  || 
+//  ||----------------------------------------------------
+
+
+
+
+float magVec3(Vec3 vec3);
+
+// reduces to unit vector
+void normalizeVec3(Vec3* vec3);
+
+Vec3 pt3ToVec3(Pt3 pt3);
+
+
+//  ||----------------------------------------------------
+//  ||
 //  || PRINT FORMATTING  |||||||||||||||||||||||||||||||||
 //  || 
 //  || Convenient printing functions for debugging.
@@ -183,6 +243,8 @@ void printMat2(Vec2 mat2[]);
 
 // Prints formatted 3D matrix.
 void printMat3(Vec3 mat3[]);
+
+void printPt3(Pt3 pt);
 
 
 #endif

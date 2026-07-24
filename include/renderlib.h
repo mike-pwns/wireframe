@@ -9,15 +9,15 @@ typedef struct {
   float wrldWidth, wrldHeight;
   float pxWidth, pxHeight;
   
-} Canvas;
+} Viewport;
 
 
 // Camera.
 typedef struct {
 
-  Point3 eyeCoordinate;
+  Pt3 eyeCoordinate;
   float canvasDistance;
-  Canvas canvas;
+  Viewport viewport;
 
   
 } Camera;
@@ -25,7 +25,7 @@ typedef struct {
 // Scene; composition of everything.
 typedef struct {
 
-  Point3 points; // array of points
+  Pt3 points; // array of points (later shape)
   Camera camera;
   
 } Scene;
