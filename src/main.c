@@ -4,13 +4,8 @@
 #include "../include/linlib.h"
 #include "../include/renderlib.h"
 
-// customizers
-int FPS; // will run loop so updates for this fps; js will overclock but end result will be this fps.
-int distance;
-float rotation; // should 0-2pi (360 deg slider?); re-loops
-
 Scene scene;
-
+CanvasPixel canvaspixels;
 
 int main() {
 
@@ -36,4 +31,15 @@ int main() {
   // test was successful!
 
   return 0;
+}
+
+// static Pt3 ptArr[2];
+// static int numPts = 2;
+
+
+void initializeTestData() {
+
+ // ptArr[0] = pt3(0, 0, 3);
+ // ptArr[1] = pt3(-1, -1, 3);
+
 }
