@@ -63,10 +63,10 @@ void clear(CanvasPixelArray* canvasPixelArrayPtr); // resets to len 0
 typedef struct {
 
   float wrldWidth, wrldHeight;
-  float pxWidth, pxHeight;
+  int pxWidth, pxHeight;
   
 } Viewport;
-Viewport viewport(float wrldWidth, float wrldHeight, float pxWidth, float pxHeight);
+Viewport viewport(float wrldWidth, float wrldHeight, int pxWidth, int pxHeight);
 
 
 // Camera.
@@ -87,17 +87,29 @@ typedef struct {
   Pt3 *points; // array of points (later shape)
   int numPts; // f u mr C im not playing that game again
   Camera camera;
-  
 } Scene;
 Scene scene(Pt3 *points, int numPts, Camera camera);
 
 
 
+// --------------------
+// Debug / Printing
+// --------------------
+
+void printCanvasPixelArray(CanvasPixelArray arr);
+void printScene(Scene scene);
+
+
+
+// thing
+
+int worldToPixel(float wrldX, float worldY);
+
 // METHODS
 
 // render scene (intersect all points with plane and get pixels?)
 
-void render();
+void render(CanvasPixelArray* canvasPixelArrayPtr, Scene* scenePtr);
 
 
 
