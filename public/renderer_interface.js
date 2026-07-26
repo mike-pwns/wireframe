@@ -68,11 +68,79 @@ function draw_square(x, y, side_len) {
 	
 }
 
+
+// read data and parse from c
+let pxArr = [];
+
+function read_data() {
+
+    pxArr = [];
+
+    const structPtr = Module._getCanvasPixels();
+
+    const heap = Module.HEAP32;
+
+    // CanvasPixelArray:
+    // offset 0 = length
+    // offset 4 = array pointer
+
+    const structIndex = structPtr >> 2;
+
+    const length = heap[structIndex];
+    const arrayPtr = heap[structIndex + 1];
+
+    for (let i = 0; i < length; i++) {
+
+        const pixelIndex = (arrayPtr >> 2) + i * 2;
+
+        pxArr.push([
+            heap[pixelIndex],
+            heap[pixelIndex + 1]
+        ]);
+    }
+}
+
+function initialize_data() {
+  // for now runs internal initialize test data. 
+  // later will have preconfig points, etc
+
+    Module._initialize();
+    Module._renderScene();
+
+    read_data();
+}
+
+function draw() {
+
+  // wipe black
+  CONTEXT.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+  // draw square at each pixel
+  for (let i = 0; i < pxArr.length; i++) {
+    px = pxArr[i];
+    draw_square(px[X], px[Y], 10);
+  }
+
+  // (connect lines)
+}
+
+
+
 // yes i am doing this in js sue me
 function main() {
+  // frontend setup
 	initialize_canvas();
+
+
+  // backend setup
+
+  initialize_data();
+  draw();	
 }
 
 
 // neat and organized! tada!
-main()
+Module.onRuntimeInitialized = () => {
+  console.log("WASM loaded!");
+  main();
+};

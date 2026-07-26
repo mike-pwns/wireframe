@@ -12,17 +12,48 @@ Camera testCamera;
 
 
 
-Pt3 ptArr[3];
-int numPts = 3;
 Viewport testViewport;
 Pt3 origin;
 float viewportDistance;
 
+
+
+
+
+
+
+
+
+
+// cube
+Pt3 ptArr[8];
+int numPts = 8;
+
+// piramyd
+// Pt3 ptArr[4];
+// int numPts = 4;
+
+
+
+
 void initializeTestData() {
 
-  ptArr[0] = pt3(0, 0, 3);
-  ptArr[1] = pt3(-0.5, 0.5, 100);
-  ptArr[2] = pt3(1, 1, -3);
+  // cube
+  ptArr[1] = pt3(-0.5, 0.5, 1);
+  ptArr[0] = pt3(-0.5, -0.5, 1);
+  ptArr[2] = pt3(0.5, 0.5, 1);
+  ptArr[3] = pt3(0.5, -0.5, 1);
+  ptArr[4] = pt3(-0.5, 0.5, 2);
+  ptArr[6] = pt3(0.5, 0.5, 2);
+  ptArr[5] = pt3(-0.5, -0.5, 2);
+  ptArr[7] = pt3(0.5, -0.5, 2);
+
+  // pyramid
+  // ptArr[0] = pt3(-0.5, -0.5, 1);
+  // ptArr[1] = pt3(0.5, -0.5, 1);
+  // ptArr[2] = pt3(0, 0, 2);
+  // ptArr[3] = pt3(0, 0.5, 1.5);
+
   testViewport = viewport(2, 2, 1024, 1024);
   viewportDistance = 1;
   origin = pt3(0, 0, 0);
@@ -33,6 +64,24 @@ void initializeTestData() {
   testScene = scene(ptArr, numPts, testCamera);
   printf("init data");
 }
+
+
+// JS apis
+
+CanvasPixelArray* getCanvasPixels() {
+    return &canvaspixels;
+}
+
+void renderScene() {
+    render(&canvaspixels, &testScene);
+}
+
+void initialize() {
+    initializeTestData();
+    canvaspixels = canvasPixelArray();
+}
+
+
 
 int main() {
 
@@ -68,4 +117,3 @@ int main() {
 
   return 0;
 }
-

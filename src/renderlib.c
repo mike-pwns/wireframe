@@ -56,9 +56,6 @@ void clear(CanvasPixelArray* canvasPixelArrPtr) {
 
 
 
-
-#include "../include/renderlib.h"
-
 // --------------------
 // CanvasPixel
 // --------------------
