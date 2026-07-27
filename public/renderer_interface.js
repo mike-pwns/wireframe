@@ -72,76 +72,79 @@ function draw_square(x, y, side_len) {
 // read data and parse from c
 
 
-// (AI-GENERATED)
-function getProjectedVertices() {
+function getRenderResult() {
 
-    const ptr = Module._getProjectedVertices();
+    const ptr = Module._getRenderResult();
 
     const heap32 = Module.HEAP32;
-
-    // DynamicPixelArray struct:
-    // Pixel* data
-    // int numElements
-    // int capacity
-
     const base = ptr >> 2;
 
-    const dataPtr = heap32[base];
-    const length = heap32[base + 1];
+
+    // RenderedResult:
+    // DynamicRenderedPixelArray pixels
+    // DynamicRenderedLineArray lines
+
+    const pixelsPtr = base;
+    const linesPtr = base + 3; // assuming each dynamic array is ptr + int + int
+
+
+    // pixels array
+    const pixelDataPtr = heap32[pixelsPtr];
+    const pixelLength = heap32[pixelsPtr + 1];
+
 
     let pixels = [];
 
-    for (let i = 0; i < length; i++) {
+    for (let i = 0; i < pixelLength; i++) {
 
-        // Pixel:
-        // int x
-        // int y
+        // RenderedPixel:
+        // Pixel = int x, int y
+        // int isInFrontOfCamera
 
-        const pixelAddress = (dataPtr >> 2) + i * 2;
+        const p = (pixelDataPtr >> 2) + i * 3;
 
         pixels.push({
-            x: heap32[pixelAddress],
-            y: heap32[pixelAddress + 1]
+            x: heap32[p],
+            y: heap32[p + 1],
+            inFront: heap32[p + 2]
         });
     }
 
-    return pixels;
-}
 
-// (AI-GENERATED)
-function getEdges() {
 
-    const ptr = Module._getEdges();
+    // lines array
+    const lineDataPtr = heap32[linesPtr];
+    const lineLength = heap32[linesPtr + 1];
 
-    const heap32 = Module.HEAP32;
 
-    // DynamicEdge3Array struct:
-    // Edge3* data
-    // int numElements
-    // int capacity
+    let lines = [];
 
-    const base = ptr >> 2;
+    for (let i = 0; i < lineLength; i++) {
 
-    const dataPtr = heap32[base];
-    const length = heap32[base + 1];
+        // RenderedLine:
+        // startPixel x,y
+        // endPixel x,y
 
-    let edges = [];
+        const l = (lineDataPtr >> 2) + i * 4;
 
-    for (let i = 0; i < length; i++) {
+        lines.push({
+            start: {
+                x: heap32[l],
+                y: heap32[l + 1]
+            },
 
-        // Edge3:
-        // int startIndex
-        // int endIndex
-
-        const edgeAddress = (dataPtr >> 2) + i * 2;
-
-        edges.push({
-            start: heap32[edgeAddress],
-            end: heap32[edgeAddress + 1]
+            end: {
+                x: heap32[l + 2],
+                y: heap32[l + 3]
+            }
         });
     }
 
-    return edges;
+
+    return {
+        pixels: pixels,
+        lines: lines
+    };
 }
 
 
@@ -150,31 +153,28 @@ function draw() {
 
     CONTEXT.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-    const vertices = getProjectedVertices();
-    const edges = getEdges();
+    const result = getRenderResult();
 
 
-    // draw vertices
-    for (let i = 0; i < vertices.length; i++) {
+    for (let i = 0; i < result.pixels.length; i++) {
+
+        const pixel = result.pixels[i];
+
         draw_square(
-            vertices[i].x,
-            vertices[i].y,
+            pixel.x,
+            pixel.y,
             10
         );
     }
 
 
-    // draw edges
-    for (let i = 0; i < edges.length; i++) {
+    for (let i = 0; i < result.lines.length; i++) {
 
-        const edge = edges[i];
-
-        const start = vertices[edge.start];
-        const end = vertices[edge.end];
+        const line = result.lines[i];
 
         draw_line(
-            [start.x, start.y],
-            [end.x, end.y]
+            [line.start.x, line.start.y],
+            [line.end.x, line.end.y]
         );
     }
 }

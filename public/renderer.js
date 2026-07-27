@@ -1542,8 +1542,7 @@ function checkIncomingModuleAPI() {
 }
 
 // Imports from the Wasm binary.
-var _getProjectedVertices = Module['_getProjectedVertices'] = makeInvalidEarlyAccess('_getProjectedVertices');
-var _getEdges = Module['_getEdges'] = makeInvalidEarlyAccess('_getEdges');
+var _getRenderResult = Module['_getRenderResult'] = makeInvalidEarlyAccess('_getRenderResult');
 var _renderScene = Module['_renderScene'] = makeInvalidEarlyAccess('_renderScene');
 var _initialize = Module['_initialize'] = makeInvalidEarlyAccess('_initialize');
 var _fflush = makeInvalidEarlyAccess('_fflush');
@@ -1560,8 +1559,7 @@ var __indirect_function_table = makeInvalidEarlyAccess('__indirect_function_tabl
 var wasmMemory = makeInvalidEarlyAccess('wasmMemory');
 
 function assignWasmExports(wasmExports) {
-  assert(typeof wasmExports['getProjectedVertices'] != 'undefined', 'missing Wasm export: getProjectedVertices');
-  assert(typeof wasmExports['getEdges'] != 'undefined', 'missing Wasm export: getEdges');
+  assert(typeof wasmExports['getRenderResult'] != 'undefined', 'missing Wasm export: getRenderResult');
   assert(typeof wasmExports['renderScene'] != 'undefined', 'missing Wasm export: renderScene');
   assert(typeof wasmExports['initialize'] != 'undefined', 'missing Wasm export: initialize');
   assert(typeof wasmExports['fflush'] != 'undefined', 'missing Wasm export: fflush');
@@ -1575,8 +1573,7 @@ function assignWasmExports(wasmExports) {
   assert(typeof wasmExports['emscripten_stack_get_current'] != 'undefined', 'missing Wasm export: emscripten_stack_get_current');
   assert(typeof wasmExports['memory'] != 'undefined', 'missing Wasm export: memory');
   assert(typeof wasmExports['__indirect_function_table'] != 'undefined', 'missing Wasm export: __indirect_function_table');
-  _getProjectedVertices = Module['_getProjectedVertices'] = createExportWrapper('getProjectedVertices', 0);
-  _getEdges = Module['_getEdges'] = createExportWrapper('getEdges', 0);
+  _getRenderResult = Module['_getRenderResult'] = createExportWrapper('getRenderResult', 0);
   _renderScene = Module['_renderScene'] = createExportWrapper('renderScene', 0);
   _initialize = Module['_initialize'] = createExportWrapper('initialize', 0);
   _fflush = createExportWrapper('fflush', 1);

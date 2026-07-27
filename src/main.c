@@ -5,94 +5,93 @@
 #include "../include/renderlib.h"
 
 
-DynamicPixelArray pxArr;
-
-Wireframe testWireframe;
-Viewport testViewport;
-float viewportDistance;
-Pt3 origin;
-Camera testCamera;
-Scene testScene;
-
-void initializeTestData() {
-
-    testWireframe = wireframe();
-
-    // vertices
-    int v0 = addVertex(&testWireframe, pt3(-0.5, -0.5, 1));
-    int v1 = addVertex(&testWireframe, pt3(-0.5,  0.5, 1));
-    int v2 = addVertex(&testWireframe, pt3( 0.5,  0.5, 1));
-    int v3 = addVertex(&testWireframe, pt3( 0.5, -0.5, 1));
-
-    int v4 = addVertex(&testWireframe, pt3(-0.5,  0.5, 2));
-    int v5 = addVertex(&testWireframe, pt3( 0.5,  0.5, 2));
-    int v6 = addVertex(&testWireframe, pt3(-0.5, -0.5, 2));
-    int v7 = addVertex(&testWireframe, pt3( 0.5, -0.5, 2));
+Wireframe model;
+RenderedResult output;
+Scene world;
 
 
-    // front square
-    connectVertices(&testWireframe, v0, v1);
-    connectVertices(&testWireframe, v1, v2);
-    connectVertices(&testWireframe, v2, v3);
-    connectVertices(&testWireframe, v3, v0);
+void initializeSceneData() {
+
+    model = wireframe();
+
+    // CUBE IN FRONT OF CAMERA
+    // camera at z = 0 looking +Z
+    // cube spans z = 2 to z = 4
+
+    int v0 = addVertex(&model, pt3(-1, -1, 2));
+    int v1 = addVertex(&model, pt3(-1,  1, 2));
+    int v2 = addVertex(&model, pt3( 1,  1, 2));
+    int v3 = addVertex(&model, pt3( 1, -1, 2));
+
+    int v4 = addVertex(&model, pt3(-1, -1, 4));
+    int v5 = addVertex(&model, pt3(-1,  1, 4));
+    int v6 = addVertex(&model, pt3( 1,  1, 4));
+    int v7 = addVertex(&model, pt3( 1, -1, 4));
 
 
-    // back square
-    connectVertices(&testWireframe, v4, v5);
-    connectVertices(&testWireframe, v5, v7);
-    connectVertices(&testWireframe, v7, v6);
-    connectVertices(&testWireframe, v6, v4);
+    // front face
+    connectVertices(&model, v0, v1);
+    connectVertices(&model, v1, v2);
+    connectVertices(&model, v2, v3);
+    connectVertices(&model, v3, v0);
 
 
-    // connecting edges
-    connectVertices(&testWireframe, v0, v6);
-    connectVertices(&testWireframe, v1, v4);
-    connectVertices(&testWireframe, v2, v5);
-    connectVertices(&testWireframe, v3, v7);
+    // back face
+    connectVertices(&model, v4, v5);
+    connectVertices(&model, v5, v6);
+    connectVertices(&model, v6, v7);
+    connectVertices(&model, v7, v4);
 
 
-    testViewport = viewport(2, 2, 1024, 1024);
+    // depth edges
+    connectVertices(&model, v0, v4);
+    connectVertices(&model, v1, v5);
+    connectVertices(&model, v2, v6);
+    connectVertices(&model, v3, v7);
 
-    viewportDistance = 1;
 
-    origin = pt3(0,0,0);
 
-    testCamera = camera(
+    // camera
+
+    // issue was that viewport plane didnt follow the camera origin
+    Pt3 origin = pt3(0, 0, 0);
+
+    Viewport vp = viewport(2, 2, 1024, 1024);
+
+    Camera cam = camera(
         origin,
-        viewportDistance,
-        testViewport
+        1,
+        vp
     );
 
-
-    testScene = scene(
-        &testWireframe,
-        testCamera
+    world = scene(
+        &model,
+        cam
     );
 }
 
 
-// JS apis
 
-DynamicPixelArray* getProjectedVertices() {
-  return &pxArr;
-}
+// JS API
 
-DynamicEdge3Array* getEdges() {
-  return &testWireframe.edges;
+RenderedResult* getRenderResult() {
+    return &output;
 }
 
 
-// see pixels
 
-// render the scene (key thing here :P)
-
+// render the scene
 void renderScene() {
-    render(&pxArr, &testScene);
+    render(&world, &output);
 }
+
+
 
 // init
 
 void initialize() {
-    pxArr = dynamicPixelArray();
-    initializeTestData();
+
+    output = renderedResult();
+    initializeSceneData();
+
 }

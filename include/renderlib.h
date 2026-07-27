@@ -7,6 +7,12 @@
 // PRE SECTION
 // ------------
 
+
+
+
+
+
+
 // dynamic array!!!
 
 
@@ -127,6 +133,94 @@ typedef struct {
 Camera camera(Pt3 camOrigin, float viewportDistance, Viewport viewport);
 
 
+
+
+
+
+
+
+typedef struct {
+
+  Pixel pixel;
+  int isInFrontOfCamera;
+
+} RenderedPixel;
+
+
+RenderedPixel renderedPixel(Pixel pixel, int isInFrontOfCamera);
+
+
+
+typedef struct {
+
+  Pixel startPixel;
+  Pixel endPixel;
+
+} RenderedLine;
+
+
+RenderedLine renderedLine(Pixel startPixel, Pixel endPixel);
+
+
+
+// Dynamic RenderedPixel Array
+
+typedef struct {
+
+  RenderedPixel* data;
+  int numElements;
+  int capacity;
+
+} DynamicRenderedPixelArray;
+
+
+DynamicRenderedPixelArray dynamicRenderedPixelArray();
+
+void addRenderedPixel(DynamicRenderedPixelArray *arr, RenderedPixel pixel);
+
+void clearRenderedPixelArray(DynamicRenderedPixelArray *arr);
+
+
+
+// Dynamic RenderedLine Array
+
+typedef struct {
+
+  RenderedLine* data;
+  int numElements;
+  int capacity;
+
+} DynamicRenderedLineArray;
+
+
+DynamicRenderedLineArray dynamicRenderedLineArray();
+
+void addRenderedLine(DynamicRenderedLineArray *arr, RenderedLine line);
+
+void clearRenderedLineArray(DynamicRenderedLineArray *arr);
+
+
+
+// Render Result
+
+typedef struct {
+
+  DynamicRenderedPixelArray pixels;
+  DynamicRenderedLineArray lines;
+
+} RenderedResult;
+
+
+RenderedResult renderedResult();
+
+
+
+
+
+
+
+
+
 // Scene; composition of everything.
 typedef struct {
 
@@ -134,6 +228,17 @@ typedef struct {
   Camera camera;
 } Scene;
 Scene scene(Wireframe* wireframe, Camera camera);
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -148,13 +253,14 @@ void printScene(Scene scene);
 
 // thing
 
+Pixel ptToPx(Viewport viewport, Pt3 pt);
 int worldToPixel(float wrldX, float worldY);
 
 // METHODS
 
 // render scene (intersect all points with plane and get pixels?)
 
-void render(DynamicPixelArray* arr, Scene* scenePtr);
+void render(Scene* scenePtr, RenderedResult* outputPtr);
 
 
 
