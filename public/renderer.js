@@ -1542,12 +1542,9 @@ function checkIncomingModuleAPI() {
 }
 
 // Imports from the Wasm binary.
-var _getPixels = Module['_getPixels'] = makeInvalidEarlyAccess('_getPixels');
+var _getProjectedVertices = Module['_getProjectedVertices'] = makeInvalidEarlyAccess('_getProjectedVertices');
+var _getEdges = Module['_getEdges'] = makeInvalidEarlyAccess('_getEdges');
 var _renderScene = Module['_renderScene'] = makeInvalidEarlyAccess('_renderScene');
-var _getPoints = Module['_getPoints'] = makeInvalidEarlyAccess('_getPoints');
-var _addPoint = Module['_addPoint'] = makeInvalidEarlyAccess('_addPoint');
-var _removePoint = Module['_removePoint'] = makeInvalidEarlyAccess('_removePoint');
-var _clearPoints = Module['_clearPoints'] = makeInvalidEarlyAccess('_clearPoints');
 var _initialize = Module['_initialize'] = makeInvalidEarlyAccess('_initialize');
 var _fflush = makeInvalidEarlyAccess('_fflush');
 var _strerror = makeInvalidEarlyAccess('_strerror');
@@ -1563,12 +1560,9 @@ var __indirect_function_table = makeInvalidEarlyAccess('__indirect_function_tabl
 var wasmMemory = makeInvalidEarlyAccess('wasmMemory');
 
 function assignWasmExports(wasmExports) {
-  assert(typeof wasmExports['getPixels'] != 'undefined', 'missing Wasm export: getPixels');
+  assert(typeof wasmExports['getProjectedVertices'] != 'undefined', 'missing Wasm export: getProjectedVertices');
+  assert(typeof wasmExports['getEdges'] != 'undefined', 'missing Wasm export: getEdges');
   assert(typeof wasmExports['renderScene'] != 'undefined', 'missing Wasm export: renderScene');
-  assert(typeof wasmExports['getPoints'] != 'undefined', 'missing Wasm export: getPoints');
-  assert(typeof wasmExports['addPoint'] != 'undefined', 'missing Wasm export: addPoint');
-  assert(typeof wasmExports['removePoint'] != 'undefined', 'missing Wasm export: removePoint');
-  assert(typeof wasmExports['clearPoints'] != 'undefined', 'missing Wasm export: clearPoints');
   assert(typeof wasmExports['initialize'] != 'undefined', 'missing Wasm export: initialize');
   assert(typeof wasmExports['fflush'] != 'undefined', 'missing Wasm export: fflush');
   assert(typeof wasmExports['strerror'] != 'undefined', 'missing Wasm export: strerror');
@@ -1581,12 +1575,9 @@ function assignWasmExports(wasmExports) {
   assert(typeof wasmExports['emscripten_stack_get_current'] != 'undefined', 'missing Wasm export: emscripten_stack_get_current');
   assert(typeof wasmExports['memory'] != 'undefined', 'missing Wasm export: memory');
   assert(typeof wasmExports['__indirect_function_table'] != 'undefined', 'missing Wasm export: __indirect_function_table');
-  _getPixels = Module['_getPixels'] = createExportWrapper('getPixels', 0);
+  _getProjectedVertices = Module['_getProjectedVertices'] = createExportWrapper('getProjectedVertices', 0);
+  _getEdges = Module['_getEdges'] = createExportWrapper('getEdges', 0);
   _renderScene = Module['_renderScene'] = createExportWrapper('renderScene', 0);
-  _getPoints = Module['_getPoints'] = createExportWrapper('getPoints', 0);
-  _addPoint = Module['_addPoint'] = createExportWrapper('addPoint', 3);
-  _removePoint = Module['_removePoint'] = createExportWrapper('removePoint', 1);
-  _clearPoints = Module['_clearPoints'] = createExportWrapper('clearPoints', 0);
   _initialize = Module['_initialize'] = createExportWrapper('initialize', 0);
   _fflush = createExportWrapper('fflush', 1);
   _strerror = createExportWrapper('strerror', 1);

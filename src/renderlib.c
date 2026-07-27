@@ -395,9 +395,9 @@ Camera camera(Pt3 camOrigin,
     };
 }
 
-Scene scene(DynamicPt3Array *pt3Arr, Camera camera) {
+Scene scene(Wireframe* wireframe, Camera camera) {
     return (Scene){
-        .pt3Arr = pt3Arr,
+        .wireframe = wireframe,
         .camera = camera
     };
 }
@@ -458,9 +458,9 @@ void  render(DynamicPixelArray* arr, Scene* scenePtr) {
 
   // Perform calcs and add to canvas
 
-  for (int i = 0; i < scenePtr->pt3Arr->numElements; i++) {
+  for (int i = 0; i < scenePtr->wireframe->vertices.numElements; i++) {
   
-    Pt3 pt = scenePtr->pt3Arr->data[i];
+    Pt3 pt = scenePtr->wireframe->vertices.data[i];
 
     // create line (vector) --> this is the direction vector.
 

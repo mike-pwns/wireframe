@@ -130,10 +130,10 @@ Camera camera(Pt3 camOrigin, float viewportDistance, Viewport viewport);
 // Scene; composition of everything.
 typedef struct {
 
-  DynamicPt3Array *pt3Arr;
+  Wireframe *wireframe;
   Camera camera;
 } Scene;
-Scene scene(DynamicPt3Array *pt3Arr, Camera camera);
+Scene scene(Wireframe* wireframe, Camera camera);
 
 
 

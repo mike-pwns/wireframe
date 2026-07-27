@@ -72,50 +72,112 @@ function draw_square(x, y, side_len) {
 // read data and parse from c
 
 
-// (AI GEN)
-function getPixels() {
+// (AI-GENERATED)
+function getProjectedVertices() {
 
-    const ptr = Module._getPixels();
-    const heap = Module.HEAP32;
+    const ptr = Module._getProjectedVertices();
+
+    const heap32 = Module.HEAP32;
+
+    // DynamicPixelArray struct:
+    // Pixel* data
+    // int numElements
+    // int capacity
 
     const base = ptr >> 2;
 
-    const dataPtr = heap[base];
-    const length  = heap[base + 1];
-    const capacity = heap[base + 2];
+    const dataPtr = heap32[base];
+    const length = heap32[base + 1];
 
     let pixels = [];
 
     for (let i = 0; i < length; i++) {
 
-        const p = (dataPtr >> 2) + i * 2;
+        // Pixel:
+        // int x
+        // int y
 
-        pixels.push([
-        heap[p],
-        heap[p + 1]
-        ]);
+        const pixelAddress = (dataPtr >> 2) + i * 2;
+
+        pixels.push({
+            x: heap32[pixelAddress],
+            y: heap32[pixelAddress + 1]
+        });
     }
 
     return pixels;
 }
 
+// (AI-GENERATED)
+function getEdges() {
 
-function draw() {
+    const ptr = Module._getEdges();
 
-  // wipe black
-  CONTEXT.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    const heap32 = Module.HEAP32;
 
-  const pixels = getPixels();
+    // DynamicEdge3Array struct:
+    // Edge3* data
+    // int numElements
+    // int capacity
 
-  // draw square at each pixel
-  for (let i = 0; i < pixels.length; i++) {
-    px = pixels[i];
-    draw_square(px[X], px[Y], 50);
-  }
+    const base = ptr >> 2;
 
-  // (connect lines)
+    const dataPtr = heap32[base];
+    const length = heap32[base + 1];
+
+    let edges = [];
+
+    for (let i = 0; i < length; i++) {
+
+        // Edge3:
+        // int startIndex
+        // int endIndex
+
+        const edgeAddress = (dataPtr >> 2) + i * 2;
+
+        edges.push({
+            start: heap32[edgeAddress],
+            end: heap32[edgeAddress + 1]
+        });
+    }
+
+    return edges;
 }
 
+
+// (PARTIALLY AI)
+function draw() {
+
+    CONTEXT.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+    const vertices = getProjectedVertices();
+    const edges = getEdges();
+
+
+    // draw vertices
+    for (let i = 0; i < vertices.length; i++) {
+        draw_square(
+            vertices[i].x,
+            vertices[i].y,
+            10
+        );
+    }
+
+
+    // draw edges
+    for (let i = 0; i < edges.length; i++) {
+
+        const edge = edges[i];
+
+        const start = vertices[edge.start];
+        const end = vertices[edge.end];
+
+        draw_line(
+            [start.x, start.y],
+            [end.x, end.y]
+        );
+    }
+}
 
 function initialize_data() {
   // for now runs internal initialize test data. 
@@ -169,82 +231,6 @@ function getPoints() {
 
     return points;
 }
-
-// UI METHOD (ai-gen)
-function refreshPointList() {
-
-    const list = document.getElementById("point-list");
-
-    list.innerHTML = "";
-
-    const points = getPoints();
-
-
-    for (let i = 0; i < points.length; i++) {
-
-        const row = document.createElement("div");
-        row.className = "point";
-
-
-        const text = document.createElement("span");
-
-        text.textContent =
-            `[${String(i).padStart(3, "0")}] `
-            + `(${points[i].x}, ${points[i].y}, ${points[i].z})`;
-
-
-        const button = document.createElement("button");
-
-        button.textContent = "DEL";
-
-
-        button.onclick = () => {
-
-            Module._removePoint(i);
-
-            Module._renderScene();
-
-            draw();
-
-            refreshPointList();
-        };
-
-
-        row.appendChild(text);
-        row.appendChild(button);
-
-        list.appendChild(row);
-    }
-}
-
-
-
-
-// C APIs
-
-
-function onAddClicked() {
-
-    const x = Number(document.getElementById("x-input").value);
-    const y = Number(document.getElementById("y-input").value);
-    const z = Number(document.getElementById("z-input").value);
-
-    Module._addPoint(x, y, z);
-
-    Module._renderScene();
-    draw();
-    refreshPointList();
-}
-
-
-
-
-
-
-
-
-
-
 
 
 // yes i am doing this in js sue me
