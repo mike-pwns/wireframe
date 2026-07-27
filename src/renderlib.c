@@ -11,41 +11,152 @@
 // damnnnn youuuu and your stupidly simple fixed array ccccc!!!!!!!!!!! now i gotta figure out how to make dynamic array!!! no more fun and games like in python :(
 
 
-CanvasPixelArray canvasPixelArray() {
-  return (CanvasPixelArray) {
-
-    .length = 0,
-    .array = NULL
-    
+DynamicPixelArray dynamicPixelArray() {
+  return (DynamicPixelArray) {
+    .data = malloc(sizeof(Pixel)),
+    .numElements = 0,
+    .capacity = 1
   };
 }
 
-void add(CanvasPixelArray* canvasPixelArrPtr, CanvasPixel newElement) {
 
-  // update len var
-  canvasPixelArrPtr->length += 1;
+void addPixel(DynamicPixelArray *arr, Pixel pixel) {
+  // check if capacity,
+  if (arr->numElements == arr->capacity) {
+    // recreate, then copy all elements into there
+    Pixel* temp = malloc((arr->capacity * 2) * sizeof(Pixel));
 
-  // if new len is 1 (first element added), malloc
-  if (canvasPixelArrPtr->length == 1) {
-    canvasPixelArrPtr->array = malloc(1 * sizeof(CanvasPixel));
+    for (int i = 0; i < arr->capacity; i++) {
+      temp[i] = arr->data[i];
+    }
+
+    // free old data
+    free(arr->data);
+
+    // update capacity
+    arr->capacity *= 2;
+
+    // update data
+    arr->data = temp;
+    
   }
 
-  // if not 1st and like 41st, just ralloc that thang
-  else {
-    canvasPixelArrPtr->array = realloc(canvasPixelArrPtr->array, canvasPixelArrPtr->length * sizeof(CanvasPixel)); // i remember something about realloc being bad, idk for this case it should be fine
+  // add point at latest and increment num elements
+  arr->data[arr->numElements] = pixel;
+  arr->numElements++;  
+}
+
+void clearPixelArray(DynamicPixelArray *arr) {
+  free(arr->data);
+  arr->data = malloc(sizeof(Pt3));
+  arr->numElements = 0;
+  arr->capacity = 1;
+  
+}
+
+
+
+
+
+
+
+// point array (for scene)
+// logic, doubles every time limit is reached. default size one
+
+
+
+DynamicPt3Array dynamicPt3Array() {
+  return (DynamicPt3Array) {
+    .data = malloc(sizeof(Pt3)),
+    .numElements = 0,
+    .capacity = 1
+  };
+}
+
+
+void addPt3(DynamicPt3Array *arr, Pt3 pt) {
+  // check if capacity,
+  if (arr->numElements == arr->capacity) {
+    // recreate, then copy all elements into there
+    Pt3* temp = malloc((arr->capacity * 2) * sizeof(Pt3));
+
+    for (int i = 0; i < arr->capacity; i++) {
+      temp[i] = arr->data[i];
+    }
+
+    // free old data
+    free(arr->data);
+
+    // update capacity
+    arr->capacity *= 2;
+
+    // update data
+    arr->data = temp;
+    
   }
 
-  // assign new element
-  canvasPixelArrPtr->array[canvasPixelArrPtr->length - 1] = newElement;
-
+  // add point at latest and increment num elements
+  arr->data[arr->numElements] = pt;
+  arr->numElements++;  
 }
 
-// just reet the thing (make sure to free old mem!!! not just fuget abaut it)
-void clear(CanvasPixelArray* canvasPixelArrPtr) {
-  canvasPixelArrPtr->length = 0;
-  free(canvasPixelArrPtr->array);
-  canvasPixelArrPtr->array = NULL;
+void rmPt3(DynamicPt3Array *arr, int index) { 
+
+  // just sanity check
+  if (index < 0 || index >= arr->numElements) {
+      return;
+  }
+
+  // is O(n)
+
+  // recreate the array
+  Pt3* temp = malloc(arr->capacity * sizeof(Pt3));
+
+  // flag for removed; will have to offset copy index
+  int removed = 0; // will set to 1
+
+  // iterate all pts
+  for (int i = 0; i < arr->numElements; i++) {      
+
+    // if its the index, dont copy anything, just set rmvd true
+    if (i == index) {
+      removed = 1;
+    }
+
+    // otherwise copy based on whether index was passed or not
+    else {
+      if (removed) {
+        temp[i-1] = arr->data[i];
+      }
+      else {
+        temp[i] = arr->data [i];
+      }
+    }
+  }
+
+  free(arr->data);
+  arr->data = temp;
+  arr->numElements--;  
+  
+  
 }
+
+void clearPt3Array(DynamicPt3Array *arr) {
+  free(arr->data);
+  arr->data = malloc(sizeof(Pt3));
+  arr->numElements = 0;
+  arr->capacity = 1;
+  
+}
+
+
+
+
+
+
+
+
+
 
 
 
@@ -60,8 +171,8 @@ void clear(CanvasPixelArray* canvasPixelArrPtr) {
 // CanvasPixel
 // --------------------
 
-CanvasPixel canvasPixel(int x, int y) {
-    return (CanvasPixel){
+Pixel pixel(int x, int y) {
+    return (Pixel){
         .x = x,
         .y = y
     };
@@ -99,10 +210,9 @@ Camera camera(Pt3 camOrigin,
     };
 }
 
-Scene scene(Pt3 *points, int numPts, Camera camera) {
+Scene scene(DynamicPt3Array *pt3Arr, Camera camera) {
     return (Scene){
-        .points = points,
-        .numPts = numPts,
+        .pt3Arr = pt3Arr,
         .camera = camera
     };
 }
@@ -110,7 +220,7 @@ Scene scene(Pt3 *points, int numPts, Camera camera) {
 
 
 
-CanvasPixel ptToPx(Viewport viewport, Pt3 pt) {
+Pixel ptToPx(Viewport viewport, Pt3 pt) {
     // move it over so that it starts from (0, 0) in top left
     // then scale it down to fit viewport
 
@@ -120,7 +230,7 @@ CanvasPixel ptToPx(Viewport viewport, Pt3 pt) {
     int y = (int)((viewport.wrldHeight * 0.5f - pt.y) *
                   (viewport.pxHeight / viewport.wrldHeight));
 
-    return canvasPixel(x, y);
+    return pixel(x, y);
 }
 
 
@@ -145,10 +255,10 @@ CanvasPixel ptToPx(Viewport viewport, Pt3 pt) {
 
 
 // renders everything as it is
-void  render(CanvasPixelArray* canvasPixelArrPtr, Scene* scenePtr) { 
+void  render(DynamicPixelArray* arr, Scene* scenePtr) { 
 
   // clear all previous pixels
-  clear(canvasPixelArrPtr); 
+  clearPixelArray(arr); 
 
   // TESTING!!!
   // add(canvasPixelArrPtr, canvasPixel(1, 2));
@@ -163,9 +273,9 @@ void  render(CanvasPixelArray* canvasPixelArrPtr, Scene* scenePtr) {
 
   // Perform calcs and add to canvas
 
-  for (int i = 0; i < scenePtr->numPts; i++) {
+  for (int i = 0; i < scenePtr->pt3Arr->numElements; i++) {
   
-    Pt3 pt = scenePtr->points[i];
+    Pt3 pt = scenePtr->pt3Arr->data[i];
 
     // create line (vector) --> this is the direction vector.
 
@@ -229,7 +339,7 @@ void  render(CanvasPixelArray* canvasPixelArrPtr, Scene* scenePtr) {
   }
 
     // convert to px and add
-    add(canvasPixelArrPtr, ptToPx(scenePtr->camera.viewport, intersectionPoint));
+    addPixel(arr, ptToPx(scenePtr->camera.viewport, intersectionPoint));
     
 
     
@@ -255,54 +365,54 @@ void  render(CanvasPixelArray* canvasPixelArrPtr, Scene* scenePtr) {
 
 
 
-void printCanvasPixelArray(CanvasPixelArray arr) {
+void printDynamicPixelArray(DynamicPixelArray arr) {
 
     printf("CanvasPixelArray {\n");
-    printf("  length: %d\n", arr.length);
+    printf("  # elements: %d\n", arr.numElements);
     printf("  pixels:\n");
 
-    for (int i = 0; i < arr.length; i++) {
+    for (int i = 0; i < arr.numElements; i++) {
         printf("    [%d] (%d, %d)\n",
                i,
-               arr.array[i].x,
-               arr.array[i].y);
+               arr.data[i].x,
+               arr.data[i].y);
     }
 
     printf("}\n");
 }
 
-void printScene(Scene scene) {
-
-    printf("Scene {\n");
-
-    printf("  numPts: %d\n", scene.numPts);
-
-    printf("  points:\n");
-    for (int i = 0; i < scene.numPts; i++) {
-        printf("    [%d] ", i);
-        printPt3(scene.points[i]);
-    }
-
-    printf("  camera:\n");
-
-    printf("    origin: ");
-    printPt3(scene.camera.camOrigin);
-
-    printf("    viewportDistance: %f\n",
-           scene.camera.viewportDistance);
-
-    printf("    viewport:\n");
-    printf("      worldWidth : %f\n",
-           scene.camera.viewport.wrldWidth);
-    printf("      worldHeight: %f\n",
-           scene.camera.viewport.wrldHeight);
-    printf("      pixelWidth : %d\n",
-           scene.camera.viewport.pxWidth);
-    printf("      pixelHeight: %d\n",
-           scene.camera.viewport.pxHeight);
-
-    printf("}\n");
-}
+// void printScene(Scene scene) {
+// 
+//     printf("Scene {\n");
+// 
+//     printf("  numPts: %d\n", scene.numPts);
+// 
+//     printf("  points:\n");
+//     for (int i = 0; i < scene.numPts; i++) {
+//         printf("    [%d] ", i);
+//         printPt3(scene.points[i]);
+//     }
+// 
+//     printf("  camera:\n");
+// 
+//     printf("    origin: ");
+//     printPt3(scene.camera.camOrigin);
+// 
+//     printf("    viewportDistance: %f\n",
+//            scene.camera.viewportDistance);
+// 
+//     printf("    viewport:\n");
+//     printf("      worldWidth : %f\n",
+//            scene.camera.viewport.wrldWidth);
+//     printf("      worldHeight: %f\n",
+//            scene.camera.viewport.wrldHeight);
+//     printf("      pixelWidth : %d\n",
+//            scene.camera.viewport.pxWidth);
+//     printf("      pixelHeight: %d\n",
+//            scene.camera.viewport.pxHeight);
+// 
+//     printf("}\n");
+// }
   
 
 

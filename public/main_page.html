@@ -1,19 +1,147 @@
 <!DOCTYPE html>
+<html lang="en">
 
 <head>
-
+    <meta charset="UTF-8">
     <title>Wireframe</title>
 
-</head>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
+        body {
+            margin: 0;
+            background: #0a0a0a;
+            color: #00ff88;
+            font-family: Consolas, "Courier New", monospace;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        canvas {
+            margin-top: 20px;
+            height: 50vh;
+            aspect-ratio: 1 / 1;
+            background: #000;
+            border: 1px solid #00ff88;
+        }
+
+        #ui {
+            width: min(600px, 90vw);
+            margin: 20px 0;
+            padding: 14px;
+            border: 1px solid #00ff88;
+        }
+
+        h3 {
+            margin: 0 0 14px;
+            font-weight: normal;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        #point-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        #coords {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            width: 100%;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            background: #111;
+            color: #00ff88;
+            border: 1px solid #00ff88;
+            outline: none;
+            font: inherit;
+            text-align: center;
+        }
+
+        input::placeholder {
+            color: #00884d;
+            text-align: center;
+        }
+
+        button {
+            width: 100%;
+            padding: 8px;
+            background: #111;
+            color: #00ff88;
+            border: 1px solid #00ff88;
+            font: inherit;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #00ff88;
+            color: #000;
+        }
+
+        #point-list {
+            border-top: 1px solid #00ff88;
+            padding-top: 10px;
+            min-height: 120px;
+        }
+
+        .point {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 3px 0;
+        }
+
+        .point button {
+            width: auto;
+            padding: 2px 8px;
+            margin-left: 10px;
+        }
+    </style>
+</head>
 
 <body>
 
-    <!-- change the pixel stuff in js -->
-    <canvas id="canvas" style="background-color: black; height: 100vh; aspect-ratio: 1/1; height: 50vh;"></canvas>
+    <canvas id="canvas"></canvas>
+
+    <div id="ui">
+
+        <h3>POINT INPUT</h3>
+
+        <div id="point-form">
+
+            <div id="coords">
+                <input id="x-input" type="number" placeholder="X">
+                <input id="y-input" type="number" placeholder="Y">
+                <input id="z-input" type="number" placeholder="Z">
+            </div>
+
+            <button id="submit-point" onclick="onAddClicked()">
+                ADD POINT
+            </button>
+
+        </div>
+
+
+        <div id="point-list">
+            <!-- populated by javascript -->
+        </div>
+
+    </div>
 
 
     <script src="renderer.js"></script>
     <script src="renderer_interface.js"></script>
 
 </body>
+
+</html>

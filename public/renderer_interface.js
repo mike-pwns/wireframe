@@ -70,35 +70,52 @@ function draw_square(x, y, side_len) {
 
 
 // read data and parse from c
-let pxArr = [];
 
-function read_data() {
 
-    pxArr = [];
+// (AI GEN)
+function getPixels() {
 
-    const structPtr = Module._getCanvasPixels();
-
+    const ptr = Module._getPixels();
     const heap = Module.HEAP32;
 
-    // CanvasPixelArray:
-    // offset 0 = length
-    // offset 4 = array pointer
+    const base = ptr >> 2;
 
-    const structIndex = structPtr >> 2;
+    const dataPtr = heap[base];
+    const length  = heap[base + 1];
+    const capacity = heap[base + 2];
 
-    const length = heap[structIndex];
-    const arrayPtr = heap[structIndex + 1];
+    let pixels = [];
 
     for (let i = 0; i < length; i++) {
 
-        const pixelIndex = (arrayPtr >> 2) + i * 2;
+        const p = (dataPtr >> 2) + i * 2;
 
-        pxArr.push([
-            heap[pixelIndex],
-            heap[pixelIndex + 1]
+        pixels.push([
+        heap[p],
+        heap[p + 1]
         ]);
     }
+
+    return pixels;
 }
+
+
+function draw() {
+
+  // wipe black
+  CONTEXT.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+  const pixels = getPixels();
+
+  // draw square at each pixel
+  for (let i = 0; i < pixels.length; i++) {
+    px = pixels[i];
+    draw_square(px[X], px[Y], 50);
+  }
+
+  // (connect lines)
+}
+
 
 function initialize_data() {
   // for now runs internal initialize test data. 
@@ -107,22 +124,126 @@ function initialize_data() {
     Module._initialize();
     Module._renderScene();
 
-    read_data();
+    // start drawing loop
+    draw();
 }
 
-function draw() {
 
-  // wipe black
-  CONTEXT.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-  // draw square at each pixel
-  for (let i = 0; i < pxArr.length; i++) {
-    px = pxArr[i];
-    draw_square(px[X], px[Y], 10);
-  }
+// (AI GEN)
+function getPoints() {
 
-  // (connect lines)
+    const ptr = Module._getPoints();
+
+    const heap32 = Module.HEAP32;
+    const heapF32 = Module.HEAPF32;
+
+
+    // struct location
+    const base = ptr >> 2;
+
+
+    // DynamicPt3Array fields
+    const dataPtr = heap32[base];
+    const length = heap32[base + 1];
+
+
+    let points = [];
+
+
+    for (let i = 0; i < length; i++) {
+
+        // Pt3 = float x, float y, float z
+        // 3 floats per point
+
+        const p = (dataPtr >> 2) + i * 3;
+
+
+        points.push({
+            x: heapF32[p],
+            y: heapF32[p + 1],
+            z: heapF32[p + 2]
+        });
+    }
+
+
+    return points;
 }
+
+// UI METHOD (ai-gen)
+function refreshPointList() {
+
+    const list = document.getElementById("point-list");
+
+    list.innerHTML = "";
+
+    const points = getPoints();
+
+
+    for (let i = 0; i < points.length; i++) {
+
+        const row = document.createElement("div");
+        row.className = "point";
+
+
+        const text = document.createElement("span");
+
+        text.textContent =
+            `[${String(i).padStart(3, "0")}] `
+            + `(${points[i].x}, ${points[i].y}, ${points[i].z})`;
+
+
+        const button = document.createElement("button");
+
+        button.textContent = "DEL";
+
+
+        button.onclick = () => {
+
+            Module._removePoint(i);
+
+            Module._renderScene();
+
+            draw();
+
+            refreshPointList();
+        };
+
+
+        row.appendChild(text);
+        row.appendChild(button);
+
+        list.appendChild(row);
+    }
+}
+
+
+
+
+// C APIs
+
+
+function onAddClicked() {
+
+    const x = Number(document.getElementById("x-input").value);
+    const y = Number(document.getElementById("y-input").value);
+    const z = Number(document.getElementById("z-input").value);
+
+    Module._addPoint(x, y, z);
+
+    Module._renderScene();
+    draw();
+    refreshPointList();
+}
+
+
+
+
+
+
+
+
+
 
 
 

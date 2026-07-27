@@ -473,7 +473,7 @@ function updateMemoryViews() {
   HEAPU16 = new Uint16Array(b);
   Module['HEAP32'] = HEAP32 = new Int32Array(b);
   HEAPU32 = new Uint32Array(b);
-  HEAPF32 = new Float32Array(b);
+  Module['HEAPF32'] = HEAPF32 = new Float32Array(b);
   HEAPF64 = new Float64Array(b);
   HEAP64 = new BigInt64Array(b);
   HEAPU64 = new BigUint64Array(b);
@@ -1075,6 +1075,7 @@ async function createWasm() {
       return 0;
     };
 
+
 // End JS library code
 
 // include: postlibrary.js
@@ -1332,7 +1333,6 @@ missingLibrarySymbols.forEach(missingLibrarySymbol)
   'HEAP16',
   'HEAPU16',
   'HEAPU32',
-  'HEAPF32',
   'HEAPF64',
   'HEAP64',
   'HEAPU64',
@@ -1542,10 +1542,13 @@ function checkIncomingModuleAPI() {
 }
 
 // Imports from the Wasm binary.
-var _getCanvasPixels = Module['_getCanvasPixels'] = makeInvalidEarlyAccess('_getCanvasPixels');
+var _getPixels = Module['_getPixels'] = makeInvalidEarlyAccess('_getPixels');
 var _renderScene = Module['_renderScene'] = makeInvalidEarlyAccess('_renderScene');
+var _getPoints = Module['_getPoints'] = makeInvalidEarlyAccess('_getPoints');
+var _addPoint = Module['_addPoint'] = makeInvalidEarlyAccess('_addPoint');
+var _removePoint = Module['_removePoint'] = makeInvalidEarlyAccess('_removePoint');
+var _clearPoints = Module['_clearPoints'] = makeInvalidEarlyAccess('_clearPoints');
 var _initialize = Module['_initialize'] = makeInvalidEarlyAccess('_initialize');
-var _main = makeInvalidEarlyAccess('_main');
 var _fflush = makeInvalidEarlyAccess('_fflush');
 var _strerror = makeInvalidEarlyAccess('_strerror');
 var _emscripten_stack_get_end = makeInvalidEarlyAccess('_emscripten_stack_get_end');
@@ -1560,10 +1563,13 @@ var __indirect_function_table = makeInvalidEarlyAccess('__indirect_function_tabl
 var wasmMemory = makeInvalidEarlyAccess('wasmMemory');
 
 function assignWasmExports(wasmExports) {
-  assert(typeof wasmExports['getCanvasPixels'] != 'undefined', 'missing Wasm export: getCanvasPixels');
+  assert(typeof wasmExports['getPixels'] != 'undefined', 'missing Wasm export: getPixels');
   assert(typeof wasmExports['renderScene'] != 'undefined', 'missing Wasm export: renderScene');
+  assert(typeof wasmExports['getPoints'] != 'undefined', 'missing Wasm export: getPoints');
+  assert(typeof wasmExports['addPoint'] != 'undefined', 'missing Wasm export: addPoint');
+  assert(typeof wasmExports['removePoint'] != 'undefined', 'missing Wasm export: removePoint');
+  assert(typeof wasmExports['clearPoints'] != 'undefined', 'missing Wasm export: clearPoints');
   assert(typeof wasmExports['initialize'] != 'undefined', 'missing Wasm export: initialize');
-  assert(typeof wasmExports['main'] != 'undefined', 'missing Wasm export: main');
   assert(typeof wasmExports['fflush'] != 'undefined', 'missing Wasm export: fflush');
   assert(typeof wasmExports['strerror'] != 'undefined', 'missing Wasm export: strerror');
   assert(typeof wasmExports['emscripten_stack_get_end'] != 'undefined', 'missing Wasm export: emscripten_stack_get_end');
@@ -1575,10 +1581,13 @@ function assignWasmExports(wasmExports) {
   assert(typeof wasmExports['emscripten_stack_get_current'] != 'undefined', 'missing Wasm export: emscripten_stack_get_current');
   assert(typeof wasmExports['memory'] != 'undefined', 'missing Wasm export: memory');
   assert(typeof wasmExports['__indirect_function_table'] != 'undefined', 'missing Wasm export: __indirect_function_table');
-  _getCanvasPixels = Module['_getCanvasPixels'] = createExportWrapper('getCanvasPixels', 0);
+  _getPixels = Module['_getPixels'] = createExportWrapper('getPixels', 0);
   _renderScene = Module['_renderScene'] = createExportWrapper('renderScene', 0);
+  _getPoints = Module['_getPoints'] = createExportWrapper('getPoints', 0);
+  _addPoint = Module['_addPoint'] = createExportWrapper('addPoint', 3);
+  _removePoint = Module['_removePoint'] = createExportWrapper('removePoint', 1);
+  _clearPoints = Module['_clearPoints'] = createExportWrapper('clearPoints', 0);
   _initialize = Module['_initialize'] = createExportWrapper('initialize', 0);
-  _main = createExportWrapper('main', 2);
   _fflush = createExportWrapper('fflush', 1);
   _strerror = createExportWrapper('strerror', 1);
   _emscripten_stack_get_end = wasmExports['emscripten_stack_get_end'];

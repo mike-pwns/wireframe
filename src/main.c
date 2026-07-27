@@ -5,7 +5,7 @@
 #include "../include/renderlib.h"
 
 
-CanvasPixelArray canvaspixels;
+DynamicPixelArray pxArr;
 Scene testScene;
 Camera testCamera;
 
@@ -23,11 +23,11 @@ float viewportDistance;
 
 
 
-
+DynamicPt3Array pt3Arr;
 
 // cube
-Pt3 ptArr[8];
-int numPts = 8;
+// Pt3 ptArr[8];
+// int numPts = 8;
 
 // piramyd
 // Pt3 ptArr[4];
@@ -38,15 +38,16 @@ int numPts = 8;
 
 void initializeTestData() {
 
+  pt3Arr = dynamicPt3Array();
   // cube
-  ptArr[1] = pt3(-0.5, 0.5, 1);
-  ptArr[0] = pt3(-0.5, -0.5, 1);
-  ptArr[2] = pt3(0.5, 0.5, 1);
-  ptArr[3] = pt3(0.5, -0.5, 1);
-  ptArr[4] = pt3(-0.5, 0.5, 2);
-  ptArr[6] = pt3(0.5, 0.5, 2);
-  ptArr[5] = pt3(-0.5, -0.5, 2);
-  ptArr[7] = pt3(0.5, -0.5, 2);
+  addPt3(&pt3Arr, pt3(-0.5, 0.5, 1));
+  addPt3(&pt3Arr, pt3(-0.5, -0.5, 1));
+  addPt3(&pt3Arr, pt3(0.5, 0.5, 1));
+  addPt3(&pt3Arr, pt3(0.5, -0.5, 1));
+  addPt3(&pt3Arr, pt3(-0.5, 0.5, 2));
+  addPt3(&pt3Arr, pt3(0.5, 0.5, 2));
+  addPt3(&pt3Arr, pt3(-0.5, -0.5, 2));
+  addPt3(&pt3Arr, pt3(0.5, -0.5, 2));
 
   // pyramid
   // ptArr[0] = pt3(-0.5, -0.5, 1);
@@ -61,59 +62,47 @@ void initializeTestData() {
 
 
   // arrays are by default pointers (to mem)
-  testScene = scene(ptArr, numPts, testCamera);
+  testScene = scene(&pt3Arr, testCamera);
   printf("init data");
 }
 
 
 // JS apis
 
-CanvasPixelArray* getCanvasPixels() {
-    return &canvaspixels;
+// see pixels
+
+DynamicPixelArray* getPixels() {
+    return &pxArr;
 }
 
+// render the scene (key thing here :P)
+
 void renderScene() {
-    render(&canvaspixels, &testScene);
+    render(&pxArr, &testScene);
 }
+
+// point management
+
+DynamicPt3Array* getPoints() {
+    return &pt3Arr;
+}
+
+void addPoint(float x, float y, float z) {
+  addPt3(&pt3Arr, pt3(x, y, z));
+}
+
+void removePoint(int index) {
+  rmPt3(&pt3Arr, index);
+}
+
+void clearPoints() {
+  clearPt3Array(&pt3Arr);
+}
+
+// init
 
 void initialize() {
     initializeTestData();
-    canvaspixels = canvasPixelArray();
-}
-
-
-
-int main() {
-
-
-  // testing intersection func
-
-  // initialize scene
-  // select figure
-//   Vec3 dirVec = vec3(3, 2, -1);
-//   normalizeVec3(&dirVec);
-//   Pt3 ptLine = pt3(0, 1, 2);
-//   Line3 line = line3(dirVec, ptLine);
-// 
-//   Vec3 normVec = vec3(2, 3, -1);
-//   normalizeVec3(&normVec);
-//   Pt3 ptPlane = pt3(0, 0, -4);
-//   Plane plan = plane(normVec, ptPlane);
-// 
-//   Pt3 result = intersectionLinePlane(line, plan);
-// 
-//   printPt3(result);
-  
-  // test was successful!
-
-
-  initializeTestData();
-  printCanvasPixelArray(canvaspixels);
-  printScene(testScene);
-
-  render(&canvaspixels, &testScene);
-
-  printCanvasPixelArray(canvaspixels);
-
-  return 0;
+    pxArr = dynamicPixelArray();
+    pt3Arr = dynamicPt3Array();
 }

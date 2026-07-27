@@ -10,28 +10,42 @@
 // dynamic array!!!
 
 
-// the actual pixel to draw things on
 typedef struct {
 
-  int x, y;
+  Pt3* data;
+  int numElements;
+  int capacity;
   
-} CanvasPixel;
-CanvasPixel canvasPixel(int x, int y);
+} DynamicPt3Array;
+DynamicPt3Array dynamicPt3Array();
+void addPt3(DynamicPt3Array *arr, Pt3 pt);
+void rmPt3(DynamicPt3Array *arr, int index);
+void clearPt3Array(DynamicPt3Array *arr);
+
+
+
+
+
+
+
+// the actual pixel to draw things on
+typedef struct {
+  int x, y;  
+} Pixel;
+Pixel pixel(int x, int y);
 
 
 // i just dont wanna deal w the scrappy solutions im thinking of; oughta be more *elegant*
 
 typedef struct {
-  int length;
-  CanvasPixel* array;
+  Pixel* data;
+  int numElements;
+  int capacity;
   
-} CanvasPixelArray; 
-CanvasPixelArray canvasPixelArray();
-
-
-void add(CanvasPixelArray* canvasPixelArrayPtr, CanvasPixel element); // adds to last
-// void remove(CanvasPixelArray* arrayPtr, CanvasPixel element)
-void clear(CanvasPixelArray* canvasPixelArrayPtr); // resets to len 0
+} DynamicPixelArray; 
+DynamicPixelArray dynamicPixelArray();
+void add(DynamicPixelArray *arr, Pixel pixel); // adds to last
+void clear(DynamicPixelArray *arr); // resets to len 0
 
 
 
@@ -84,11 +98,10 @@ Camera camera(Pt3 camOrigin, float viewportDistance, Viewport viewport);
 // Scene; composition of everything.
 typedef struct {
 
-  Pt3 *points; // array of points (later shape)
-  int numPts; // f u mr C im not playing that game again
+  DynamicPt3Array *pt3Arr;
   Camera camera;
 } Scene;
-Scene scene(Pt3 *points, int numPts, Camera camera);
+Scene scene(DynamicPt3Array *pt3Arr, Camera camera);
 
 
 
@@ -96,7 +109,7 @@ Scene scene(Pt3 *points, int numPts, Camera camera);
 // Debug / Printing
 // --------------------
 
-void printCanvasPixelArray(CanvasPixelArray arr);
+void printDynamicPixelArray(DynamicPixelArray arr);
 void printScene(Scene scene);
 
 
@@ -109,7 +122,7 @@ int worldToPixel(float wrldX, float worldY);
 
 // render scene (intersect all points with plane and get pixels?)
 
-void render(CanvasPixelArray* canvasPixelArrayPtr, Scene* scenePtr);
+void render(DynamicPixelArray* arr, Scene* scenePtr);
 
 
 
