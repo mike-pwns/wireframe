@@ -6,25 +6,18 @@
 
 
 DynamicPixelArray pxArr;
-Scene testScene;
+DynamicPt3Array pt3Arr;
+DynamicEdge3Array edge3Arr;
+
+
+
+Pt3 origin;
+float viewportDistance;
+Viewport testViewport;
 Camera testCamera;
 
 
-
-
-Viewport testViewport;
-Pt3 origin;
-float viewportDistance;
-
-
-
-
-
-
-
-
-DynamicPt3Array pt3Arr;
-
+Scene testScene;
 // cube
 // Pt3 ptArr[8];
 // int numPts = 8;
@@ -40,14 +33,17 @@ void initializeTestData() {
 
   pt3Arr = dynamicPt3Array();
   // cube
-  addPt3(&pt3Arr, pt3(-0.5, 0.5, 1));
   addPt3(&pt3Arr, pt3(-0.5, -0.5, 1));
+  addPt3(&pt3Arr, pt3(-0.5, 0.5, 1));
   addPt3(&pt3Arr, pt3(0.5, 0.5, 1));
   addPt3(&pt3Arr, pt3(0.5, -0.5, 1));
   addPt3(&pt3Arr, pt3(-0.5, 0.5, 2));
   addPt3(&pt3Arr, pt3(0.5, 0.5, 2));
   addPt3(&pt3Arr, pt3(-0.5, -0.5, 2));
   addPt3(&pt3Arr, pt3(0.5, -0.5, 2));
+
+  edge3Arr = dynamicEdge3Array();
+  // addEdge3()
 
   // pyramid
   // ptArr[0] = pt3(-0.5, -0.5, 1);

@@ -25,6 +25,30 @@ void clearPt3Array(DynamicPt3Array *arr);
 
 
 
+// edge is mathematically between 2 points.
+// were getting to the more "comp sci" side of things here :P
+typedef struct {
+
+  // convenient for us
+  int startIndex;
+  int endIndex;
+  
+} Edge3;
+Edge3 edge3(int startIndex, int endIndex);
+
+
+typedef struct {
+
+  Edge3* data;
+  int numElements;
+  int capacity;
+  
+} DynamicEdge3Array;
+DynamicEdge3Array dynamicEdge3Array();
+void addEdge3(DynamicEdge3Array *arr, Edge3 edge3);
+void rmEdge3(DynamicEdge3Array *arr, int index);
+void clearEdge3Array(DynamicEdge3Array *arr);
+
 
 
 
@@ -50,7 +74,15 @@ void clear(DynamicPixelArray *arr); // resets to len 0
 
 
 
-
+typedef struct {
+  DynamicPt3Array vertices; 
+  DynamicEdge3Array edges;
+} Wireframe;
+Wireframe wireframe();
+// returns the index of the vertex added (good for edge building)
+int addVertex(Wireframe* wireframePtr, Pt3 pt);
+void connectVertices(Wireframe* wireframePtr, int startIndex, int endIndex);
+void clearWireframe(Wireframe* wireframePtr);
 
 
 

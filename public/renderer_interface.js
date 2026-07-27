@@ -256,12 +256,13 @@ function main() {
   // backend setup
 
   initialize_data();
-  draw();	
+  draw();
+
+  // draw_line();	
 }
 
 
 // neat and organized! tada!
 Module.onRuntimeInitialized = () => {
-  console.log("WASM loaded!");
   main();
 };

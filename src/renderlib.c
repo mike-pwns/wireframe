@@ -60,6 +60,120 @@ void clearPixelArray(DynamicPixelArray *arr) {
 
 
 
+
+
+
+
+// EDGES
+
+
+
+
+Edge3 edge3(int startIndex, int endIndex) {
+  return (Edge3) {
+    .startIndex = startIndex,
+    .endIndex = endIndex
+  };
+}
+
+
+// array
+
+
+
+
+
+
+
+DynamicEdge3Array dynamicEdge3Array() {
+  return (DynamicEdge3Array) {
+    .data = malloc(sizeof(Pt3)),
+    .numElements = 0,
+    .capacity = 1
+  };
+}
+
+
+void addEdge3(DynamicEdge3Array *arr, Edge3 edge3) {
+  // check if capacity,
+  if (arr->numElements == arr->capacity) {
+    // recreate, then copy all elements into there
+    Edge3* temp = malloc((arr->capacity * 2) * sizeof(Edge3));
+
+    for (int i = 0; i < arr->capacity; i++) {
+      temp[i] = arr->data[i];
+    }
+
+    // free old data
+    free(arr->data);
+
+    // update capacity
+    arr->capacity *= 2;
+
+    // update data
+    arr->data = temp;
+    
+  }
+
+  // add point at latest and increment num elements
+  arr->data[arr->numElements] = edge3;
+  arr->numElements++;  
+}
+
+void rmEdge3(DynamicEdge3Array *arr, int index) { 
+
+  // just sanity check
+  if (index < 0 || index >= arr->numElements) {
+      return;
+  }
+
+  // is O(n)
+
+  // recreate the array
+  Edge3* temp = malloc(arr->capacity * sizeof(Edge3));
+
+  // flag for removed; will have to offset copy index
+  int removed = 0; // will set to 1
+
+  // iterate all pts
+  for (int i = 0; i < arr->numElements; i++) {      
+
+    // if its the index, dont copy anything, just set rmvd true
+    if (i == index) {
+      removed = 1;
+    }
+
+    // otherwise copy based on whether index was passed or not
+    else {
+      if (removed) {
+        temp[i-1] = arr->data[i];
+      }
+      else {
+        temp[i] = arr->data [i];
+      }
+    }
+  }
+
+  free(arr->data);
+  arr->data = temp;
+  arr->numElements--;  
+  
+  
+}
+
+void clearEdge3Array(DynamicEdge3Array *arr) {
+  free(arr->data);
+  arr->data = malloc(sizeof(Edge3));
+  arr->numElements = 0;
+  arr->capacity = 1;
+  
+}
+
+
+
+
+
+
 // point array (for scene)
 // logic, doubles every time limit is reached. default size one
 
@@ -138,7 +252,6 @@ void rmPt3(DynamicPt3Array *arr, int index) {
   arr->data = temp;
   arr->numElements--;  
   
-  
 }
 
 void clearPt3Array(DynamicPt3Array *arr) {
@@ -152,6 +265,78 @@ void clearPt3Array(DynamicPt3Array *arr) {
 
 
 
+
+
+
+Wireframe wireframe() {
+  return (Wireframe) {
+    .vertices = dynamicPt3Array(),
+    .edges = dynamicEdge3Array()
+  };
+}
+
+// returns the index of the vertex added (good for edge building)
+int addVertex(Wireframe* wireframePtr, Pt3 pt) {
+  addPt3(&wireframePtr->vertices, pt);
+  return (wireframePtr->vertices.numElements-1);
+}
+
+
+void rmVertex(Wireframe* wireframePtr, int index) {
+  rmPt3(&wireframePtr->vertices, index);
+
+  // remove any edges with said vertex
+  DynamicEdge3Array tempEdgeArr = dynamicEdge3Array();
+
+  for (int i = 0; i < wireframePtr->edges.numElements; i++) {
+    Edge3 tempEdge = wireframePtr->edges.data[i];
+
+    if (tempEdge.startIndex == index || tempEdge.endIndex == index) {
+      continue;
+    }
+
+    // set all vertexes with index higher 1 down
+    if (tempEdge.startIndex > index) {
+      tempEdge.startIndex--;
+    }
+
+    if (tempEdge.endIndex > index) {
+      tempEdge.endIndex--;
+    }
+
+    // add it to the new arr
+    addEdge3(&tempEdgeArr, tempEdge);
+    
+  }
+
+
+  free(wireframePtr->edges.data);      
+  wireframePtr->edges = tempEdgeArr;
+
+}
+
+
+void connectVertices(Wireframe* wireframePtr, int startIndex, int endIndex) {
+
+    // sanity check; start & end indexes are in range, and its not the same vertex
+    if (!(startIndex >=  0 && startIndex < wireframePtr->vertices.numElements) ||
+        !(endIndex >=  0 && endIndex < wireframePtr->vertices.numElements) ||
+        (startIndex == endIndex)) {
+        return;
+    }
+    // for later; duplicate edges?
+  
+
+    addEdge3(&wireframePtr->edges, edge3(startIndex, endIndex));
+}
+
+
+// void removeEdge(Wireframe* wireframePtr, Edge3 edge) 
+
+void clearWireframe(Wireframe* wireframePtr) {
+  clearPt3Array(&wireframePtr->vertices);
+  clearEdge3Array(&wireframePtr->edges);
+}
 
 
 
@@ -323,20 +508,25 @@ void  render(DynamicPixelArray* arr, Scene* scenePtr) {
     // }
 
     // if the intersection does not exist within the bounds of the viewport, skip the point
-  if (
-      !(
 
-        // check x range
-        (scenePtr->camera.camOrigin.x - 0.5f * scenePtr->camera.viewport.wrldWidth) <= intersectionPoint.x &&
-        intersectionPoint.x <= (scenePtr->camera.camOrigin.x + 0.5f * scenePtr->camera.viewport.wrldWidth) &&
-
-
-        // check y range
-        scenePtr->camera.camOrigin.y - 0.5f * scenePtr->camera.viewport.wrldHeight <= intersectionPoint.y &&
-        intersectionPoint.y <= scenePtr->camera.camOrigin.y + 0.5f * scenePtr->camera.viewport.wrldHeight)
-  ) {
-      continue;
-  }
+    // REMOVED WHEN DEALING WITH EDGES:
+    // - what if we wanna draw edges to outside of the screen?
+    // we still gonna need points for that! so doesnt matter if its in here or not.
+    
+//   if (
+//       !(
+// 
+//         // check x range
+//         (scenePtr->camera.camOrigin.x - 0.5f * scenePtr->camera.viewport.wrldWidth) <= intersectionPoint.x &&
+//         intersectionPoint.x <= (scenePtr->camera.camOrigin.x + 0.5f * scenePtr->camera.viewport.wrldWidth) &&
+// 
+// 
+//         // check y range
+//         scenePtr->camera.camOrigin.y - 0.5f * scenePtr->camera.viewport.wrldHeight <= intersectionPoint.y &&
+//         intersectionPoint.y <= scenePtr->camera.camOrigin.y + 0.5f * scenePtr->camera.viewport.wrldHeight)
+//   ) {
+//       continue;
+//   }
 
     // convert to px and add
     addPixel(arr, ptToPx(scenePtr->camera.viewport, intersectionPoint));
