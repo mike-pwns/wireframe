@@ -1544,6 +1544,7 @@ function checkIncomingModuleAPI() {
 // Imports from the Wasm binary.
 var _getRenderResult = Module['_getRenderResult'] = makeInvalidEarlyAccess('_getRenderResult');
 var _renderScene = Module['_renderScene'] = makeInvalidEarlyAccess('_renderScene');
+var _translateCamera = Module['_translateCamera'] = makeInvalidEarlyAccess('_translateCamera');
 var _initialize = Module['_initialize'] = makeInvalidEarlyAccess('_initialize');
 var _fflush = makeInvalidEarlyAccess('_fflush');
 var _strerror = makeInvalidEarlyAccess('_strerror');
@@ -1561,6 +1562,7 @@ var wasmMemory = makeInvalidEarlyAccess('wasmMemory');
 function assignWasmExports(wasmExports) {
   assert(typeof wasmExports['getRenderResult'] != 'undefined', 'missing Wasm export: getRenderResult');
   assert(typeof wasmExports['renderScene'] != 'undefined', 'missing Wasm export: renderScene');
+  assert(typeof wasmExports['translateCamera'] != 'undefined', 'missing Wasm export: translateCamera');
   assert(typeof wasmExports['initialize'] != 'undefined', 'missing Wasm export: initialize');
   assert(typeof wasmExports['fflush'] != 'undefined', 'missing Wasm export: fflush');
   assert(typeof wasmExports['strerror'] != 'undefined', 'missing Wasm export: strerror');
@@ -1575,6 +1577,7 @@ function assignWasmExports(wasmExports) {
   assert(typeof wasmExports['__indirect_function_table'] != 'undefined', 'missing Wasm export: __indirect_function_table');
   _getRenderResult = Module['_getRenderResult'] = createExportWrapper('getRenderResult', 0);
   _renderScene = Module['_renderScene'] = createExportWrapper('renderScene', 0);
+  _translateCamera = Module['_translateCamera'] = createExportWrapper('translateCamera', 3);
   _initialize = Module['_initialize'] = createExportWrapper('initialize', 0);
   _fflush = createExportWrapper('fflush', 1);
   _strerror = createExportWrapper('strerror', 1);

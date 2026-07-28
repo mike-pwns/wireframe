@@ -8,7 +8,6 @@
 Wireframe model;
 RenderedResult output;
 Scene world;
-float translationSpeed;
 
 
 void initializeSceneData() {
@@ -87,10 +86,12 @@ void renderScene() {
 }
 
 
-// +1 means go forward, -1 go back, 0, dont do anything
-void translateCamera(int x, int y, int z) {
-  Camera cam = world.camera;
-  
+
+// moves the camera origin(viewport etc follow cam orig)
+void translateCamera(float x, float y, float z) {
+  world.camera.camOrigin.x += (x);
+  world.camera.camOrigin.y += (y); 
+  world.camera.camOrigin.z += (z); 
 }
 
 

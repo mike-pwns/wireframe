@@ -184,71 +184,153 @@ function initialize_data() {
   // later will have preconfig points, etc
 
     Module._initialize();
-    Module._renderScene();
+    // Module._renderScene();
 
     // start drawing loop
-    draw();
+    // draw();
 }
 
 
 
-// (AI GEN)
-function getPoints() {
 
-    const ptr = Module._getPoints();
+const FPS = 30; 
+const TRANSLATION_SPEED = 3;
+const W = 0;
+const A = 1;
+const S = 2;
+const D = 3;
+const SHIFT = 4;
+const SPACE = 5;
+let KEYS_PRESSED = [false, false, false, false, false, false] // w a s d shift space ; yeah culd do 0 0 0 0 whatever
+let lastTime;
 
-    const heap32 = Module.HEAP32;
-    const heapF32 = Module.HEAPF32;
+function updateCamera(dt) {
+    
+    // note2self: adding means itll cancel
 
-
-    // struct location
-    const base = ptr >> 2;
-
-
-    // DynamicPt3Array fields
-    const dataPtr = heap32[base];
-    const length = heap32[base + 1];
-
-
-    let points = [];
-
-
-    for (let i = 0; i < length; i++) {
-
-        // Pt3 = float x, float y, float z
-        // 3 floats per point
-
-        const p = (dataPtr >> 2) + i * 3;
-
-
-        points.push({
-            x: heapF32[p],
-            y: heapF32[p + 1],
-            z: heapF32[p + 2]
-        });
+    // forward/back
+    let z = 0;
+    if (KEYS_PRESSED[W]) {
+      z += 1;
+    }
+    if (KEYS_PRESSED[S]) {
+      z -= 1;
     }
 
+    // left/right
+    let x = 0;
+    if (KEYS_PRESSED[A]) {
+      x -= 1;
+    }
+    if (KEYS_PRESSED[D]) {
+      x += 1;
+    }
 
-    return points;
+    // up down
+    let y = 0;
+    if (KEYS_PRESSED[SHIFT]) {
+      y -= 1;
+    }
+    if (KEYS_PRESSED[SPACE]) {
+      y += 1;
+    }
+
+    Module._translateCamera(
+        x * TRANSLATION_SPEED * dt,
+        y * TRANSLATION_SPEED * dt,
+        z * TRANSLATION_SPEED * dt
+    );
 }
 
 
-// yes i am doing this in js sue me
+function simulationLoop() {
+
+    // manage time
+    let now = performance.now();
+    let dt = (now - lastTime) / 1000;
+    lastTime = now;
+
+    // apply transformations to cam
+    updateCamera(dt);
+
+    // update render var in c
+    Module._renderScene();
+
+    // draw (by reading then drawing)
+    // TODO separate getRender and draw
+    draw();
+
+    // 
+    setTimeout(simulationLoop, (1/FPS)*1000);
+}
+
+
+function initialize_key_listeners() {
+  
+  document.addEventListener("keydown", (event) => {
+    switch(event.key.toLowerCase()) {
+      case 'w': 
+        KEYS_PRESSED[W] = true;
+        break;
+      case 'a':
+        KEYS_PRESSED[A] = true;
+        break;
+      case 's':
+        KEYS_PRESSED[S] = true;
+        break;
+      case 'd':
+        KEYS_PRESSED[D] = true;
+        break;
+      case 'shift':
+        KEYS_PRESSED[SHIFT] = true;
+        break;
+      case ' ':
+        KEYS_PRESSED[SPACE] = true;
+        break;
+    }
+  });
+
+  document.addEventListener("keyup", (event) => {
+    switch(event.key.toLowerCase()) {
+      case 'w':
+        KEYS_PRESSED[W] = false;
+        break;
+      case 'a':
+        KEYS_PRESSED[A] = false;
+        break;
+      case 's':
+        KEYS_PRESSED[S] = false;
+        break;
+      case 'd':
+        KEYS_PRESSED[D] = false;
+        break;
+      case 'shift':
+        KEYS_PRESSED[SHIFT] = false;
+        break;
+      case ' ':
+        KEYS_PRESSED[SPACE] = false;
+        break;
+    }
+  });
+}
+
 function main() {
   // frontend setup
 	initialize_canvas();
-
-
-  // backend setup
-
   initialize_data();
-  draw();
+  initialize_key_listeners();
 
-  // draw_line();	
+  // starting simulation loop
+  lastTime = performance.now();
+  simulationLoop();
+  
 }
+
 
 
 // neat and organized! tada!
 Module.onRuntimeInitialized = () => {
   main();
+
+  
 };
