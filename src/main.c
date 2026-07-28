@@ -8,6 +8,7 @@
 Wireframe model;
 RenderedResult output;
 Scene world;
+float translationSpeed;
 
 
 void initializeSceneData() {
@@ -83,6 +84,13 @@ RenderedResult* getRenderResult() {
 // render the scene
 void renderScene() {
     render(&world, &output);
+}
+
+
+// +1 means go forward, -1 go back, 0, dont do anything
+void translateCamera(int x, int y, int z) {
+  Camera cam = world.camera;
+  
 }
 
 

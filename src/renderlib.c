@@ -590,7 +590,7 @@ void render(Scene* scenePtr, RenderedResult* outputPtr) {
   
   // get plane (normal is z axis, known point is (0, 0, viewportDistance))
 
-  Plane viewportPlane = plane(vec3(0, 0, 1), pt3(0, 0, scenePtr->camera.camOrigin.z + scenePtr->camera.viewportDistance));
+  Plane viewportPlane = plane(vec3(0, 0, 1), pt3(scenePtr->camera.camOrigin.x, scenePtr->camera.camOrigin.y, scenePtr->camera.camOrigin.z + scenePtr->camera.viewportDistance));
                         
 
   Pixel vertexPixels[scenePtr->wireframe->vertices.numElements];
@@ -629,6 +629,14 @@ void render(Scene* scenePtr, RenderedResult* outputPtr) {
     Pt3 intersectionPoint = intersectionLinePlane(line, viewportPlane);
 
     // convert to px and add
+
+
+    // =========> BAND AID
+    intersectionPoint.x -= scenePtr->camera.camOrigin.x;
+    intersectionPoint.y -= scenePtr->camera.camOrigin.y;
+    // =========> BAND AID
+
+    
     Pixel projectedPixel = ptToPx(scenePtr->camera.viewport, intersectionPoint);
     addRenderedPixel(&outputPtr->pixels, renderedPixel(projectedPixel, 1));
     vertexPixels[i] = projectedPixel;
@@ -669,6 +677,11 @@ void render(Scene* scenePtr, RenderedResult* outputPtr) {
         Pt3 intersectionPoint = intersectionLinePlane(line, viewportPlane);
 
         // generate projected point
+        // =========> BAND AID
+        intersectionPoint.x -= scenePtr->camera.camOrigin.x;
+        intersectionPoint.y -= scenePtr->camera.camOrigin.y;
+        // =========> BAND AID
+
         Pixel projPixel = ptToPx(scenePtr->camera.viewport, intersectionPoint);
         
         // create line and add to list
