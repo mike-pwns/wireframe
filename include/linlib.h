@@ -94,8 +94,14 @@ typedef struct {
 Plane plane(Vec3 normVec, Pt3 pt);
 
 
-// I'll put equation stuff here when i get to that 	
+typedef struct {
 
+  Vec3 translation;
+  Vec3 rotation;
+  
+} Transformation;
+Transformation transformation(Vec3 translation, Vec3 rotation);
+void transformPt(Transformation transformation, Pt3* pt);
 
 //  ||====================================================
 //  ||
@@ -145,8 +151,10 @@ Vec3 crossVec3(Vec3 vecA, Vec3 vecB);
 //  ||====================================================
 
 
+
 // Rotates a given 2D vector by given radians.
 void rotateVec2(Vec2 *vecPtr, float radians);
+void rotateVec3(Vec3 *vecPtr, float radX, float radY, float radZ);
 
 
 //  ||----------------------------------------------------
@@ -210,6 +218,7 @@ float magVec3(Vec3 vec3);
 void normalizeVec3(Vec3* vec3);
 
 Vec3 pt3ToVec3(Pt3 pt3);
+Pt3 vec3toPt3(Vec3 vec3);
 
 
 //  ||----------------------------------------------------

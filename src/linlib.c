@@ -245,20 +245,90 @@ Vec2 multVec2Mat2(Vec2 vec2, Vec2 mat2[]) {
 }
 
 
+
 // rotate (yeah the pointer is inconsistent but whatever, thats a learning moment)
 // note: rotates COUNTER-CLOCKWISE
 void rotateVec2(Vec2 *vecPtr, float radians) {
 
 	// assemble the rotation matrix
 	Vec2 rotationMat2[2] = {
-							(Vec2) {.x = cos(radians), .y = sin(radians)},
-							(Vec2) {.x = -sin(radians), .y = cos(radians)}
-						};
-
+								(Vec2) {.x = cos(radians), .y = sin(radians)},
+								(Vec2) {.x = -sin(radians), .y = cos(radians)}
+							};
+	
 	// apply it and save it to the place
 	*vecPtr = multVec2Mat2(*vecPtr, rotationMat2);
 		
 }
+
+Vec3 multVec3Mat3(Vec3 vec3, Vec3 mat3[]) {
+  Vec3 result;
+  Vec3 matVecI = mat3[0];
+  Vec3 matVecJ = mat3[1];
+  Vec3 matVecK = mat3[2];
+  
+  /*
+  | i j k | |a|
+  | l m n | |b|
+  | o p q | |c|
+
+  |i|     |j|     |k|
+  |l| a + |m| b + |n| c
+  |o|     |p|     |q|
+
+  x = ia + jb + kc ; x = matVecI.x*vec.x + matVecJ.x*vec.y + matVecK.z*
+  y = la + mb + nc; etc
+  z = 0a + pb + qc; etc
+  */
+
+  result.x = (matVecI.x * vec3.x) + (matVecJ.x * vec3.y) + (matVecK.x * vec3.z);
+  result.y = (matVecI.y * vec3.x) + (matVecJ.y * vec3.y) + (matVecK.y * vec3.z);
+  result.z = (matVecI.z * vec3.x) + (matVecJ.z * vec3.y) + (matVecK.z * vec3.z);
+
+  return result;
+}
+
+void rotateVec3(Vec3* vecPtr, float radX, float radY, float radZ) {
+
+  // is counterclockwise probably (feed normal vals instead of -theta)
+
+
+  // PITCH (nod up/down)
+	Vec3 X_rotationMat3[3] = {
+								vec3(1, 0, 0),
+                vec3(0, cos(radX), sin(radX)),
+								vec3(0, -sin(radX), cos(radX))
+							};
+
+  // YAW (turn left/right)
+	Vec3 Y_rotationMat3[3] = {
+								vec3(cos(radY), 0, -sin(radY)),
+                vec3(0, 1, 0),
+								vec3(sin(radY), 0, cos(radY))
+							};
+
+  // roll (tilt) --> not really gonna be used.
+	Vec3 Z_rotationMat3[3] = {
+								vec3(cos(radZ), -sin(radZ), 0),
+                vec3(-sin(radZ), cos(radZ), 0),
+								vec3(0, 0, 1)
+							};
+
+  // since i havent written matmult for 3s we do i this way
+	*vecPtr = multVec3Mat3(*vecPtr, X_rotationMat3);
+	*vecPtr = multVec3Mat3(*vecPtr, Y_rotationMat3);
+	*vecPtr = multVec3Mat3(*vecPtr, Z_rotationMat3);
+	
+
+
+//cos(radians), .y = sin(radians)},
+  //-sin(radians), .y = cos(radians)
+
+
+  
+
+}
+
 
 // thingy
 
@@ -365,6 +435,41 @@ Vec3 pt3ToVec3(Pt3 pt3) {
   };
 }
 
+Pt3  vec3ToPt3(Vec3 vec3) {
+  return (Pt3) {
+    .x = vec3.x,
+    .y = vec3.y,
+    .z = vec3.z
+  };  
+}
+
+
+
+// TRANSFORMATIONS
+
+
+Transformation transformation(Vec3 translation, Vec3 rotation) {
+  return (Transformation) {
+    .translation = translation,
+    .rotation = rotation
+  };
+}
+
+void transformPt(Transformation transformation, Pt3* pt) {
+
+  Vec3 translation = transformation.translation;
+  Vec3 rotation = transformation.rotation;
+  
+  
+  Vec3 temp = pt3ToVec3(*pt);
+  
+  rotateVec3(&temp, rotation.x, rotation.y, rotation.z);
+  
+  pt->x = temp.x + translation.x;
+  pt->y = temp.y + translation.y;
+  pt->z = temp.z + translation.z;
+
+}
 
 
 

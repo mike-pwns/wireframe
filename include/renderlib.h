@@ -127,10 +127,11 @@ typedef struct {
   Pt3 camOrigin; // for us (0, 0, 0)
   float viewportDistance;
   Viewport viewport;
+  Transformation transformation;
 
   
 } Camera;
-Camera camera(Pt3 camOrigin, float viewportDistance, Viewport viewport);
+Camera camera(Pt3 camOrigin, float viewportDistance, Viewport viewport, Transformation transformation);
 
 
 

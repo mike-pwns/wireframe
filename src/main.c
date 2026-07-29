@@ -58,10 +58,13 @@ void initializeSceneData() {
 
     Viewport vp = viewport(2, 2, 1024, 1024);
 
+    Transformation trans = transformation(vec3(0, 0, 0), vec3(0, 0, 0));
+
     Camera cam = camera(
         origin,
         1,
-        vp
+        vp,
+        trans
     );
 
     world = scene(
@@ -87,13 +90,16 @@ void renderScene() {
 
 
 
-// moves the camera origin(viewport etc follow cam orig)
-void translateCamera(float x, float y, float z) {
-  world.camera.camOrigin.x += (x);
-  world.camera.camOrigin.y += (y); 
-  world.camera.camOrigin.z += (z); 
-}
 
+void transformCamera(float x, float y, float z, float radX, float radY, float radZ) {
+  world.camera.transformation.translation.x += x;
+  world.camera.transformation.translation.y += y; 
+  world.camera.transformation.translation.z += z; 
+  world.camera.transformation.rotation.x += radX;
+  world.camera.transformation.rotation.y += radY;
+  world.camera.transformation.rotation.z += radZ;
+  
+}
 
 
 // init

@@ -380,18 +380,20 @@ Viewport viewport(float wrldWidth,
     };
 }
 
+
 // --------------------
 // Camera
 // --------------------
 
 Camera camera(Pt3 camOrigin,
               float viewportDistance,
-              Viewport viewport) {
+              Viewport viewport, Transformation transformation) {
 
     return (Camera){
         .camOrigin = camOrigin,
         .viewportDistance = viewportDistance,
-        .viewport = viewport
+        .viewport = viewport,
+        .transformation = transformation
     };
 }
 
@@ -604,6 +606,22 @@ void render(Scene* scenePtr, RenderedResult* outputPtr) {
   for (int i = 0; i < scenePtr->wireframe->vertices.numElements; i++) {
   
     Pt3 pt = scenePtr->wireframe->vertices.data[i];
+
+    // APPLY (INVERSE TO CAMERA) TRANSFORMATIONS. THEN PROCEED WITH PROJECTION
+
+    Vec3 camTranslations = scenePtr->camera.transformation.translation;
+    camTranslations.x *= -1;
+    camTranslations.y *= -1;
+    camTranslations.z *= -1;
+
+    Vec3 camRotation = scenePtr->camera.transformation.rotation;
+    camRotation.x *= -1;
+    camRotation.y *= -1;
+    camRotation.z *= -1;
+
+
+
+    transformPt(transformation(camTranslations, camRotation), &pt);
 
 
     // check if the point is behind the camera

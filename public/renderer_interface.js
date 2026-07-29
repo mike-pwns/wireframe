@@ -193,15 +193,26 @@ function initialize_data() {
 
 
 
-const FPS = 30; 
-const TRANSLATION_SPEED = 3;
+const FPS = 60; 
+const TRANSLATION_SPEED = 2; // world units/s (i think)
+const ROTATION_SPEED = 2 // rad/s (i think)
+
 const W = 0;
 const A = 1;
 const S = 2;
 const D = 3;
 const SHIFT = 4;
 const SPACE = 5;
-let KEYS_PRESSED = [false, false, false, false, false, false] // w a s d shift space ; yeah culd do 0 0 0 0 whatever
+const UP = 6;
+const DOWN = 7;
+const LEFT = 8;
+const RIGHT = 9;
+let KEYS_PRESSED = [false, false, false, false, // W A S D 
+                    false, false,               // SHIFT SPACE
+                    false, false, false, false] // UP DOWN LEFT RIGHT
+
+// yeah culd do 0 0 0 0 whatever
+
 let lastTime;
 
 function updateCamera(dt) {
@@ -235,11 +246,37 @@ function updateCamera(dt) {
       y += 1;
     }
 
-    Module._translateCamera(
+    // pitch
+    // for some reason is up +=1 then goes down
+    let pitch = 0
+    if (KEYS_PRESSED[UP]) {
+      pitch -= 1;
+    }
+    if (KEYS_PRESSED[DOWN]) {
+      pitch += 1;
+    }
+
+    // yaw
+    let yaw = 0;
+    if (KEYS_PRESSED[LEFT]) {
+      yaw -=1;
+    }
+    if (KEYS_PRESSED[RIGHT]) {
+      yaw += 1;
+    }
+
+    // roll here but we "forget about it"
+    let roll = 0;
+
+    Module._transformCamera(
         x * TRANSLATION_SPEED * dt,
         y * TRANSLATION_SPEED * dt,
-        z * TRANSLATION_SPEED * dt
+        z * TRANSLATION_SPEED * dt,
+        pitch * ROTATION_SPEED * dt,
+        yaw * ROTATION_SPEED * dt,
+        roll * ROTATION_SPEED * dt
     );
+
 }
 
 
@@ -290,6 +327,23 @@ function initialize_key_listeners() {
     }
   });
 
+  document.addEventListener("keydown", (event) => {
+    switch(event.key) {
+      case "ArrowDown":
+        KEYS_PRESSED[DOWN] = true;
+        break;
+      case "ArrowUp":
+        KEYS_PRESSED[UP] = true;
+        break;
+      case "ArrowLeft":
+        KEYS_PRESSED[LEFT] = true;
+        break;
+      case "ArrowRight":
+        KEYS_PRESSED[RIGHT] = true;
+        break;  
+    }
+  });
+
   document.addEventListener("keyup", (event) => {
     switch(event.key.toLowerCase()) {
       case 'w':
@@ -310,6 +364,23 @@ function initialize_key_listeners() {
       case ' ':
         KEYS_PRESSED[SPACE] = false;
         break;
+    }
+  });
+
+   document.addEventListener("keyup", (event) => {
+    switch(event.key) {
+      case "ArrowDown":
+        KEYS_PRESSED[DOWN] = false;
+        break;
+      case "ArrowUp":
+        KEYS_PRESSED[UP] = false;
+        break;
+      case "ArrowLeft":
+        KEYS_PRESSED[LEFT] = false;
+        break;
+      case "ArrowRight":
+        KEYS_PRESSED[RIGHT] = false;
+        break;  
     }
   });
 }
