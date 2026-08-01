@@ -1,6 +1,14 @@
 #ifndef LINLIB_H
 #define LINLIB_H
 
+
+//  ||====================================================
+//  ||
+//  || CONSTANTS |||||||||||||||||||||||||||||||||||||||||
+//  || 
+//  ||====================================================
+
+
 // Mathematical constant PI.
 #define PI 3.14159265358979323846
 
@@ -28,7 +36,6 @@ typedef struct {
 	float y;
 	
 } Vec2;
-
 Vec2 vec2(float x, float y);
 
 
@@ -40,7 +47,6 @@ typedef struct {
 	float z;
 	
 } Vec3;
-
 Vec3 vec3(float x, float y, float z);
 
 
@@ -61,8 +67,20 @@ typedef struct {
 	float z;
 	
 } Pt3;
-
 Pt3 pt3(float x, float y, float z);
+
+// Dynamic array for Pt3.
+typedef struct {
+
+  Pt3* data;
+  int numElements;
+  int capacity;
+
+} DynamicPt3Array;
+DynamicPt3Array dynamicPt3Array();
+void addPt3(DynamicPt3Array *arr, Pt3 pt);
+void rmPt3(DynamicPt3Array *arr, int index);
+void clearPt3Array(DynamicPt3Array *arr);
 
 
 //  ||----------------------------------------------------
@@ -75,25 +93,29 @@ Pt3 pt3(float x, float y, float z);
 //  ||----------------------------------------------------
 
 
+// Line in 3D space.
+// Format is from vector equation: PT + DIR_VEC(t).
 typedef struct {
 
   Vec3 dirVec;
   Pt3 pt;
   
 } Line3;
-
 Line3 line3(Vec3 dirVec, Pt3 pt);
 
+
+// Plane in 3D space.
+// Format is from cartesian equation: Ax + By + Cz + d = 0.
 typedef struct {
 
   Vec3 normVec;
   Pt3 pt;
   
-} Plane; // idk maybe 4d planes exist too? hyperplanes ig 
-
+} Plane; 
 Plane plane(Vec3 normVec, Pt3 pt);
 
-
+// 3D Transformation. 
+// (Didn't specify in struct that it was 3d, sorry!)
 typedef struct {
 
   Vec3 translation;
@@ -102,6 +124,7 @@ typedef struct {
 } Transformation;
 Transformation transformation(Vec3 translation, Vec3 rotation);
 void transformPt(Transformation transformation, Pt3* pt);
+
 
 //  ||====================================================
 //  ||
@@ -149,7 +172,6 @@ Vec3 crossVec3(Vec3 vecA, Vec3 vecB);
 //  ||====================================================
 //  || ROTATION ||||||||||||||||||||||||||||||||||||||||||
 //  ||====================================================
-
 
 
 // Rotates a given 2D vector by given radians.
@@ -200,6 +222,7 @@ Pt3 intersectionLinePlane(Line3 line, Plane plane);
 
 // technically should write more for the "complete linlib collection" but honestly behh meh im not doin allat!
 
+
 //  ||----------------------------------------------------
 //  ||
 //  || CONVENIENT STUFF ||||||||||||||||||||||||||||||||||
@@ -210,14 +233,16 @@ Pt3 intersectionLinePlane(Line3 line, Plane plane);
 //  ||----------------------------------------------------
 
 
-
-
+// Magnitude of a 3D vector.
 float magVec3(Vec3 vec3);
 
-// reduces to unit vector
+// Reduces / Converts 3D vector to unit vector.
 void normalizeVec3(Vec3* vec3);
 
+// Converts Pt3 struct to Vec3 struct.
 Vec3 pt3ToVec3(Pt3 pt3);
+
+// Converts Vec3 struct to Pt3 struct.
 Pt3 vec3toPt3(Vec3 vec3);
 
 
@@ -253,7 +278,7 @@ void printMat2(Vec2 mat2[]);
 // Prints formatted 3D matrix.
 void printMat3(Vec3 mat3[]);
 
+// Prints formatted 3D point.
 void printPt3(Pt3 pt);
-
 
 #endif
