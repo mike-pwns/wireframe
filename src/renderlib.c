@@ -597,6 +597,7 @@ void render(Scene* scenePtr, RenderedResult* outputPtr) {
 
   Pixel vertexPixels[scenePtr->wireframe->vertices.numElements];
   int vertexInFrontOfCamera[scenePtr->wireframe->vertices.numElements];
+  Pt3 camSpacePts[scenePtr->wireframe->vertices.numElements];
 
   // Perform calcs and add to canvas
 
@@ -609,10 +610,10 @@ void render(Scene* scenePtr, RenderedResult* outputPtr) {
 
     // APPLY (INVERSE TO CAMERA) TRANSFORMATIONS. THEN PROCEED WITH PROJECTION
 
-    Vec3 camTranslations = scenePtr->camera.transformation.translation;
-    camTranslations.x *= -1;
-    camTranslations.y *= -1;
-    camTranslations.z *= -1;
+    Vec3 camTranslation = scenePtr->camera.transformation.translation;
+    camTranslation.x *= -1;
+    camTranslation.y *= -1;
+    camTranslation.z *= -1;
 
     Vec3 camRotation = scenePtr->camera.transformation.rotation;
     camRotation.x *= -1;
@@ -620,9 +621,44 @@ void render(Scene* scenePtr, RenderedResult* outputPtr) {
     camRotation.z *= -1;
 
 
+    // HAVE TO DO IN REVERSE ORDER (MOVE THEN ROTATE!!)
+    // transformPt(transformation(camTranslations, camRotation), &pt);
 
-    transformPt(transformation(camTranslations, camRotation), &pt);
+    // now issue is that its always moving in the objective direction; not where facing. 
+    // this is fixel by translating based on where is looking in 3d space
 
+    // move
+    pt.x += camTranslation.x;
+    pt.y += camTranslation.y;
+    pt.z += camTranslation.z;
+
+
+    Vec3 temp = pt3ToVec3(pt);
+    
+    // rotateVec3(&temp, camRotation.x, camRotation.y, camRotation.z);
+
+  	Vec3 X_rotationMat3[3] = {
+  								vec3(1, 0, 0),
+                  vec3(0, cos(camRotation.x), sin(camRotation.x)),
+  								vec3(0, -sin(camRotation.x), cos(camRotation.x))
+  							};
+      
+  	Vec3 Y_rotationMat3[3] = {
+  								vec3(cos(camRotation.y), 0, -sin(camRotation.y)),
+                  vec3(0, 1, 0),
+  								vec3(sin(camRotation.y), 0, cos(camRotation.y))
+  							};
+  
+    // yaw first (left/right; y-axis)
+    temp = multVec3Mat3(temp, Y_rotationMat3);
+
+    // then pitch (up/down; x axis)
+    temp = multVec3Mat3(temp, X_rotationMat3);
+
+    pt = vec3ToPt3(temp);
+
+    camSpacePts[i] = pt;
+    
 
     // check if the point is behind the camera
     if (pt.z <= scenePtr->camera.camOrigin.z) {
@@ -679,8 +715,8 @@ void render(Scene* scenePtr, RenderedResult* outputPtr) {
     // one is in, one is out
     else {
 
-        Pt3 ptA = scenePtr->wireframe->vertices.data[edge.startIndex];
-        Pt3 ptB = scenePtr->wireframe->vertices.data[edge.endIndex];
+        Pt3 ptA = camSpacePts[edge.startIndex];
+        Pt3 ptB = camSpacePts[edge.endIndex];
     
         // create line
         Vec3 dirvec = vec3(

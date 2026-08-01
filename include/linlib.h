@@ -205,6 +205,8 @@ float detMat3(Vec3 mat3[]);
 //  ||====================================================
 
 
+Vec3 multVec3Mat3(Vec3 vec3, Vec3 mat3[]);
+
 // matmult (real ones know about this one!)
 // Didnt implement yet.
 
@@ -243,7 +245,7 @@ void normalizeVec3(Vec3* vec3);
 Vec3 pt3ToVec3(Pt3 pt3);
 
 // Converts Vec3 struct to Pt3 struct.
-Pt3 vec3toPt3(Vec3 vec3);
+Pt3 vec3ToPt3(Vec3 vec3);
 
 
 //  ||----------------------------------------------------

@@ -455,6 +455,7 @@ Transformation transformation(Vec3 translation, Vec3 rotation) {
   };
 }
 
+// not gonna use cuz inverse transformation is backwards of this (woah!)
 void transformPt(Transformation transformation, Pt3* pt) {
 
   Vec3 translation = transformation.translation;
