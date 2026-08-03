@@ -2,11 +2,23 @@
 #include <stdlib.h>
 #include "../include/renderlib.h"
 #include "../include/linlib.h"
-#include <math.h> // TODO  i should prolly just use the pi from this?
+#include <math.h> 
 
-// ------------
-// PRE SECTION
-// ------------
+//  ||====================================================
+//  ||
+//  || "CONSTRUCTORS" ||||||||||||||||||||||||||||||||||||
+//  || 
+//  ||====================================================
+
+//  ||----------------------------------------------------
+//  ||
+//  || MATH++ ||||||||||||||||||||||||||||||||||||||||||||
+//  || 
+//  || 
+//  || 
+//  || 
+//  ||----------------------------------------------------
+
 
 // damnnnn youuuu and your stupidly simple fixed array ccccc!!!!!!!!!!! now i gotta figure out how to make dynamic array!!! no more fun and games like in python :(
 
@@ -75,15 +87,6 @@ Edge3 edge3(int startIndex, int endIndex) {
     .endIndex = endIndex
   };
 }
-
-
-// array
-
-
-
-
-
-
 
 DynamicEdge3Array dynamicEdge3Array() {
   return (DynamicEdge3Array) {
@@ -174,93 +177,6 @@ void clearEdge3Array(DynamicEdge3Array *arr) {
 
 
 
-// point array (for scene)
-// logic, doubles every time limit is reached. default size one
-
-
-
-DynamicPt3Array dynamicPt3Array() {
-  return (DynamicPt3Array) {
-    .data = malloc(sizeof(Pt3)),
-    .numElements = 0,
-    .capacity = 1
-  };
-}
-
-
-void addPt3(DynamicPt3Array *arr, Pt3 pt) {
-  // check if capacity,
-  if (arr->numElements == arr->capacity) {
-    // recreate, then copy all elements into there
-    Pt3* temp = malloc((arr->capacity * 2) * sizeof(Pt3));
-
-    for (int i = 0; i < arr->capacity; i++) {
-      temp[i] = arr->data[i];
-    }
-
-    // free old data
-    free(arr->data);
-
-    // update capacity
-    arr->capacity *= 2;
-
-    // update data
-    arr->data = temp;
-    
-  }
-
-  // add point at latest and increment num elements
-  arr->data[arr->numElements] = pt;
-  arr->numElements++;  
-}
-
-void rmPt3(DynamicPt3Array *arr, int index) { 
-
-  // just sanity check
-  if (index < 0 || index >= arr->numElements) {
-      return;
-  }
-
-  // is O(n)
-
-  // recreate the array
-  Pt3* temp = malloc(arr->capacity * sizeof(Pt3));
-
-  // flag for removed; will have to offset copy index
-  int removed = 0; // will set to 1
-
-  // iterate all pts
-  for (int i = 0; i < arr->numElements; i++) {      
-
-    // if its the index, dont copy anything, just set rmvd true
-    if (i == index) {
-      removed = 1;
-    }
-
-    // otherwise copy based on whether index was passed or not
-    else {
-      if (removed) {
-        temp[i-1] = arr->data[i];
-      }
-      else {
-        temp[i] = arr->data [i];
-      }
-    }
-  }
-
-  free(arr->data);
-  arr->data = temp;
-  arr->numElements--;  
-  
-}
-
-void clearPt3Array(DynamicPt3Array *arr) {
-  free(arr->data);
-  arr->data = malloc(sizeof(Pt3));
-  arr->numElements = 0;
-  arr->capacity = 1;
-  
-}
 
 
 

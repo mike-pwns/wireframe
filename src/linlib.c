@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "../include/linlib.h"
 #include <math.h> 
-
+#include <stdlib.h>
 
 //  ||====================================================
 //  ||
@@ -38,6 +38,8 @@ Pt3 pt3(float x, float y, float z) {
   };
 }
 
+
+
 // Line in 3D.
 Line3 line3(Vec3 dirVec, Pt3 pt) {
   return (Line3) {
@@ -61,6 +63,116 @@ Transformation transformation(Vec3 translation, Vec3 rotation) {
     .rotation = rotation
   };
 }
+
+
+//  ||====================================================
+//  ||
+//  || DYNAMIC ARRAYS ||||||||||||||||||||||||||||||||||||
+//  || 
+//  ||====================================================
+
+
+// Constructor.
+DynamicPt3Array dynamicPt3Array() {
+  return (DynamicPt3Array) {
+    .data = malloc(sizeof(Pt3)),
+    .numElements = 0,
+    .capacity = 1
+  };
+}
+
+
+// Add element.
+void addPt3(DynamicPt3Array *arr, Pt3 pt) {
+
+  // Check if capacity reached.
+  if (arr->numElements == arr->capacity) {
+  
+    // If reached, recreate the array with double the capacity.
+    Pt3* temp = malloc((arr->capacity * 2) * sizeof(Pt3));
+
+    // Then copy all elements into the new one.
+    for (int i = 0; i < arr->capacity; i++) {
+      temp[i] = arr->data[i];
+    }
+
+    // free old data.
+    free(arr->data);
+
+    // update capacity var.
+    arr->capacity *= 2;
+
+    // update data.
+    arr->data = temp;
+    
+  }
+
+  // Add point at latest and increment num elements.
+  arr->data[arr->numElements] = pt;
+  arr->numElements++;  
+  
+}
+
+// Remove element.
+void rmPt3(DynamicPt3Array *arr, int index) { 
+
+  // Just check (should do this more often).
+  if (index < 0 || index >= arr->numElements) {
+      return;
+  }
+
+  // Recreate array.
+  Pt3* temp = malloc(arr->capacity * sizeof(Pt3));
+
+  // Flag for removed; will have to offset copy index.
+  int removed = 0; // will set to 1.
+
+  // Iterate all pts
+  for (int i = 0; i < arr->numElements; i++) {      
+
+    // If its the index, dont copy anything, just set rmvd true.
+    if (i == index) {
+      removed = 1;
+    }
+
+    // Otherwise copy based on whether index was passed or not.
+    else {
+
+      // Yeah sure can do else if but whatevs man.
+    
+      if (removed) {
+        temp[i-1] = arr->data[i];
+      }
+      else {
+        temp[i] = arr->data [i];
+      }
+    }
+  }
+
+  // Free old data.
+  free(arr->data);
+
+  // Set new data, decrement num elements.
+  arr->data = temp;
+  arr->numElements--;  
+  
+}
+
+// Clears the array entirely, "blank slate".
+void clearPt3Array(DynamicPt3Array *arr) {
+
+  // Free old array.
+  free(arr->data);
+
+  // Allocate mem and create new ptr.
+  arr->data = malloc(sizeof(Pt3));
+
+  // Set default vars.
+  arr->numElements = 0;
+  arr->capacity = 1;
+  
+}
+
 
 //  ||====================================================
 //  ||
@@ -383,7 +495,7 @@ void rotateVec3(Vec3* vecPtr, float radX, float radY, float radZ) {
 							};
 
   // Apply the matrices.
-  // since I havent written matmult for 3s we do this way.
+  // Since I havent written matmult for 3s we do this way.
 
 	*vecPtr = multVec3Mat3(*vecPtr, X_rotationMat3);
 	*vecPtr = multVec3Mat3(*vecPtr, Y_rotationMat3);
@@ -508,7 +620,7 @@ void transformPt(Transformation transformation, Pt3* pt) {
 
 //  ||====================================================
 //  ||
-//  || CONVENIENCE FUNCTIONS |||||||||||||||||||||||||||||
+//  || OPTIMIZATION / CONVENIENCE FUNCTIONS ||||||||||||||
 //  || 
 //  ||====================================================
 
