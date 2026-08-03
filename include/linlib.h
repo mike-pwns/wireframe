@@ -220,6 +220,7 @@ Vec3 multVec3Mat3(Vec3 vec3, Vec3 mat3[]);
 //  ||----------------------------------------------------
 
 
+// Intersects a given line with a given plane and returns point.
 Pt3 intersectionLinePlane(Line3 line, Plane plane);
 
 // technically should write more for the "complete linlib collection" but honestly behh meh im not doin allat!

@@ -1,9 +1,3 @@
-#include <stdio.h>
-
-
-// TODO KEY ISSUE IS IN THAT THE CUBE ROTATES AROUND THE ORIGIN.
-
-
 /*
 
 ---
@@ -14,153 +8,123 @@ Summer 2026.
 */
 
 
-
-// remove the ../include on official compilation, instead do -I include/
 #include "../include/linlib.h"
 #include "../include/renderlib.h"
+#include <math.h>
+#include <stdio.h>
+
+//  ||====================================================
+//  ||
+//  || PROGRAM VARIABLES |||||||||||||||||||||||||||||||||
+//  || 
+//  ||====================================================
 
 
-Wireframe model;
 RenderedResult output;
+Wireframe model;
 Scene world;
+
+
+//  ||====================================================
+//  ||
+//  || METHODS |||||||||||||||||||||||||||||||||||||||||||
+//  || 
+//  ||====================================================
+
+
+//  ||----------------------------------------------------
+//  ||
+//  || SCENE INITIALIZER  ||||||||||||||||||||||||||||||||
+//  || 
+//  || Initializes all necessary components such as 
+//  || wireframe, viewport, camera, etc.  
+//  || 
+//  ||----------------------------------------------------
+
+
 
 void initializeSceneData() {
 
-    model = wireframe();
-
+    // Initialize wireframe (cube by default).
     
-    int v0 = addVertex(&model, pt3(-1, -1, 2));
-    int v1 = addVertex(&model, pt3(-1,  1, 2));
-    int v2 = addVertex(&model, pt3( 1,  1, 2));
-    int v3 = addVertex(&model, pt3( 1, -1, 2));
+    model = wireframe();
+    CUBE(&model);
 
-    int v4 = addVertex(&model, pt3(-1, -1, 4));
-    int v5 = addVertex(&model, pt3(-1,  1, 4));
-    int v6 = addVertex(&model, pt3( 1,  1, 4));
-    int v7 = addVertex(&model, pt3( 1, -1, 4));
-
-
-    // front face
-    connectVertices(&model, v0, v1);
-    connectVertices(&model, v1, v2);
-    connectVertices(&model, v2, v3);
-    connectVertices(&model, v3, v0);
-
-
-    // back face
-    connectVertices(&model, v4, v5);
-    connectVertices(&model, v5, v6);
-    connectVertices(&model, v6, v7);
-    connectVertices(&model, v7, v4);
-
-
-    // depth edges
-    connectVertices(&model, v0, v4);
-    connectVertices(&model, v1, v5);
-    connectVertices(&model, v2, v6);
-    connectVertices(&model, v3, v7);
-
-  
-
-    // issue was that viewport plane didnt follow the camera origin
-    Pt3 origin = pt3(0, 0, 0);
-
-    Viewport vp = viewport(2, 2, 1024, 1024);
-
-    Transformation trans = transformation(vec3(0, 0, 0), vec3(0, 0, 0));
-
+    // Initialize camera.
+    
     Camera cam = camera(
-        origin,
-        1,
-        vp,
-        trans
+        pt3(0, 0, 0),                                 // WHERE THE CAM STARTS
+        1,                                            // DIST (FOV)
+        viewport(2, 2, 1024, 1024),                   // VIEWPORT DIMENSIONS
+        transformation(vec3(0, 0, 0), vec3(0, 0, 0))  // DEFAULT TRANSFORMATION
     );
+
+    // Compile into the scene/world.
 
     world = scene(
         &model,
         cam
     );
+
+    printf("did it");
 }
 
 
-// Modellers
-
-void CUBE(Wireframe* model) {
-
-    // CUBE IN FRONT OF CAMERA
-    // camera at z = 0 looking +Z
-    // cube spans z = 2 to z = 4
-  
-    int v0 = addVertex(model, pt3(-1, -1, 2));
-    int v1 = addVertex(model, pt3(-1,  1, 2));
-    int v2 = addVertex(model, pt3( 1,  1, 2));
-    int v3 = addVertex(model, pt3( 1, -1, 2));
-
-    int v4 = addVertex(model, pt3(-1, -1, 4));
-    int v5 = addVertex(model, pt3(-1,  1, 4));
-    int v6 = addVertex(model, pt3( 1,  1, 4));
-    int v7 = addVertex(model, pt3( 1, -1, 4));
+//  ||----------------------------------------------------
+//  ||
+//  || JS APIs  ||||||||||||||||||||||||||||||||||||||||||
+//  || 
+//  || These functions are the ones that are ultimately
+//  || called by the frontend. 
+//  || 
+//  ||----------------------------------------------------
 
 
-    // front face
-    connectVertices(model, v0, v1);
-    connectVertices(model, v1, v2);
-    connectVertices(model, v2, v3);
-    connectVertices(model, v3, v0);
-
-
-    // back face
-    connectVertices(model, v4, v5);
-    connectVertices(model, v5, v6);
-    connectVertices(model, v6, v7);
-    connectVertices(model, v7, v4);
-
-
-    // depth edges
-    connectVertices(model, v0, v4);
-    connectVertices(model, v1, v5);
-    connectVertices(model, v2, v6);
-    connectVertices(model, v3, v7);
-
+// Initialize all program variables.
+void initialize() {
+    output = renderedResult();
+    initializeSceneData();
 }
 
-void AXES(Wireframe* model) {
-
-    int v0 = addVertex(model, pt3(-100, 0, 0));
-    int v1 = addVertex(model, pt3(100,  0, 0));
-    connectVertices(model, v0, v1);
-    
-    int v2 = addVertex(model, pt3(0,  -100, 0));
-    int v3 = addVertex(model, pt3(0, 100, 0));
-    connectVertices(model, v2, v3);
-
-    int v4 = addVertex(model, pt3(0, 0, -100));
-    int v5 = addVertex(model, pt3(0, 0, 100));
-    connectVertices(model, v4, v5);
-
-}
-
-
-// JS API
-
+// Returns WASM pointer to JS so it can parse the data of the render.
+// Note: manual data parsing is super annoying/tedious, so AI did that.
 RenderedResult* getRenderResult() {
     return &output;
 }
 
-
-
-// render the scene
+// Calls the render func from JS.
 void renderScene() {
     render(&world, &output);
 }
 
-
-
-
+// Applies transformations to cam based on keyboard inputs on JS.
 void transformCamera(float x, float y, float z, float radX, float radY, float radZ) { 
-  world.camera.transformation.rotation.x += radX;
+
+
+  // APPLY ROTATION.
+
+
+  // Clamp pitch to [-PI/2, PI/2].
+  if ((world.camera.transformation.rotation.x + radX) >= (PI/2)) {
+      world.camera.transformation.rotation.x = PI/2;
+  }
+  else if ((world.camera.transformation.rotation.x + radX) <= (-PI/2)) {
+      world.camera.transformation.rotation.x = -PI/2;
+  }
+  else {
+    world.camera.transformation.rotation.x += radX;
+  }
+
+  // Apply YAW (rotation around the Y axis).
   world.camera.transformation.rotation.y += radY;
+
+  // Apply Roll (rotation around the Z axis).
+  // NOT USED FOR THIS PROJECT. (Only included for mathematical formality).
   world.camera.transformation.rotation.z += radZ;
+
+
+  // APPLY TRANSLATION
+
 
   // gets movement to follow cam orientation
   Vec3 tempTranslation = vec3(x, y, z);
@@ -173,14 +137,4 @@ void transformCamera(float x, float y, float z, float radX, float radY, float ra
   world.camera.transformation.translation.y += tempTranslation.y;
   world.camera.transformation.translation.z += tempTranslation.z;
   
-}
-
-
-// init
-
-void initialize() {
-
-    output = renderedResult();
-    initializeSceneData();
-
 }

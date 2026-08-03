@@ -69,7 +69,7 @@ typedef struct {
 
 } Wireframe;
 Wireframe wireframe();
-int addVertex(Wireframe* wireframePtr, Pt3 pt); // returns the index of the vertex added (good for edge building).
+int addVertex(Wireframe* wireframePtr, Pt3 pt); // Returns the index of the vertex added (good for edge building).
 void connectVertices(Wireframe* wireframePtr, int startIndex, int endIndex); // Adds an edge between 2 pts.
 void clearWireframe(Wireframe* wireframePtr); // Clears the dynamic arrays.
 
@@ -256,8 +256,40 @@ int worldToPixel(float wrldX, float worldY);
 //  ||====================================================
 
 
-// Takes a "snapshot" of the world from the camera.
+//  ||----------------------------------------------------
+//  ||
+//  || RENDER  |||||||||||||||||||||||||||||||||||||||||||
+//  || 
+//  || The "snapshot" of a world function; whole project
+//  || leads to this one function. 
+//  || 
+//  ||----------------------------------------------------
+
+
 // Saves result in provided RenderedResult.
 void render(Scene* scenePtr, RenderedResult* outputPtr);
+
+
+//  ||----------------------------------------------------
+//  ||
+//  || MODEL BUILDERS  |||||||||||||||||||||||||||||||||||
+//  || 
+//  || Includes premade models: CUBE,
+//  || 
+//  || Note: these are AI-generated.  
+//  || 
+//  ||----------------------------------------------------
+
+
+void CUBE(Wireframe* model);
+
+
+//  ||----------------------------------------------------
+//  ||
+//  || CUSTOM MODELLER FUNCS  ||||||||||||||||||||||||||||
+//  || 
+//  || For custom model making.
+//  || 
+//  ||----------------------------------------------------
     
 #endif

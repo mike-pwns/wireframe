@@ -1,12 +1,18 @@
-// linlib.c
-
-// Bienvenue a ma bibliotheque d'algebra liniaire (or however the heck its spelt i didnt take french since grade 9)
+// Bienvenue a ma bibliotheque d'algebra liniaire!!
 
 #include <stdio.h>
 #include "../include/linlib.h"
-#include <math.h> // TODO  i should prolly just use the pi from this?
+#include <math.h> 
 
-// pseudo constructors
+
+//  ||====================================================
+//  ||
+//  || "CONSTRUCTORS" ||||||||||||||||||||||||||||||||||||
+//  || 
+//  ||====================================================
+
+
+// 2D vector.
 Vec2 vec2(float x, float y) {
   return (Vec2) {
     .x = x,
@@ -14,6 +20,7 @@ Vec2 vec2(float x, float y) {
   };
 }
 
+// 3D vector.
 Vec3 vec3(float x, float y, float z) {
   return (Vec3) {
     .x = x,
@@ -22,6 +29,7 @@ Vec3 vec3(float x, float y, float z) {
   };
 }
 
+// 3D point.
 Pt3 pt3(float x, float y, float z) {
   return (Pt3) {
     .x = x,
@@ -30,6 +38,7 @@ Pt3 pt3(float x, float y, float z) {
   };
 }
 
+// Line in 3D.
 Line3 line3(Vec3 dirVec, Pt3 pt) {
   return (Line3) {
     .dirVec = dirVec,
@@ -37,6 +46,7 @@ Line3 line3(Vec3 dirVec, Pt3 pt) {
   };
 }
 
+// Plane ("in 3D").
 Plane plane(Vec3 normVec, Pt3 pt) {
   return (Plane) {
     .normVec = normVec,
@@ -44,11 +54,24 @@ Plane plane(Vec3 normVec, Pt3 pt) {
   };
 }
 
-// addition and base vector operations
 
+//  ||====================================================
+//  ||
+//  || VECTOR ARITHMETIC |||||||||||||||||||||||||||||||||
+//  || 
+//  ||====================================================
+
+
+//  ||====================================================
+//  || ADDITION  |||||||||||||||||||||||||||||||||||||||||
+//  ||====================================================
+
+
+// Returns the 2D resultant vector.
 Vec2 addVec2(Vec2 vecA, Vec2 vecB) {
 
 	Vec2 result;
+
 	result.x = (vecA.x + vecB.x);
 	result.y = (vecA.y + vecB.y);
 
@@ -56,17 +79,26 @@ Vec2 addVec2(Vec2 vecA, Vec2 vecB) {
 	
 }
 
+// Returns the 3D resultant vector.
 Vec3 addVec3(Vec3 vecA, Vec3 vecB) {
 
 	Vec3 result;
+	
 	result.x = (vecA.x + vecB.x);
 	result.y = (vecA.y + vecB.y);
 	result.z = (vecA.z + vecB.z);
 
 	return result;
-	
+		
 }
 
+
+//  ||====================================================
+//  || MULITPLICATION  |||||||||||||||||||||||||||||||||||
+//  ||====================================================
+
+
+// Returns dot product of 2 2D vectors.
 float dotVec2(Vec2 vecA, Vec2 vecB) {
 
 	float result = (vecA.x * vecB.x) + (vecA.y * vecB.y);
@@ -75,6 +107,7 @@ float dotVec2(Vec2 vecA, Vec2 vecB) {
 
 }
 
+// Returns dot product of 2 3D vectors.
 float dotVec3(Vec3 vecA, Vec3 vecB) {
 
 	float result = (vecA.x * vecB.x) + (vecA.y * vecB.y) + (vecA.z * vecB.z);
@@ -83,6 +116,63 @@ float dotVec3(Vec3 vecA, Vec3 vecB) {
 	
 }
 
+// Returns 3D vector; result of cross product.
+Vec3 crossVec3(Vec3 vecA, Vec3 vecB) {
+
+	Vec3 result;
+
+	// algorithmically the same as laplace but 
+	// dif i dont fully understand yet but maybe i will.
+
+	// i-hat
+
+	Vec2 subMatI[2] = {
+              vec2(vecA.y, vecB.y),
+              vec2(vecA.z, vecB.z)
+            };
+
+	result.x = (1) * detMat2(subMatI); // (+)
+
+	// j-hat
+	
+	Vec2 subMatJ[2] = {
+  	          vec2(vecA.x, vecB.x),
+  	          vec2(vecA.z, vecB.z)
+	          };
+
+
+	result.y = (-1) * detMat2(subMatJ); // (-)
+
+	// k-hat
+
+	Vec2 subMatK[2] = {
+  	          vec2(vecA.x, vecB.x),
+  	          vec2(vecA.y, vecB.y)
+	          };
+
+	
+	result.z = (1) * detMat2(subMatK); // (+)
+
+	// return result
+	
+	return result;
+
+}
+
+
+//  ||====================================================
+//  ||
+//  || MATRIX MATH |||||||||||||||||||||||||||||||||||||||
+//  || 
+//  ||====================================================
+
+
+//  ||====================================================
+//  || DETERMINANTS ||||||||||||||||||||||||||||||||||||||
+//  ||====================================================
+
+
+// Returns determinant of 2D matrix.
 float detMat2(Vec2 mat2[]) {
 
 	Vec2 vecA = mat2[0]; // column vec
@@ -94,6 +184,7 @@ float detMat2(Vec2 mat2[]) {
 	
 }
 
+// Returns determinant of 3D matrix.
 float detMat3(Vec3 mat3[]) {
 
 	Vec3 vecA = mat3[0];
@@ -107,15 +198,14 @@ float detMat3(Vec3 mat3[]) {
 	// *note: not doing the whole cofactor thing for a 3x3, i alr know its (+ - +)
 
 
-
 	// TERM 1 (of 3)
 
 
 	float elementA = vecA.x;
 
 	Vec2 subMatA[2] = {
-						(Vec2){.x = vecB.y, .y = vecB.z},
-						(Vec2){.x = vecC.y, .y = vecC.z} // TODO replace these with constructors
+	            vec2(vecB.y, vecB.z),
+	            vec2(vecC.y, vecC.z)
 					  };						
 
 	float minorA = detMat2(subMatA);
@@ -129,9 +219,9 @@ float detMat3(Vec3 mat3[]) {
 	float elementB = vecB.x;
 
 	Vec2 subMatB[2] = {
-						(Vec2){.x = vecA.y, .y = vecA.z},
-						(Vec2){.x = vecC.y, .y = vecC.z}
-					  };						
+              vec2(vecA.y, vecA.z),
+              vec2(vecC.y,vecC.z)
+            };						
 
 	float minorB = detMat2(subMatB);
 
@@ -144,8 +234,8 @@ float detMat3(Vec3 mat3[]) {
 	float elementC = vecC.x;
 
 	Vec2 subMatC[2] = {
-						(Vec2) {.x = vecA.y, .y = vecA.z},	
-						(Vec2) {.x = vecB.y, .y = vecB.z}
+              vec2(vecA.y, vecA.z),
+              vec2(vecB.y, vecB.z)
 					  };
 
 	float minorC = detMat2(subMatC);
@@ -153,9 +243,8 @@ float detMat3(Vec3 mat3[]) {
 	float termC = (1 * elementC * minorC);
 
 
-	// put together and return
-
-
+	// Put together and return.
+	
 	float result = termA + termB + termC;
 
 	return result;
@@ -163,58 +252,13 @@ float detMat3(Vec3 mat3[]) {
 }
 
 
-Vec3 crossVec3(Vec3 vecA, Vec3 vecB) {
-
-	Vec3 result;
-
-	// algorithmically the same as laplace but 
-	// dif i dont fully understand yet but maybe i will.
+//  ||====================================================
+//  || MULITPLICATION  |||||||||||||||||||||||||||||||||||
+//  ||====================================================
 
 
-	// i-hat
-
-
-	Vec2 subMatI[2] = {
-						(Vec2) {.x = vecA.y, .y = vecB.y},
-						(Vec2) {.x = vecA.z, .y = vecB.z}
-					  };
-
-	result.x = (1) * detMat2(subMatI);
-
-
-	// j-hat
-
-
-	Vec2 subMatJ[2] = {
-						(Vec2) {.x = vecA.x, .y = vecB.x},
-						(Vec2) {.x = vecA.z, .y = vecB.z}
-					  };
-
-
-	result.y = (-1) * detMat2(subMatJ); // same bs here with (-1)
-
-
-	// k-hat
-
-
-	Vec2 subMatK[2] = {
-						(Vec2) {.x = vecA.x, .y = vecB.x},
-						(Vec2) {.x = vecA.y, .y = vecB.y}
-					  };
-
-	
-	result.z = (1) * detMat2(subMatK);
-
-
-	// return result
-
-	
-	return result;
-
-}
-
-// mult mat w vec (note; technically they never need to pass copied values, just pointers work)
-
+// Returns the result of multiplying a vec2 by a mat2. 
+// AKA Applying a tranformation on a 2d vector.
 Vec2 multVec2Mat2(Vec2 vec2, Vec2 mat2[]) {
 
 	Vec2 result;
@@ -246,21 +290,10 @@ Vec2 multVec2Mat2(Vec2 vec2, Vec2 mat2[]) {
 
 
 
-// rotate (yeah the pointer is inconsistent but whatever, thats a learning moment)
-// note: rotates COUNTER-CLOCKWISE
-void rotateVec2(Vec2 *vecPtr, float radians) {
 
-	// assemble the rotation matrix
-	Vec2 rotationMat2[2] = {
-								(Vec2) {.x = cos(radians), .y = sin(radians)},
-								(Vec2) {.x = -sin(radians), .y = cos(radians)}
-							};
-	
-	// apply it and save it to the place
-	*vecPtr = multVec2Mat2(*vecPtr, rotationMat2);
-		
-}
 
+// Returns the result of multiplying a vec2 by a mat3. 
+// AKA Applying a tranformation on a 3d vector.
 Vec3 multVec3Mat3(Vec3 vec3, Vec3 mat3[]) {
   Vec3 result;
   Vec3 matVecI = mat3[0];
@@ -286,6 +319,29 @@ Vec3 multVec3Mat3(Vec3 vec3, Vec3 mat3[]) {
   result.z = (matVecI.z * vec3.x) + (matVecJ.z * vec3.y) + (matVecK.z * vec3.z);
 
   return result;
+}
+
+
+//  ||====================================================
+//  || ROTATION  |||||||||||||||||||||||||||||||||||||||||
+//  || Pretty much just multiplying but with preset 
+//  || matrices, plus saving the result in the given vec.
+//  ||====================================================
+
+
+// rotate (yeah the pointer is inconsistent but whatever, thats a learning moment)
+// note: rotates COUNTER-CLOCKWISE
+void rotateVec2(Vec2 *vecPtr, float radians) {
+
+	// assemble the rotation matrix
+	Vec2 rotationMat2[2] = {
+								(Vec2) {.x = cos(radians), .y = sin(radians)},
+								(Vec2) {.x = -sin(radians), .y = cos(radians)}
+							};
+	
+	// apply it and save it to the place
+	*vecPtr = multVec2Mat2(*vecPtr, rotationMat2);
+		
 }
 
 void rotateVec3(Vec3* vecPtr, float radX, float radY, float radZ) {
