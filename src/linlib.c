@@ -54,6 +54,13 @@ Plane plane(Vec3 normVec, Pt3 pt) {
   };
 }
 
+// Transformation.
+Transformation transformation(Vec3 translation, Vec3 rotation) {
+  return (Transformation) {
+    .translation = translation,
+    .rotation = rotation
+  };
+}
 
 //  ||====================================================
 //  ||
@@ -288,19 +295,21 @@ Vec2 multVec2Mat2(Vec2 vec2, Vec2 mat2[]) {
 	
 }
 
-
-
-
-
 // Returns the result of multiplying a vec2 by a mat3. 
 // AKA Applying a tranformation on a 3d vector.
 Vec3 multVec3Mat3(Vec3 vec3, Vec3 mat3[]) {
+
   Vec3 result;
+
+  // Split up matrix into column vectors.
   Vec3 matVecI = mat3[0];
   Vec3 matVecJ = mat3[1];
   Vec3 matVecK = mat3[2];
   
   /*
+
+  (Ignore, just space to figure it out for myself.)
+  
   | i j k | |a|
   | l m n | |b|
   | o p q | |c|
@@ -312,6 +321,7 @@ Vec3 multVec3Mat3(Vec3 vec3, Vec3 mat3[]) {
   x = ia + jb + kc ; x = matVecI.x*vec.x + matVecJ.x*vec.y + matVecK.z*
   y = la + mb + nc; etc
   z = 0a + pb + qc; etc
+  
   */
 
   result.x = (matVecI.x * vec3.x) + (matVecJ.x * vec3.y) + (matVecK.x * vec3.z);
@@ -319,6 +329,7 @@ Vec3 multVec3Mat3(Vec3 vec3, Vec3 mat3[]) {
   result.z = (matVecI.z * vec3.x) + (matVecJ.z * vec3.y) + (matVecK.z * vec3.z);
 
   return result;
+  
 }
 
 
@@ -330,71 +341,71 @@ Vec3 multVec3Mat3(Vec3 vec3, Vec3 mat3[]) {
 
 
 // rotate (yeah the pointer is inconsistent but whatever, thats a learning moment)
-// note: rotates COUNTER-CLOCKWISE
+// note: rotates COUNTER-CLOCKWISE.
 void rotateVec2(Vec2 *vecPtr, float radians) {
 
-	// assemble the rotation matrix
+	// Assemble the rotation matrix.
 	Vec2 rotationMat2[2] = {
-								(Vec2) {.x = cos(radians), .y = sin(radians)},
-								(Vec2) {.x = -sin(radians), .y = cos(radians)}
+	              vec2(cos(radians), sin(radians)),
+	              vec2(-sin(radians), cos(radians))
 							};
 	
-	// apply it and save it to the place
+	// Apply it and save it to the original vector.
 	*vecPtr = multVec2Mat2(*vecPtr, rotationMat2);
 		
 }
 
+// Rotates a vector around the primary XYZ axes.
+// Saves to provided pointer. Rotates COUNTER-CLOCKWISE (probably).
 void rotateVec3(Vec3* vecPtr, float radX, float radY, float radZ) {
 
-  // is counterclockwise probably (feed normal vals instead of -theta)
+  // Assemble rotation matrices.
 
-
-  // PITCH (nod up/down)
+  // PITCH (nod up/down).
 	Vec3 X_rotationMat3[3] = {
 								vec3(1, 0, 0),
                 vec3(0, cos(radX), sin(radX)),
 								vec3(0, -sin(radX), cos(radX))
 							};
 
-  // YAW (turn left/right)
+  // YAW (turn left/right).
 	Vec3 Y_rotationMat3[3] = {
 								vec3(cos(radY), 0, -sin(radY)),
                 vec3(0, 1, 0),
 								vec3(sin(radY), 0, cos(radY))
 							};
 
-  // roll (tilt) --> not really gonna be used.
+  // ROLL (tilt) --> Not really gonna be used.
 	Vec3 Z_rotationMat3[3] = {
 								vec3(cos(radZ), -sin(radZ), 0),
                 vec3(-sin(radZ), cos(radZ), 0),
 								vec3(0, 0, 1)
 							};
 
-  // since i havent written matmult for 3s we do i this way
+  // Apply the matrices.
+  // since I havent written matmult for 3s we do this way.
+
 	*vecPtr = multVec3Mat3(*vecPtr, X_rotationMat3);
 	*vecPtr = multVec3Mat3(*vecPtr, Y_rotationMat3);
 	*vecPtr = multVec3Mat3(*vecPtr, Z_rotationMat3);
-	
-
-
-//cos(radians), .y = sin(radians)},
-  //-sin(radians), .y = cos(radians)
-
-
-  
 
 }
 
 
-// thingy
+//  ||====================================================
+//  ||
+//  || INTERSECTIONS |||||||||||||||||||||||||||||||||||||
+//  || 
+//  ||====================================================
+
 
 Pt3 intersectionLinePlane(Line3 line, Plane plane) {
 
-  // (Cartesian eq) get d in Ax + By + Cz + d = 0
+  // --- 1. (Cartesian eq) get d in Ax + By + Cz + d = 0
   
   /*
 
-  explanation:
+  yap sesh (explanation):
 
   Ax + By + Cz + d = 0
 
@@ -402,8 +413,6 @@ Pt3 intersectionLinePlane(Line3 line, Plane plane) {
 
   for the equation to be true (... = 0), the x, y, z must be of a point which exists on the plane.. 
   Ahem, like the point we have from the plane. 
-
-  --> For our case this point is really just (0, 0, distance of viewport from origin/eye) 
 
   so Ax + By + Cz can be rewritten as (normal.x)(point.x) + (normal.y)(point.y) + (normal.z)(point.z).. + d = 0
 
@@ -425,16 +434,17 @@ Pt3 intersectionLinePlane(Line3 line, Plane plane) {
   float d = (-1) * dotVec3(plane.normVec, pt3ToVec3(plane.pt));
 
 
-  // get the parameter for vector/parametric line equation
-
-  /* idea is super simple but takes a while to follow through so buckle up
+  // --- 2. Get the parameter for vector/parametric line equation
 
 
-  as of now we have 
+  /* 
 
-  Line --> point, and dir vector
-  Plane --> point, and normal vector --> represented by Ax + By + Cz + d = 0
-  (now we have d too!)
+  idea is super simple but takes a while to follow through so buckle up
+
+  as of now we have:
+   - Line --> point, and dir vector
+   - Plane --> point, and normal vector --> represented by Ax + By + Cz + d = 0
+   - (now we have d too!)
 
   Pretty much we take point and dir vector, compile parametric equations:
 
@@ -449,11 +459,12 @@ Pt3 intersectionLinePlane(Line3 line, Plane plane) {
 
 
   */
+  
   float numerator = ((-1 * d) - dotVec3(plane.normVec, pt3ToVec3(line.pt)));
   float denominator = dotVec3(plane.normVec, line.dirVec);
 
   // denom being 0 just means the line is parallel to the plane and not intersecting; therefore no intersection exists.
-  if (denominator == 0) { // uh oh, what if float arithmetic makes it like 0.00000002
+  if (denominator == 0) { // uh oh, what if float arithmetic makes it like 0.00000002 - screw that were here for it, bring it on c
     return pt3(0, 0, 0);
   }
 
@@ -466,23 +477,64 @@ Pt3 intersectionLinePlane(Line3 line, Plane plane) {
 }
 
 
-// conv
+//  ||====================================================
+//  ||
+//  || TRANSFORMATIONS |||||||||||||||||||||||||||||||||||
+//  || 
+//  ||====================================================
 
 
-float magVec3(Vec3 vec3) {
-  return sqrt(vec3.x*vec3.x + vec3.y*vec3.y + vec3.z*vec3.z);
+
+// Note:  Not gonna use cuz when I need to apply translations its actually an inverse transformation and is backwards of this (woah!)
+void transformPt(Transformation transformation, Pt3* pt) {
+
+  // Get the translation and rotation for convenience.
+  Vec3 translation = transformation.translation;
+  Vec3 rotation = transformation.rotation;
+  
+  // Convert point to vector (since we can transform a vector).
+  Vec3 temp = pt3ToVec3(*pt);
+
+  // First rotate that same vector.
+  rotateVec3(&temp, rotation.x, rotation.y, rotation.z);
+
+  // Then translate it.
+  pt->x = temp.x + translation.x;
+  pt->y = temp.y + translation.y;
+  pt->z = temp.z + translation.z;
+
 }
 
+
+//  ||====================================================
+//  ||
+//  || CONVENIENCE FUNCTIONS |||||||||||||||||||||||||||||
+//  || 
+//  ||====================================================
+
+
+// Get the magnitude of a 3D vector.
+float magVec3(Vec3 vec3) {
+
+  // Literally just sqrt(vecx^2 ...)
+  return sqrt(vec3.x*vec3.x + vec3.y*vec3.y + vec3.z*vec3.z);
+
+}
+
+// Normalizes a given 3D vector.
 void normalizeVec3(Vec3* vec3) {
 
+  // Get magnitude of vector.
   float mag = magVec3(*vec3);
 
+  // Divide all components by magnitude.
   vec3->x = (vec3->x / mag);
   vec3->y = (vec3->y / mag);
   vec3->z = (vec3->z / mag);
 
 }
 
+// Converts Pt3 to Vec3.
 Vec3 pt3ToVec3(Pt3 pt3) {
   return (Vec3) {
     .x = pt3.x,
@@ -491,7 +543,8 @@ Vec3 pt3ToVec3(Pt3 pt3) {
   };
 }
 
-Pt3  vec3ToPt3(Vec3 vec3) {
+// Converts Vec3 to Pt3
+Pt3 vec3ToPt3(Vec3 vec3) {
   return (Pt3) {
     .x = vec3.x,
     .y = vec3.y,
@@ -500,62 +553,37 @@ Pt3  vec3ToPt3(Vec3 vec3) {
 }
 
 
-
-// TRANSFORMATIONS
-
-
-Transformation transformation(Vec3 translation, Vec3 rotation) {
-  return (Transformation) {
-    .translation = translation,
-    .rotation = rotation
-  };
-}
-
-// not gonna use cuz inverse transformation is backwards of this (woah!)
-void transformPt(Transformation transformation, Pt3* pt) {
-
-  Vec3 translation = transformation.translation;
-  Vec3 rotation = transformation.rotation;
-  
-  
-  Vec3 temp = pt3ToVec3(*pt);
-  
-  rotateVec3(&temp, rotation.x, rotation.y, rotation.z);
-  
-  pt->x = temp.x + translation.x;
-  pt->y = temp.y + translation.y;
-  pt->z = temp.z + translation.z;
-
-}
+//  ||====================================================
+//  ||
+//  || PRINT FUNCTIONS |||||||||||||||||||||||||||||||||||
+//  || 
+//  ||====================================================
 
 
-
-
-// vec2 / vec3 prints
-
+// Prints formatted 2D vector.
 void printVec2(Vec2 vec) {
 	printf("<%f, %f>\n", vec.x, vec.y);	
 }
 
+// Prints formatted 3D vector.
 void printVec3(Vec3 vec) {
 	printf("<%f, %f, %f>\n", vec.x, vec.y, vec.z);		
 }
 
+// Prints formatted 2x2 matrix.
 void printMat2(Vec2 mat2[]) {
-
 	printf("|%f %f|\n", mat2[0].x, mat2[1].x);
 	printf("|%f %f|\n", mat2[0].y, mat2[1].y);	
-
 }
 
+// Prints formatted 3x3 matrix.
 void printMat3(Vec3 mat3[]) {
 	printf("|%f %f %f|\n", mat3[0].x, mat3[1].x, mat3[2].x);		
 	printf("|%f %f %f|\n", mat3[0].y, mat3[1].y, mat3[2].y);		
 	printf("|%f %f %f|\n", mat3[0].z, mat3[1].z, mat3[2].z);		
 }
 
-
-
+// Prints formatted 3D point.
 void printPt3(Pt3 pt) {
 	printf("(%f, %f, %f)\n", pt.x, pt.y, pt.z);		
 }
