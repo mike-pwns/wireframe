@@ -7,9 +7,18 @@
 
 //  ||====================================================
 //  ||
-//  || "CONSTRUCTORS" ||||||||||||||||||||||||||||||||||||
+//  || "CONSTRUCTORS" AND DYNAMIC ARRAYS |||||||||||||||||
 //  || 
 //  ||====================================================
+
+
+//  ||----------------------------------------------------
+//  ||
+//  || STRUCT CONSTRUCTORS  ||||||||||||||||||||||||||||||
+//  || 
+//  || Standard constructors idk what else to say. 
+//  || 
+//  ||----------------------------------------------------
 
 
 // 2D vector.
@@ -65,11 +74,16 @@ Transformation transformation(Vec3 translation, Vec3 rotation) {
 }
 
 
-//  ||====================================================
+
+//  ||----------------------------------------------------
 //  ||
-//  || DYNAMIC ARRAYS ||||||||||||||||||||||||||||||||||||
+//  || DYNAMIC ARRAYS & FRIENDS (METHODS)  |||||||||||||||
 //  || 
-//  ||====================================================
+//  || Just dynamic arrays for necessary objects and 
+//  || their respective add/remove/etc implementations. 
+//  || 
+//  ||----------------------------------------------------
+
 
 
 // Constructor.
@@ -121,7 +135,7 @@ void rmPt3(DynamicPt3Array *arr, int index) {
       return;
   }
 
-  // Recreate array.
+  // (Pt3 DynamicArray) Recreate array.
   Pt3* temp = malloc(arr->capacity * sizeof(Pt3));
 
   // Flag for removed; will have to offset copy index.
@@ -158,7 +172,7 @@ void rmPt3(DynamicPt3Array *arr, int index) {
   
 }
 
-// Clears the array entirely, "blank slate".
+// (Pt3 DynamicArray) Clears the array entirely, "blank slate".
 void clearPt3Array(DynamicPt3Array *arr) {
 
   // Free old array.
