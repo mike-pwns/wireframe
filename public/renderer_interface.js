@@ -1,18 +1,102 @@
-// universal coords n whatnot
+// RENDERER_INTERFACE.JS
+// Frontend logic for interacting with the C stuff.
+
+
+//  ||====================================================
+//  ||
+//  || CONSTANTS AND VARIABLE ||||||||||||||||||||||||||||
+//  || 
+//  ||====================================================
+
+
+//  ||====================================================
+//  || COORDINATE REFERENCES |||||||||||||||||||||||||||||
+//  ||====================================================
+
+
 const X = 0;
 const Y = 1;
 
-// customizations
+
+//  ||====================================================
+//  || CUSTOMIZATIONS ||||||||||||||||||||||||||||||||||||
+//  ||====================================================
+
+
+// TODO make it so u can change color and stroke width in ui
+
 const HACKER_GREEN = "#20C20E";
-const STROKE_WIDTH = 10; // in px
+let STROKE_WIDTH = 10; // in px.
 
 
-// canvas thing
+//  ||====================================================
+//  || CANVAS CONSTANTS ||||||||||||||||||||||||||||||||||
+//  ||====================================================
+
 
 const CANVAS = document.getElementById("canvas");
 const CONTEXT = CANVAS.getContext("2d");
-const CANVAS_WIDTH = 1024; // in px
-const CANVAS_HEIGHT = 1024; // in px
+const CANVAS_WIDTH = 1024; // in px.
+const CANVAS_HEIGHT = 1024; // in px.
+
+
+//  ||====================================================
+//  || CONTROL VARIABLES |||||||||||||||||||||||||||||||||
+//  ||====================================================
+
+
+let FPS = 60; // Framerate.
+let TRANSLATION_SPEED = 2; // world units/s (i think)
+let ROTATION_SPEED = 2 // rad/s (i think)
+
+
+//  ||====================================================
+//  || CONTROL CONSTANTS |||||||||||||||||||||||||||||||||
+//  ||====================================================
+
+
+// Camera translation.
+const W = 0; const A = 1; const S = 2; const D = 3; const SHIFT = 4; const SPACE = 5;
+
+// Camera rotation.
+const UP = 6; const DOWN = 7; const LEFT = 8; const RIGHT = 9;
+
+// Pressed flags for updating camera.
+let KEYS_PRESSED = [false, false, false, false, // W A S D 
+                    false, false,               // SHIFT SPACE
+                    false, false, false, false] // UP DOWN LEFT RIGHT
+
+
+//  ||====================================================
+//  || TIME MANAGEMENT |||||||||||||||||||||||||||||||||||
+//  ||====================================================
+
+
+let lastTime; // Used in simulation loop for calculating delta time.
+
+
+//  ||====================================================
+//  ||
+//  || FUNCTIONS |||||||||||||||||||||||||||||||||||||||||
+//  || 
+//  ||====================================================
+
+
+
+//  ||----------------------------------------------------
+//  ||
+//  || DYNAMIC ARRAYS & FRIENDS (METHODS)  |||||||||||||||
+//  || 
+//  || Just dynamic arrays for necessary objects and 
+//  || their respective add/remove/etc implementations. 
+//  || 
+//  || Note: line by line comment is in the linlib.c, not
+//  ||       repeating it all 4-6 times same thing.
+//  ||       
+//  || Note: The implementation is that of ArrayList in
+//  ||       Java (i think - thats what I was told).
+//  || 
+//  ||----------------------------------------------------
 
 function initialize_canvas() {
 
@@ -193,27 +277,6 @@ function initialize_data() {
 
 
 
-const FPS = 60; 
-const TRANSLATION_SPEED = 2; // world units/s (i think)
-const ROTATION_SPEED = 2 // rad/s (i think)
-
-const W = 0;
-const A = 1;
-const S = 2;
-const D = 3;
-const SHIFT = 4;
-const SPACE = 5;
-const UP = 6;
-const DOWN = 7;
-const LEFT = 8;
-const RIGHT = 9;
-let KEYS_PRESSED = [false, false, false, false, // W A S D 
-                    false, false,               // SHIFT SPACE
-                    false, false, false, false] // UP DOWN LEFT RIGHT
-
-// yeah culd do 0 0 0 0 whatever
-
-let lastTime;
 
 function updateCamera(dt) {
     

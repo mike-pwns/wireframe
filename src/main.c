@@ -2,8 +2,7 @@
 
 ---
 
-@mike-pwns on GitHub
-Summer 2026.
+
 
 */
 
@@ -48,7 +47,8 @@ void initializeSceneData() {
     // Initialize wireframe (cube by default).
     
     model = wireframe();
-    CUBE(&model);
+    // CUBE(&model);
+    SYNTHSCAPE(&model);
 
     // Initialize camera.
     

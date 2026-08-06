@@ -282,6 +282,12 @@ void render(Scene* scenePtr, RenderedResult* outputPtr);
 
 
 void CUBE(Wireframe* model);
+void PYRAMID(Wireframe* model);
+void SPHERE(Wireframe* model);
+void OCTAHEDRON(Wireframe* model);
+void TORUS(Wireframe* model);
+void SYNTHSCAPE(Wireframe* model);
+void PENGUIN(Wireframe* model);
 
 
 //  ||----------------------------------------------------

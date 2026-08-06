@@ -832,3 +832,492 @@ void CUBE(Wireframe* model) {
     connectVertices(model, v3, v7);
 
 }
+
+
+// PYRAMID: square base + apex, standing upright (like the classic).
+// base at y = -1 (bottom), apex at y = 1 (top), centered around z = 3.
+void PYRAMID(Wireframe* model) {
+
+    // base corners
+    int v0 = addVertex(model, pt3(-1, -1, 2));
+    int v1 = addVertex(model, pt3( 1, -1, 2));
+    int v2 = addVertex(model, pt3( 1, -1, 4));
+    int v3 = addVertex(model, pt3(-1, -1, 4));
+
+    // apex
+    int v4 = addVertex(model, pt3(0, 1, 3));
+
+    // base square
+    connectVertices(model, v0, v1);
+    connectVertices(model, v1, v2);
+    connectVertices(model, v2, v3);
+    connectVertices(model, v3, v0);
+
+    // base -> apex (the 4 slanted edges)
+    connectVertices(model, v0, v4);
+    connectVertices(model, v1, v4);
+    connectVertices(model, v2, v4);
+    connectVertices(model, v3, v4);
+
+}
+
+
+// SPHERE: classic UV sphere (latitude rings + longitude lines + 2 poles).
+// centered at (0, 0, 3.5), radius 1.
+void SPHERE(Wireframe* model) {
+
+    const float radius = 1.0f;
+    const float centerZ = 3.5f;
+
+    const int numRings = 6;   // rings between the poles
+    const int numSegs = 12;   // points per ring (longitude divisions)
+
+    // grid of indices so we can wire up meridians + parallels after the fact
+    int ringIndices[numRings][numSegs];
+
+    // build the interior rings (no poles yet)
+    for (int i = 0; i < numRings; i++) {
+
+        // phi sweeps from just above south pole to just below north pole
+        float phi = -PI / 2.0f + PI * (i + 1) / (numRings + 1);
+
+        float y = radius * sin(phi);
+        float ringRadius = radius * cos(phi);
+
+        for (int j = 0; j < numSegs; j++) {
+
+            float theta = 2.0f * PI * j / numSegs;
+
+            float x = ringRadius * cos(theta);
+            float z = centerZ + ringRadius * sin(theta);
+
+            ringIndices[i][j] = addVertex(model, pt3(x, y, z));
+        }
+    }
+
+    // poles
+    int northPole = addVertex(model, pt3(0, radius, centerZ));
+    int southPole = addVertex(model, pt3(0, -radius, centerZ));
+
+    // parallels (around each ring)
+    for (int i = 0; i < numRings; i++) {
+        for (int j = 0; j < numSegs; j++) {
+            connectVertices(model, ringIndices[i][j], ringIndices[i][(j + 1) % numSegs]);
+        }
+    }
+
+    // meridians (between adjacent rings)
+    for (int i = 0; i < numRings - 1; i++) {
+        for (int j = 0; j < numSegs; j++) {
+            connectVertices(model, ringIndices[i][j], ringIndices[i + 1][j]);
+        }
+    }
+
+    // connect poles to their nearest ring
+    for (int j = 0; j < numSegs; j++) {
+        connectVertices(model, southPole, ringIndices[0][j]);
+        connectVertices(model, northPole, ringIndices[numRings - 1][j]);
+    }
+
+}
+
+
+// OCTAHEDRON: 6 points (top/bottom/left/right/front/back), 12 edges.
+// centered at (0, 0, 3.5).
+void OCTAHEDRON(Wireframe* model) {
+
+    const float r = 1.2f;
+    const float centerZ = 3.5f;
+
+    int top    = addVertex(model, pt3(0,  r, centerZ));
+    int bottom = addVertex(model, pt3(0, -r, centerZ));
+    int left   = addVertex(model, pt3(-r, 0, centerZ));
+    int right  = addVertex(model, pt3( r, 0, centerZ));
+    int front  = addVertex(model, pt3(0, 0, centerZ - r));
+    int back   = addVertex(model, pt3(0, 0, centerZ + r));
+
+    // top + bottom each connect to all 4 "equator" points
+    connectVertices(model, top, left);
+    connectVertices(model, top, right);
+    connectVertices(model, top, front);
+    connectVertices(model, top, back);
+
+    connectVertices(model, bottom, left);
+    connectVertices(model, bottom, right);
+    connectVertices(model, bottom, front);
+    connectVertices(model, bottom, back);
+
+    // the equator ring itself
+    connectVertices(model, front, left);
+    connectVertices(model, left, back);
+    connectVertices(model, back, right);
+    connectVertices(model, right, front);
+
+}
+
+
+// TORUS: lying flat (like a donut on a table), axis vertical (Y).
+// centered at (0, 0, 3.5).
+void TORUS(Wireframe* model) {
+
+    const float majorRadius = 1.0f;  // big ring radius
+    const float minorRadius = 0.4f;  // tube radius
+    const float centerZ = 3.5f;
+
+    const int majorSegs = 16;
+    const int minorSegs = 8;
+
+    int ringIndices[majorSegs][minorSegs];
+
+    for (int i = 0; i < majorSegs; i++) {
+
+        float u = 2.0f * PI * i / majorSegs; // angle around the big ring (now in the XZ plane)
+
+        for (int j = 0; j < minorSegs; j++) {
+
+            float v = 2.0f * PI * j / minorSegs; // angle around the tube
+
+            // ring lies flat in X/Z, tube bulges up/down in Y
+            float x = (majorRadius + minorRadius * cos(v)) * cos(u);
+            float z = centerZ + (majorRadius + minorRadius * cos(v)) * sin(u);
+            float y = minorRadius * sin(v);
+
+            ringIndices[i][j] = addVertex(model, pt3(x, y, z));
+        }
+    }
+
+    // connect around the tube (minor circles)
+    for (int i = 0; i < majorSegs; i++) {
+        for (int j = 0; j < minorSegs; j++) {
+            connectVertices(model, ringIndices[i][j], ringIndices[i][(j + 1) % minorSegs]);
+        }
+    }
+
+    // connect around the big ring (major circles)
+    for (int i = 0; i < majorSegs; i++) {
+        for (int j = 0; j < minorSegs; j++) {
+            connectVertices(model, ringIndices[i][j], ringIndices[(i + 1) % majorSegs][j]);
+        }
+    }
+
+}
+
+
+// SYNTHSCAPE: 80s-retrowave scene - a big rolling-hills grid floor,
+// layered mountain ranges, a large banded sun, and a starfield.
+// grid spans x = -8 to 8, z = 2 to 16.
+void SYNTHSCAPE(Wireframe* model) {
+
+    // GROUND GRID (WITH HILLS) |||||||||||||||||||||||||||
+    // ----------------------------------------------------
+
+    const int cols = 17;  // grid lines running away from camera (along z)
+    const int rows = 12;  // grid lines running across (along x)
+
+    const float xMin = -8.0f, xMax = 8.0f;
+    const float zMin = 2.0f, zMax = 16.0f;
+    const float groundY = -1.6f;
+    const float hillAmplitude = 0.6f;
+
+    int gridIndices[rows][cols];
+
+    for (int r = 0; r < rows; r++) {
+
+        float z = zMin + (zMax - zMin) * r / (rows - 1);
+
+        for (int c = 0; c < cols; c++) {
+
+            float x = xMin + (xMax - xMin) * c / (cols - 1);
+
+            // rolling hills - combine two waves so it doesn't look too uniform
+            float y = groundY + hillAmplitude * sin(x * 0.35) * cos(z * 0.22);
+
+            gridIndices[r][c] = addVertex(model, pt3(x, y, z));
+        }
+    }
+
+    // lines running across (constant z, varying x)
+    for (int r = 0; r < rows; r++) {
+        for (int c = 0; c < cols - 1; c++) {
+            connectVertices(model, gridIndices[r][c], gridIndices[r][c + 1]);
+        }
+    }
+
+    // lines receding into the distance (constant x, varying z)
+    for (int c = 0; c < cols; c++) {
+        for (int r = 0; r < rows - 1; r++) {
+            connectVertices(model, gridIndices[r][c], gridIndices[r + 1][c]);
+        }
+    }
+
+
+    // MOUNTAIN RANGES |||||||||||||||||||||||||||||||||||
+    // ----------------------------------------------------
+    // two jagged zigzag ranges near the horizon - closer one taller,
+    // farther one shorter and further back for a bit of depth.
+
+    float rangeNear[][2] = { // {x, heightAboveGround}
+        {-8.0f, 0.6f}, {-6.2f, 1.8f}, {-4.6f, 0.9f}, {-2.8f, 2.4f},
+        {-1.0f, 1.2f}, { 0.8f, 2.6f}, { 2.6f, 1.1f}, { 4.4f, 2.1f},
+        { 6.2f, 0.8f}, { 8.0f, 1.9f}
+    };
+    int numNear = sizeof(rangeNear) / sizeof(rangeNear[0]);
+    float nearZ = 11.0f;
+
+    int nearPeaks[numNear];
+    for (int i = 0; i < numNear; i++) {
+        nearPeaks[i] = addVertex(model, pt3(rangeNear[i][0], groundY + rangeNear[i][1], nearZ));
+    }
+    for (int i = 0; i < numNear - 1; i++) {
+        connectVertices(model, nearPeaks[i], nearPeaks[i + 1]);
+    }
+
+    float rangeFar[][2] = {
+        {-8.0f, 0.4f}, {-5.5f, 1.1f}, {-3.0f, 0.5f}, {-0.5f, 1.4f},
+        { 2.0f, 0.6f}, { 4.5f, 1.2f}, { 7.0f, 0.5f}, { 8.0f, 0.9f}
+    };
+    int numFar = sizeof(rangeFar) / sizeof(rangeFar[0]);
+    float farZ = 15.0f;
+
+    int farPeaks[numFar];
+    for (int i = 0; i < numFar; i++) {
+        farPeaks[i] = addVertex(model, pt3(rangeFar[i][0], groundY + rangeFar[i][1], farZ));
+    }
+    for (int i = 0; i < numFar - 1; i++) {
+        connectVertices(model, farPeaks[i], farPeaks[i + 1]);
+    }
+
+
+    // RETRO SUN (BIG) |||||||||||||||||||||||||||||||||||
+    // ----------------------------------------------------
+
+    const float sunCenterX = 0.0f;
+    const float sunCenterY = 1.4f;
+    const float sunCenterZ = zMax + 4.0f;  // well behind the mountains
+    const float sunRadius = 3.2f;
+    const int sunSegs = 28;
+
+    int sunRing[sunSegs];
+
+    for (int i = 0; i < sunSegs; i++) {
+        float theta = 2.0f * PI * i / sunSegs;
+        float x = sunCenterX + sunRadius * cos(theta);
+        float y = sunCenterY + sunRadius * sin(theta);
+        sunRing[i] = addVertex(model, pt3(x, y, sunCenterZ));
+    }
+
+    for (int i = 0; i < sunSegs; i++) {
+        connectVertices(model, sunRing[i], sunRing[(i + 1) % sunSegs]);
+    }
+
+    // horizontal scanline bars across the lower half of the sun (retro "cut" look)
+    const int numBars = 7;
+    for (int b = 1; b <= numBars; b++) {
+
+        float dy = -sunRadius * b / (numBars + 1.5f);
+        float halfWidth = sqrt(sunRadius * sunRadius - dy * dy);
+
+        int left = addVertex(model, pt3(sunCenterX - halfWidth, sunCenterY + dy, sunCenterZ));
+        int right = addVertex(model, pt3(sunCenterX + halfWidth, sunCenterY + dy, sunCenterZ));
+
+        connectVertices(model, left, right);
+    }
+
+
+    // STARS (LOTS) ||||||||||||||||||||||||||||||||||||||
+    // ----------------------------------------------------
+    // lone vertices (no edges) scattered across the sky - still render
+    // as individual pixels without adding line clutter.
+
+    const int numStars = 40;
+
+    // deterministic pseudo-scatter so it's reproducible without rand().
+    // just a couple of irrational-ish multipliers to avoid visible grid patterns.
+    for (int i = 0; i < numStars; i++) {
+
+        float fx = fmod(i * 12.9898f, 17.0f) - 8.5f;       // spread across x
+        float fy = 1.0f + fmod(i * 7.233f, 5.5f);          // sky height
+        float fz = sunCenterZ - 4.0f - fmod(i * 5.771f, 14.0f); // scattered depth in front of the sun
+
+        addVertex(model, pt3(fx, fy, fz));
+    }
+
+}
+
+
+// (private helper) Builds a UV ellipsoid (rings + poles) at a given center
+// with independent x/y/z radii, and wires it up. Used by PENGUIN to build
+// the body and head from the same code. Not exposed in the header since
+// its just plumbing for the modellers in this file.
+static void addEllipsoidPart(Wireframe* model, float cx, float cy, float cz,
+                              float rx, float ry, float rz,
+                              int numRings, int numSegs) {
+
+    int ringIndices[numRings][numSegs];
+
+    for (int i = 0; i < numRings; i++) {
+
+        float phi = -PI / 2.0f + PI * (i + 1) / (numRings + 1);
+
+        float y = cy + ry * sin(phi);
+        float ringScale = cos(phi);
+
+        for (int j = 0; j < numSegs; j++) {
+
+            float theta = 2.0f * PI * j / numSegs;
+
+            float x = cx + rx * ringScale * cos(theta);
+            float z = cz + rz * ringScale * sin(theta);
+
+            ringIndices[i][j] = addVertex(model, pt3(x, y, z));
+        }
+    }
+
+    int topPole = addVertex(model, pt3(cx, cy + ry, cz));
+    int bottomPole = addVertex(model, pt3(cx, cy - ry, cz));
+
+    for (int i = 0; i < numRings; i++) {
+        for (int j = 0; j < numSegs; j++) {
+            connectVertices(model, ringIndices[i][j], ringIndices[i][(j + 1) % numSegs]);
+        }
+    }
+
+    for (int i = 0; i < numRings - 1; i++) {
+        for (int j = 0; j < numSegs; j++) {
+            connectVertices(model, ringIndices[i][j], ringIndices[i + 1][j]);
+        }
+    }
+
+    for (int j = 0; j < numSegs; j++) {
+        connectVertices(model, bottomPole, ringIndices[0][j]);
+        connectVertices(model, topPole, ringIndices[numRings - 1][j]);
+    }
+
+}
+
+
+// (private helper) Draws one stroke of a blocky vector-font letter.
+// x1,y1,x2,y2 are normalized 0..1 within the letter's box.
+static void addLetterSegment(Wireframe* model, float ox, float oy, float z, float w, float h,
+                              float x1, float y1, float x2, float y2) {
+    int a = addVertex(model, pt3(ox + x1 * w, oy + y1 * h, z));
+    int b = addVertex(model, pt3(ox + x2 * w, oy + y2 * h, z));
+    connectVertices(model, a, b);
+}
+
+// (private helper) Simple blocky vector font - just enough letters for "LINUX".
+static void addLetter(Wireframe* model, char c, float ox, float oy, float z, float w, float h) {
+    switch (c) {
+        case 'L':
+            addLetterSegment(model, ox, oy, z, w, h, 0, 1, 0, 0);
+            addLetterSegment(model, ox, oy, z, w, h, 0, 0, 1, 0);
+            break;
+        case 'I':
+            addLetterSegment(model, ox, oy, z, w, h, 0, 1, 1, 1);
+            addLetterSegment(model, ox, oy, z, w, h, 0.5f, 1, 0.5f, 0);
+            addLetterSegment(model, ox, oy, z, w, h, 0, 0, 1, 0);
+            break;
+        case 'N':
+            addLetterSegment(model, ox, oy, z, w, h, 0, 0, 0, 1);
+            addLetterSegment(model, ox, oy, z, w, h, 0, 1, 1, 0);
+            addLetterSegment(model, ox, oy, z, w, h, 1, 0, 1, 1);
+            break;
+        case 'U':
+            addLetterSegment(model, ox, oy, z, w, h, 0, 1, 0, 0);
+            addLetterSegment(model, ox, oy, z, w, h, 0, 0, 1, 0);
+            addLetterSegment(model, ox, oy, z, w, h, 1, 0, 1, 1);
+            break;
+        case 'X':
+            addLetterSegment(model, ox, oy, z, w, h, 0, 1, 1, 0);
+            addLetterSegment(model, ox, oy, z, w, h, 0, 0, 1, 1);
+            break;
+        default:
+            break;
+    }
+}
+
+// (private helper) Lays out a string of the blocky vector font, centered on centerX.
+static void addVectorText(Wireframe* model, const char* text, float centerX, float baseY, float z,
+                           float letterW, float letterH, float gap) {
+
+    int len = 0;
+    while (text[len] != '\0') len++;
+
+    float totalWidth = len * letterW + (len - 1) * gap;
+    float startX = centerX - totalWidth / 2.0f;
+
+    for (int i = 0; i < len; i++) {
+        float ox = startX + i * (letterW + gap);
+        addLetter(model, text[i], ox, baseY, z, letterW, letterH);
+    }
+}
+
+
+// PENGUIN: chubby body + head (ellipsoids), a beak, two wings, two feet,
+// and a "LINUX" tag floating above its head. standing upright, centered
+// around z = 3.5.
+void PENGUIN(Wireframe* model) {
+
+    const float centerZ = 3.5f;
+
+    // BODY (chubby - wide and round rather than a tall egg)
+    const float bodyCy = -0.1f;
+    const float bodyRx = 0.75f, bodyRy = 0.8f, bodyRz = 0.68f;
+    addEllipsoidPart(model, 0, bodyCy, centerZ, bodyRx, bodyRy, bodyRz, 6, 12);
+
+    // HEAD (rests on top of the body, slight overlap so it looks attached)
+    const float headCy = 1.05f;
+    const float headR = 0.42f;
+    addEllipsoidPart(model, 0, headCy, centerZ, headR, headR, headR, 5, 10);
+
+    // BEAK (small pyramid poking out the front of the head, toward the camera)
+    int beakLeft  = addVertex(model, pt3(-0.12f, headCy, centerZ - headR));
+    int beakRight = addVertex(model, pt3( 0.12f, headCy, centerZ - headR));
+    int beakTop   = addVertex(model, pt3(0, headCy + 0.1f, centerZ - headR));
+    int beakTip   = addVertex(model, pt3(0, headCy - 0.05f, centerZ - headR - 0.35f));
+
+    connectVertices(model, beakLeft, beakRight);
+    connectVertices(model, beakLeft, beakTop);
+    connectVertices(model, beakRight, beakTop);
+    connectVertices(model, beakLeft, beakTip);
+    connectVertices(model, beakRight, beakTip);
+    connectVertices(model, beakTop, beakTip);
+
+    // EYES (tiny lone points, rendered as pixels - no need for edges)
+    addVertex(model, pt3(-0.17f, headCy + 0.08f, centerZ - headR + 0.05f));
+    addVertex(model, pt3( 0.17f, headCy + 0.08f, centerZ - headR + 0.05f));
+
+    // WINGS (flat flipper shapes on either side of the chubby body, swept back)
+    for (int side = -1; side <= 1; side += 2) { // -1 = left wing, +1 = right wing
+
+        float sx = side * bodyRx; // attach right at the body's side
+
+        int top    = addVertex(model, pt3(sx, bodyCy + bodyRy * 0.55f, centerZ));
+        int bottom = addVertex(model, pt3(sx * 1.05f, bodyCy - bodyRy * 0.6f, centerZ));
+        int tip     = addVertex(model, pt3(sx * 1.55f, bodyCy - bodyRy * 0.1f, centerZ + 0.3f)); // swept back and out
+
+        connectVertices(model, top, bottom);
+        connectVertices(model, bottom, tip);
+        connectVertices(model, tip, top);
+    }
+
+    // FEET (small webbed triangles at the base, poking forward)
+    for (int side = -1; side <= 1; side += 2) { // -1 = left foot, +1 = right foot
+
+        float sx = side * 0.3f;
+        float footY = bodyCy - bodyRy - 0.02f; // just at the bottom of the body
+
+        int heel = addVertex(model, pt3(sx, footY, centerZ));
+        int toeL = addVertex(model, pt3(sx - 0.14f, footY, centerZ - 0.4f));
+        int toeR = addVertex(model, pt3(sx + 0.14f, footY, centerZ - 0.4f));
+
+        connectVertices(model, heel, toeL);
+        connectVertices(model, heel, toeR);
+        connectVertices(model, toeL, toeR);
+    }
+
+    // "LINUX" TAG (floating vector-font text above the head)
+    float headTopY = headCy + headR;
+    addVectorText(model, "LINUX", 0, headTopY + 0.3f, centerZ, 0.32f, 0.45f, 0.12f);
+
+}
