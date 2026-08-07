@@ -93,26 +93,34 @@ button {
    ==================================================== */
 
 .info {
-    padding: 48px;
+    padding: 32px 40px;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 16px;
     min-width: 0;
-    overflow-y: auto;
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
 }
 
 @media (max-width: 900px) {
     .info {
         padding: 28px 20px;
         order: 2;
+        height: auto;
+        overflow: visible;
     }
 }
 
 /* --- brand / wordmark --- */
 
+.brand {
+    flex: 0 0 auto;
+}
+
 .brand__title {
-    margin: 0 0 12px;
-    font-size: clamp(3rem, 6.5vw, 5.5rem);
+    margin: 0 0 6px;
+    font-size: clamp(2rem, 4vw, 3.2rem);
     font-weight: normal;
     letter-spacing: 0.03em;
     line-height: 0.9;
@@ -120,14 +128,14 @@ button {
 }
 
 .brand__byline {
-    margin: 0 0 8px;
-    font-size: 0.95rem;
+    margin: 0 0 4px;
+    font-size: 0.85rem;
     color: var(--text-muted);
 }
 
 .brand__link {
     display: inline-block;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     text-decoration: underline;
     text-underline-offset: 3px;
     color: var(--green);
@@ -136,27 +144,32 @@ button {
 /* --- divider --- */
 
 .rule {
+    flex: 0 0 auto;
     height: 2px;
     background: var(--green);
 }
 
-/* --- gallery: 1 big square + 3x2 small squares --- */
+/* --- gallery: 1 big square + 3x2 small squares + custom row --- */
+
+.gallery {
+    flex: 0 0 auto;
+}
 
 .gallery__label {
-    margin: 0 0 14px;
-    font-size: 0.95rem;
+    margin: 0 0 10px;
+    font-size: 0.85rem;
     color: var(--text-muted);
 }
 
 .gallery__grid {
     display: grid;
     grid-template-columns: 2fr 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
+    grid-template-rows: 1fr 1fr auto;
     grid-template-areas:
         "cube a b c"
-        "cube d e f";
-    gap: 12px;
-    aspect-ratio: 2.5 / 1;
+        "cube d e f"
+        "custom custom custom custom";
+    gap: 10px;
 }
 
 .gallery__item:nth-of-type(1) { grid-area: cube; }
@@ -166,21 +179,44 @@ button {
 .gallery__item:nth-of-type(5) { grid-area: d; }
 .gallery__item:nth-of-type(6) { grid-area: e; }
 .gallery__item:nth-of-type(7) { grid-area: f; }
+.gallery__item:nth-of-type(8) { grid-area: custom; }
+
+/* small squares keep a 1:1 shape - the grid rows then size themselves
+   off that, instead of needing a fixed-height container. */
+.gallery__item:nth-of-type(2),
+.gallery__item:nth-of-type(3),
+.gallery__item:nth-of-type(4),
+.gallery__item:nth-of-type(5),
+.gallery__item:nth-of-type(6),
+.gallery__item:nth-of-type(7) {
+    aspect-ratio: 1 / 1;
+}
+
+.gallery__item--big[data-model-id="7"] {
+    flex-direction: row;
+    min-height: 52px;
+    gap: 14px;
+}
 
 @media (max-width: 600px) {
     .gallery__grid {
         grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: none;
         grid-template-areas: none;
-        aspect-ratio: auto;
     }
 
     .gallery__item:nth-of-type(n) {
         grid-area: auto;
     }
 
+    .gallery__item {
+        aspect-ratio: 1 / 1;
+    }
+
     .gallery__item--big {
         grid-column: span 2;
         aspect-ratio: 2 / 1;
+        flex-direction: column;
     }
 }
 
@@ -229,6 +265,172 @@ button {
 }
 
 /* ====================================================
+   BUILDER (make your own model)
+   ==================================================== */
+
+.builder {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    gap: 10px;
+}
+
+.builder__panel {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    gap: 14px;
+}
+
+.builder__section {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+    min-height: 0;
+    gap: 8px;
+}
+
+.builder__section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.builder__section-title {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    text-transform: lowercase;
+    letter-spacing: 0.05em;
+}
+
+.builder__new-point {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: 8px;
+}
+
+.builder__add-btn {
+    background: #000000;
+    border: 2px solid var(--green);
+    border-radius: 0;
+    color: var(--green);
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    padding: 6px 10px;
+    white-space: nowrap;
+}
+
+.builder__add-btn:hover {
+    background: var(--green);
+    color: #000000;
+}
+
+.builder__list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1 1 auto;
+    min-height: 40px;
+    overflow-y: auto;
+}
+
+.builder__empty {
+    margin: 0;
+    padding: 10px 0;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
+.builder__row {
+    display: grid;
+    grid-template-columns: auto 1fr 1fr 1fr auto;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    background: var(--bg-inset);
+    border: 2px solid var(--border);
+    flex: 0 0 auto;
+}
+
+.builder__row-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+/* edge rows only have a label + delete button, so let the label span
+   the coordinate columns instead of leaving them empty */
+#edgeList .builder__row {
+    grid-template-columns: 1fr auto;
+}
+
+.builder__coord {
+    width: 100%;
+    min-width: 0;
+    background: #000000;
+    border: 2px solid var(--text-muted);
+    border-radius: 0;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    padding: 4px 6px;
+}
+
+.builder__coord:focus {
+    border-color: var(--green);
+}
+
+.builder__delete {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    background: #000000;
+    border: 2px solid var(--text-muted);
+    border-radius: 0;
+    color: var(--text-muted);
+    font-size: 1rem;
+    line-height: 1;
+    padding: 0;
+}
+
+.builder__delete:hover {
+    background: var(--green);
+    border-color: var(--green);
+    color: #000000;
+}
+
+.builder__edge-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.builder__select {
+    flex: 1;
+    min-width: 0;
+    background: #000000;
+    border: 2px solid var(--text-muted);
+    border-radius: 0;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    padding: 5px 6px;
+}
+
+.builder__select:focus {
+    border-color: var(--green);
+}
+
+.builder__edge-arrow {
+    color: var(--text-muted);
+}
+
+/* ====================================================
    SIMULATION COLUMN
    top half: viewport / bottom half: controls
    ==================================================== */
@@ -264,12 +466,19 @@ button {
     border-radius: 0;
     padding: 0;
     width: 100%;
+    flex: 0 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 canvas {
     display: block;
-    width: 100%;
+    width: auto;
     height: auto;
+    max-width: 100%;
+    max-height: 52vh;
     aspect-ratio: 1 / 1;
     background: #000;
     image-rendering: pixelated;
@@ -280,6 +489,7 @@ canvas {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    align-self: stretch;
     gap: 8px;
     padding: 8px;
     border-top: 2px solid var(--green);
@@ -326,8 +536,9 @@ canvas {
 .controls {
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    padding: 14px;
+    justify-content: center;
+    gap: 22px;
+    padding: 20px;
     background: #000000;
     border: 2px solid var(--green);
     border-radius: 0;
@@ -339,10 +550,15 @@ canvas {
 .controls__hint {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 10px;
     font-size: 0.82rem;
-    padding-bottom: 12px;
+    padding-bottom: 18px;
     border-bottom: 2px solid var(--green);
+}
+
+.controls__hint--last {
+    padding-bottom: 0;
+    border-bottom: none;
 }
 
 .controls__hint-label {
@@ -363,48 +579,6 @@ kbd {
     font-family: var(--mono);
     font-size: 0.76rem;
     color: var(--green);
-}
-
-.controls__slider {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.controls__slider label {
-    font-size: 0.78rem;
-    color: var(--text-muted);
-    word-break: break-word;
-}
-
-.controls__slider input[type="range"] {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 100%;
-    height: 4px;
-    background: var(--text-muted);
-    border-radius: 0;
-    outline: none;
-}
-
-.controls__slider input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 16px;
-    height: 16px;
-    border-radius: 0;
-    background: var(--green);
-    border: 2px solid #000000;
-    cursor: pointer;
-}
-
-.controls__slider input[type="range"]::-moz-range-thumb {
-    width: 16px;
-    height: 16px;
-    border-radius: 0;
-    background: var(--green);
-    border: 2px solid #000000;
-    cursor: pointer;
 }
 
 /* ====================================================

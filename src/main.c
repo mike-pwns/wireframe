@@ -47,8 +47,7 @@ void initializeSceneData() {
     // Initialize wireframe (cube by default).
     
     model = wireframe();
-    // CUBE(&model);
-    SYNTHSCAPE(&model);
+    CUBE(&model);
 
     // Initialize camera.
     
@@ -80,17 +79,34 @@ void initializeSceneData() {
 //  ||----------------------------------------------------
 
 
-// Initialize all program variables.
-void initialize() {
-    output = renderedResult();
-    initializeSceneData();
-}
+
+//  ||====================================================
+//  || OUTPUT DATA ACCESS VIA POINTER ||||||||||||||||||||
+//  ||====================================================
+
 
 // Returns WASM pointer to JS so it can parse the data of the render.
 // Note: manual data parsing is super annoying/tedious, so AI did that.
 RenderedResult* getRenderResult() {
     return &output;
 }
+
+//  ||====================================================
+//  || INITIALIZE PROGRAM ||||||||||||||||||||||||||||||||
+//  ||====================================================
+
+
+// Initialize all program variables.
+void initialize() {
+    output = renderedResult();
+    initializeSceneData();
+}
+
+
+//  ||====================================================
+//  || RENDER ("TAKE A PICTURE") |||||||||||||||||||||||||
+//  ||====================================================
+
 
 // Calls the render func from JS.
 void renderScene() {
@@ -137,4 +153,74 @@ void transformCamera(float x, float y, float z, float radX, float radY, float ra
   world.camera.transformation.translation.y += tempTranslation.y;
   world.camera.transformation.translation.z += tempTranslation.z;
   
+}
+
+
+#define MODEL_CUBE       0
+#define MODEL_PYRAMID    1
+#define MODEL_SPHERE     2
+#define MODEL_OCTAHEDRON 3
+#define MODEL_TORUS      4
+#define MODEL_SYNTHSCAPE 5
+#define MODEL_PENGUIN    6
+
+// Switches model to the associated id provided.
+void switchModel(int modelId) {
+
+    clearWireframe(&model);
+
+    switch (modelId) {
+        case MODEL_CUBE:       CUBE(&model);       break;
+        case MODEL_PYRAMID:    PYRAMID(&model);    break;
+        case MODEL_SPHERE:     SPHERE(&model);     break;
+        case MODEL_OCTAHEDRON: OCTAHEDRON(&model); break;
+        case MODEL_TORUS:      TORUS(&model);      break;
+        case MODEL_SYNTHSCAPE: SYNTHSCAPE(&model); break;
+        case MODEL_PENGUIN:    PENGUIN(&model);    break;
+        default:               CUBE(&model);       break;
+    }
+
+    world.camera.transformation = transformation(vec3(0, 0, 0), vec3(0, 0, 0));
+
+}
+
+//  ||====================================================
+//  || CUSTOM MODEL BUILDER (JS API) |||||||||||||||||||||
+//  || 
+//  || Thin wrappers so the "make your own model" UI in JS
+//  || can add vertices/edges to the currently active model
+//  || one at a time. The JS side keeps its own list of
+//  || points/edges and always rebuilds from scratch (via
+//  || switchModel(MODEL_CUSTOM) + these calls), so there's
+//  || no need for index-aware removal here.
+//  ||====================================================
+ 
+//  ||====================================================
+//  || CUSTOM MODEL BUILDER (JS API) |||||||||||||||||||||
+//  || 
+//  || Thin wrappers so the "make your own model" UI in JS
+//  || can add vertices/edges to the currently active model
+//  || one at a time. The JS side keeps its own list of
+//  || points/edges and always rebuilds from scratch (via
+//  || switchModel(MODEL_CUSTOM) + these calls), so there's
+//  || no need for index-aware removal here.
+//  ||====================================================
+ 
+ 
+// Adds a vertex to the active model. Returns its index.
+int addCustomVertex(float x, float y, float z) {
+    return addVertex(&model, pt3(x, y, z));
+}
+ 
+// Connects two vertices (by index) in the active model.
+void connectCustomVertices(int startIndex, int endIndex) {
+    connectVertices(&model, startIndex, endIndex);
+}
+ 
+// Clears just the wireframe - no camera reset. switchModel() clears AND
+// resets the camera (used when you actually pick a new model from the
+// gallery); this is the lighter version used every time the builder UI
+// edits the custom model, so the camera stays put while you work.
+void clearCustomModel() {
+    clearWireframe(&model);
 }

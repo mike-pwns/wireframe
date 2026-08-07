@@ -32,6 +32,7 @@ const MODEL_OCTAHEDRON = 3;
 const MODEL_TORUS = 4;
 const MODEL_SYNTHSCAPE = 5;
 const MODEL_PENGUIN = 6;
+const MODEL_CUSTOM = 7;
 
 
 //  ||====================================================
@@ -64,12 +65,6 @@ const CANVAS_HEIGHT = 1024; // in px.
 let FPS = 60; // Framerate.
 let TRANSLATION_SPEED = 2; // world units/s (i think)
 let ROTATION_SPEED = 2 // rad/s (i think)
-
-// Auto-rotate speeds, set by the sliders in the UI.
-// NOTE: not wired to a C-side hook yet - this is just recording the
-// values for now, until theres a WASM export to spin the model itself.
-let AUTO_ROTATE_HORIZONTAL_SPEED = 0;
-let AUTO_ROTATE_VERTICAL_SPEED = 0;
 
 // Client-side visual zoom (CSS scale on the canvas). Not the same as
 // a real FOV/viewport-distance zoom on the C side - just an easy win
@@ -325,9 +320,16 @@ function initialize_data() {
 //  ||====================================================
 
 
-// Calls into the C switchModel(int) export, then updates the active
-// gallery card to match.
+// Calls into the C switchModel(int) export (full clear + camera reset),
+// then updates the active gallery card to match. Picking CUSTOM this way
+// always starts a fresh, empty build - it resets the camera and wipes
+// the builder's local point/edge state too.
 function switchModel(modelId, buttonEl) {
+
+    if (modelId === MODEL_CUSTOM) {
+        customPoints = [];
+        customEdges = [];
+    }
 
     Module._switchModel(modelId);
 
@@ -337,6 +339,12 @@ function switchModel(modelId, buttonEl) {
 
     if (buttonEl) {
         buttonEl.classList.add("is-active");
+    }
+
+    if (modelId === MODEL_CUSTOM) {
+        renderPointList();
+        renderEdgeOptions();
+        renderEdgeList();
     }
 
 }
@@ -456,37 +464,6 @@ function initialize_fullscreen() {
 }
 
 
-//  ||====================================================
-//  ||
-//  || ROTATION SPEED SLIDERS ||||||||||||||||||||||||||||
-//  || 
-//  ||====================================================
-
-
-function initialize_sliders() {
-
-    const hSlider = document.getElementById("rotHorizontal");
-    const vSlider = document.getElementById("rotVertical");
-    const hValueEl = document.getElementById("rotHorizontalValue");
-    const vValueEl = document.getElementById("rotVerticalValue");
-
-    if (hSlider) {
-        hSlider.addEventListener("input", () => {
-            AUTO_ROTATE_HORIZONTAL_SPEED = parseFloat(hSlider.value);
-            if (hValueEl) hValueEl.textContent = AUTO_ROTATE_HORIZONTAL_SPEED.toFixed(2);
-        });
-    }
-
-    if (vSlider) {
-        vSlider.addEventListener("input", () => {
-            AUTO_ROTATE_VERTICAL_SPEED = parseFloat(vSlider.value);
-            if (vValueEl) vValueEl.textContent = AUTO_ROTATE_VERTICAL_SPEED.toFixed(2);
-        });
-    }
-
-}
-
-
 function updateCamera(dt) {
     
     // note2self: adding means itll cancel
@@ -571,6 +548,245 @@ function simulationLoop() {
 
     // 
     setTimeout(simulationLoop, (1/FPS)*1000);
+}
+
+
+//  ||====================================================
+//  ||
+//  || CUSTOM MODEL BUILDER ||||||||||||||||||||||||||||||
+//  || 
+//  || Lets the user build their own wireframe from the UI:
+//  || a list of points (editable x/y/z + delete) and an
+//  || edge manager (connect two vertices / remove an edge).
+//  || 
+//  || State lives here in JS. Any time it changes we just
+//  || rebuild the whole C-side model from scratch - simpler
+//  || and safer than trying to keep indices in sync on both
+//  || sides.
+//  || 
+//  ||====================================================
+
+
+let customPoints = []; // [{ x, y, z }, ...]
+let customEdges = [];  // [{ a, b }, ...] -- indices into customPoints
+
+// Re-fills the C-side model from customPoints/customEdges WITHOUT
+// touching the camera - this is what every add/delete/edit in the
+// builder UI calls, so the camera stays exactly where you left it.
+// (Only clicking the CUSTOM gallery card itself resets the camera - see
+// switchModel() above.)
+function rebuildCustomModel() {
+
+    Module._clearCustomModel(); // wireframe only, camera untouched
+
+    for (let i = 0; i < customPoints.length; i++) {
+        const p = customPoints[i];
+        Module._addCustomVertex(p.x, p.y, p.z);
+    }
+
+    for (let i = 0; i < customEdges.length; i++) {
+        const e = customEdges[i];
+        Module._connectCustomVertices(e.a, e.b);
+    }
+
+    // reflect that we're now looking at the custom build in the gallery.
+    document.querySelectorAll(".gallery__item").forEach((btn) => {
+        btn.classList.remove("is-active");
+    });
+    const customBtn = document.querySelector('.gallery__item[data-model-id="7"]');
+    if (customBtn) customBtn.classList.add("is-active");
+
+}
+
+// Reads the "new point" form and adds a point with those coordinates -
+// coordinates are set BEFORE the point is created, rather than adding a
+// blank point and editing it after the fact.
+function addCustomPoint() {
+
+    const xInput = document.getElementById("newPointX");
+    const yInput = document.getElementById("newPointY");
+    const zInput = document.getElementById("newPointZ");
+
+    const x = parseFloat(xInput.value) || 0;
+    const y = parseFloat(yInput.value) || 0;
+    const z = parseFloat(zInput.value) || 0;
+
+    customPoints.push({ x, y, z });
+    rebuildCustomModel();
+    renderPointList();
+    renderEdgeOptions();
+
+    // reset the form back to the default "next point" values.
+    xInput.value = 0;
+    yInput.value = 0;
+    zInput.value = 3;
+
+}
+
+function deleteCustomPoint(index) {
+
+    customPoints.splice(index, 1);
+
+    // any edge touching the removed point goes with it; edges pointing
+    // past it shift down by one, mirroring how rmVertex re-indexes edges
+    // on the C side.
+    customEdges = customEdges
+        .filter((e) => e.a !== index && e.b !== index)
+        .map((e) => ({
+            a: e.a > index ? e.a - 1 : e.a,
+            b: e.b > index ? e.b - 1 : e.b
+        }));
+
+    rebuildCustomModel();
+    renderPointList();
+    renderEdgeOptions();
+    renderEdgeList();
+
+}
+
+function updateCustomPointCoord(index, axis, value) {
+    customPoints[index][axis] = parseFloat(value) || 0;
+    rebuildCustomModel();
+}
+
+function addCustomEdge(startIndex, endIndex) {
+
+    if (isNaN(startIndex) || isNaN(endIndex) || startIndex === endIndex) {
+        return;
+    }
+
+    const alreadyExists = customEdges.some(
+        (e) => (e.a === startIndex && e.b === endIndex) || (e.a === endIndex && e.b === startIndex)
+    );
+    if (alreadyExists) return;
+
+    customEdges.push({ a: startIndex, b: endIndex });
+    rebuildCustomModel();
+    renderEdgeList();
+
+}
+
+function deleteCustomEdge(index) {
+    customEdges.splice(index, 1);
+    rebuildCustomModel();
+    renderEdgeList();
+}
+
+// Redraws the point rows (coordinate inputs + delete icon).
+function renderPointList() {
+
+    const list = document.getElementById("pointList");
+    list.innerHTML = "";
+
+    if (customPoints.length === 0) {
+        list.innerHTML = `<p class="builder__empty">no points yet - add one to start.</p>`;
+        return;
+    }
+
+    customPoints.forEach((p, i) => {
+
+        const row = document.createElement("div");
+        row.className = "builder__row";
+
+        row.innerHTML = `
+            <span class="builder__row-label">P${i}</span>
+            <input type="number" class="builder__coord" step="0.1" value="${p.x}" data-axis="x" aria-label="P${i} x coordinate">
+            <input type="number" class="builder__coord" step="0.1" value="${p.y}" data-axis="y" aria-label="P${i} y coordinate">
+            <input type="number" class="builder__coord" step="0.1" value="${p.z}" data-axis="z" aria-label="P${i} z coordinate">
+            <button class="builder__delete" aria-label="Delete P${i}">&times;</button>
+        `;
+
+        row.querySelectorAll(".builder__coord").forEach((input) => {
+            input.addEventListener("change", (event) => {
+                updateCustomPointCoord(i, event.target.dataset.axis, event.target.value);
+            });
+        });
+
+        row.querySelector(".builder__delete").addEventListener("click", () => {
+            deleteCustomPoint(i);
+        });
+
+        list.appendChild(row);
+
+    });
+
+}
+
+// Redraws the start/end vertex dropdowns used to connect an edge.
+function renderEdgeOptions() {
+
+    const startSelect = document.getElementById("edgeStartSelect");
+    const endSelect = document.getElementById("edgeEndSelect");
+
+    [startSelect, endSelect].forEach((select) => {
+        select.innerHTML = "";
+        customPoints.forEach((p, i) => {
+            const opt = document.createElement("option");
+            opt.value = i;
+            opt.textContent = `P${i}`;
+            select.appendChild(opt);
+        });
+    });
+
+    // default the end select to the second point, if there is one.
+    if (endSelect.options.length > 1) {
+        endSelect.selectedIndex = 1;
+    }
+
+}
+
+// Redraws the edge rows (P_a -> P_b + delete icon).
+function renderEdgeList() {
+
+    const list = document.getElementById("edgeList");
+    list.innerHTML = "";
+
+    if (customEdges.length === 0) {
+        list.innerHTML = `<p class="builder__empty">no edges yet.</p>`;
+        return;
+    }
+
+    customEdges.forEach((e, i) => {
+
+        const row = document.createElement("div");
+        row.className = "builder__row";
+
+        row.innerHTML = `
+            <span class="builder__row-label">P${e.a} &rarr; P${e.b}</span>
+            <button class="builder__delete" aria-label="Delete edge P${e.a} to P${e.b}">&times;</button>
+        `;
+
+        row.querySelector(".builder__delete").addEventListener("click", () => {
+            deleteCustomEdge(i);
+        });
+
+        list.appendChild(row);
+
+    });
+
+}
+
+function initialize_builder() {
+
+    const addPointBtn = document.getElementById("addPointBtn");
+    const connectBtn = document.getElementById("connectBtn");
+
+    if (addPointBtn) {
+        addPointBtn.addEventListener("click", addCustomPoint);
+    }
+
+    if (connectBtn) {
+        connectBtn.addEventListener("click", () => {
+            const startIndex = parseInt(document.getElementById("edgeStartSelect").value, 10);
+            const endIndex = parseInt(document.getElementById("edgeEndSelect").value, 10);
+            addCustomEdge(startIndex, endIndex);
+        });
+    }
+
+    renderPointList();
+    renderEdgeOptions();
+    renderEdgeList();
+
 }
 
 
@@ -672,7 +888,7 @@ function main() {
   initialize_gallery();
   initialize_zoom();
   initialize_fullscreen();
-  initialize_sliders();
+  initialize_builder();
 
   // starting simulation loop
   lastTime = performance.now();

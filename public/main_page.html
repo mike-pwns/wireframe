@@ -112,9 +112,71 @@
                         <span class="gallery__caption">PENGUIN</span>
                     </button>
 
+                    <button class="gallery__item gallery__item--big" data-model-id="7" data-model-name="CUSTOM">
+                        <svg class="gallery__icon" viewBox="0 0 48 48" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <line x1="10" y1="34" x2="24" y2="12" />
+                            <line x1="24" y1="12" x2="38" y2="30" />
+                            <line x1="10" y1="34" x2="38" y2="30" />
+                            <circle cx="10" cy="34" r="2.5" fill="currentColor" stroke="none" />
+                            <circle cx="24" cy="12" r="2.5" fill="currentColor" stroke="none" />
+                            <circle cx="38" cy="30" r="2.5" fill="currentColor" stroke="none" />
+                        </svg>
+                        <span class="gallery__caption">CUSTOM</span>
+                    </button>
+
                 </div>
 
             </nav>
+
+            <div class="rule"></div>
+
+            <section class="builder" aria-label="Custom model builder">
+
+                <p class="gallery__label">// make your own model</p>
+
+                <div class="builder__panel">
+
+                    <div class="builder__section">
+
+                        <div class="builder__section-head">
+                            <span class="builder__section-title">points</span>
+                        </div>
+
+                        <div class="builder__new-point">
+                            <input type="number" class="builder__coord" id="newPointX" step="0.1" value="0"
+                                aria-label="New point x coordinate" placeholder="x">
+                            <input type="number" class="builder__coord" id="newPointY" step="0.1" value="0"
+                                aria-label="New point y coordinate" placeholder="y">
+                            <input type="number" class="builder__coord" id="newPointZ" step="0.1" value="3"
+                                aria-label="New point z coordinate" placeholder="z">
+                            <button class="builder__add-btn" id="addPointBtn">add</button>
+                        </div>
+
+                        <div class="builder__list" id="pointList"></div>
+
+                    </div>
+
+                    <div class="builder__section">
+
+                        <div class="builder__section-head">
+                            <span class="builder__section-title">edges</span>
+                        </div>
+
+                        <div class="builder__edge-form">
+                            <select class="builder__select" id="edgeStartSelect" aria-label="Start vertex"></select>
+                            <span class="builder__edge-arrow">&rarr;</span>
+                            <select class="builder__select" id="edgeEndSelect" aria-label="End vertex"></select>
+                            <button class="builder__add-btn" id="connectBtn">connect</button>
+                        </div>
+
+                        <div class="builder__list" id="edgeList"></div>
+
+                    </div>
+
+                </div>
+
+            </section>
 
         </section>
 
@@ -146,23 +208,21 @@
                     <span class="controls__hint-label">// movement</span>
                     <span class="controls__hint-keys">
                         <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> fly
-                        <br>
-                        <kbd>&uarr;</kbd><kbd>&darr;</kbd><kbd>&larr;</kbd><kbd>&rarr;</kbd> look
-                        <br>
-                        <kbd>SPACE</kbd> / <kbd>SHIFT</kbd> up / down
                     </span>
                 </div>
 
-                <div class="controls__slider">
-                    <label for="rotHorizontal">horizontal_rotation_speed = <span id="rotHorizontalValue">0.00</span>
-                        rad/s</label>
-                    <input type="range" id="rotHorizontal" min="0" max="5" step="0.01" value="0">
+                <div class="controls__hint">
+                    <span class="controls__hint-label">// look</span>
+                    <span class="controls__hint-keys">
+                        <kbd>&uarr;</kbd><kbd>&darr;</kbd><kbd>&larr;</kbd><kbd>&rarr;</kbd> aim
+                    </span>
                 </div>
 
-                <div class="controls__slider">
-                    <label for="rotVertical">vertical_rotation_speed = <span id="rotVerticalValue">0.00</span>
-                        rad/s</label>
-                    <input type="range" id="rotVertical" min="0" max="5" step="0.01" value="0">
+                <div class="controls__hint controls__hint--last">
+                    <span class="controls__hint-label">// vertical</span>
+                    <span class="controls__hint-keys">
+                        <kbd>SPACE</kbd> up &nbsp; <kbd>SHIFT</kbd> down
+                    </span>
                 </div>
 
             </div>
