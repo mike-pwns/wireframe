@@ -177,7 +177,7 @@ void switchModel(int modelId) {
         case MODEL_TORUS:      TORUS(&model);      break;
         case MODEL_SYNTHSCAPE: SYNTHSCAPE(&model); break;
         case MODEL_PENGUIN:    PENGUIN(&model);    break;
-        default:               CUBE(&model);       break;
+        default:               break;
     }
 
     world.camera.transformation = transformation(vec3(0, 0, 0), vec3(0, 0, 0));

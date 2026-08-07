@@ -619,7 +619,7 @@ function addCustomPoint() {
     // reset the form back to the default "next point" values.
     xInput.value = 0;
     yInput.value = 0;
-    zInput.value = 3;
+    zInput.value = 0;
 
 }
 
