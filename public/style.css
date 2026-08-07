@@ -1,0 +1,437 @@
+/* ====================================================
+   FONT
+   ==================================================== */
+
+@font-face {
+    font-family: 'VCR OSD Mono';
+    src: url('vcr.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* ====================================================
+   TOKENS
+   ==================================================== */
+
+:root {
+    --bg-page: #000000;
+    --bg-panel: #0a0a0a;
+    --bg-inset: #000000;
+
+    --green: #20C20E;
+    --border: #20C20E;
+
+    --text: #20C20E;
+    --text-muted: #0e7d05;
+
+    --mono: 'VCR OSD Mono', ui-monospace, 'SF Mono', Consolas, monospace;
+}
+
+/* ====================================================
+   RESET / BASE - locked to viewport, no page scroll
+   ==================================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    background: var(--bg-page);
+    color: var(--text);
+    font-family: var(--mono);
+    letter-spacing: 0.02em;
+}
+
+a {
+    color: inherit;
+}
+
+button {
+    font-family: inherit;
+    cursor: pointer;
+}
+
+:focus-visible {
+    outline: 2px solid var(--green);
+    outline-offset: 2px;
+}
+
+/* ====================================================
+   LAYOUT: info column ~2/3, simulation column ~1/3
+   fixed to viewport height - nothing scrolls or grows
+   ==================================================== */
+
+.app {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+@media (max-width: 900px) {
+    .app {
+        grid-template-columns: 1fr;
+        height: auto;
+        overflow: auto;
+    }
+
+    html, body {
+        overflow: auto;
+    }
+}
+
+/* ====================================================
+   INFO COLUMN
+   ==================================================== */
+
+.info {
+    padding: 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    min-width: 0;
+    overflow-y: auto;
+}
+
+@media (max-width: 900px) {
+    .info {
+        padding: 28px 20px;
+        order: 2;
+    }
+}
+
+/* --- brand / wordmark --- */
+
+.brand__title {
+    margin: 0 0 12px;
+    font-size: clamp(3rem, 6.5vw, 5.5rem);
+    font-weight: normal;
+    letter-spacing: 0.03em;
+    line-height: 0.9;
+    color: var(--green);
+}
+
+.brand__byline {
+    margin: 0 0 8px;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+}
+
+.brand__link {
+    display: inline-block;
+    font-size: 0.95rem;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    color: var(--green);
+}
+
+/* --- divider --- */
+
+.rule {
+    height: 2px;
+    background: var(--green);
+}
+
+/* --- gallery: 1 big square + 3x2 small squares --- */
+
+.gallery__label {
+    margin: 0 0 14px;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+}
+
+.gallery__grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas:
+        "cube a b c"
+        "cube d e f";
+    gap: 12px;
+    aspect-ratio: 2.5 / 1;
+}
+
+.gallery__item:nth-of-type(1) { grid-area: cube; }
+.gallery__item:nth-of-type(2) { grid-area: a; }
+.gallery__item:nth-of-type(3) { grid-area: b; }
+.gallery__item:nth-of-type(4) { grid-area: c; }
+.gallery__item:nth-of-type(5) { grid-area: d; }
+.gallery__item:nth-of-type(6) { grid-area: e; }
+.gallery__item:nth-of-type(7) { grid-area: f; }
+
+@media (max-width: 600px) {
+    .gallery__grid {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-areas: none;
+        aspect-ratio: auto;
+    }
+
+    .gallery__item:nth-of-type(n) {
+        grid-area: auto;
+    }
+
+    .gallery__item--big {
+        grid-column: span 2;
+        aspect-ratio: 2 / 1;
+    }
+}
+
+.gallery__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--bg-inset);
+    border: 2px solid var(--border);
+    border-radius: 0;
+    color: var(--text);
+    min-height: 0;
+    min-width: 0;
+}
+
+.gallery__item:hover {
+    background: #0a1f08;
+}
+
+.gallery__item.is-active {
+    background: var(--green);
+    border-color: var(--green);
+    color: #000000;
+}
+
+.gallery__icon {
+    width: 34%;
+    height: auto;
+    max-height: 40%;
+    flex-shrink: 1;
+}
+
+.gallery__item--big .gallery__icon {
+    max-height: 34%;
+}
+
+.gallery__caption {
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+}
+
+.gallery__item--big .gallery__caption {
+    font-size: 1.1rem;
+}
+
+/* ====================================================
+   SIMULATION COLUMN
+   top half: viewport / bottom half: controls
+   ==================================================== */
+
+.simulation {
+    background: var(--bg-panel);
+    border-left: 2px solid var(--green);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+@media (max-width: 900px) {
+    .simulation {
+        border-left: none;
+        border-top: 2px solid var(--green);
+        order: 1;
+        height: auto;
+        overflow: visible;
+    }
+}
+
+/* --- top half: the viewport itself --- */
+
+.viewport__frame {
+    position: relative;
+    background: #000000;
+    border: 2px solid var(--green);
+    border-radius: 0;
+    padding: 0;
+    width: 100%;
+}
+
+canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    background: #000;
+    image-rendering: pixelated;
+    transform-origin: center center;
+}
+
+.viewport__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px;
+    border-top: 2px solid var(--green);
+    background: #000000;
+}
+
+.viewport__btn {
+    background: #000000;
+    border: 2px solid var(--green);
+    border-radius: 0;
+    color: var(--green);
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    padding: 4px 8px;
+}
+
+.viewport__btn:hover {
+    background: var(--green);
+    color: #000000;
+}
+
+.viewport__btn--icon {
+    width: 28px;
+    padding: 4px 0;
+    text-align: center;
+    font-size: 1rem;
+}
+
+.viewport__zoom {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.viewport__zoom-label {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    margin-right: 4px;
+}
+
+/* --- bottom half: controls --- */
+
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 14px;
+    background: #000000;
+    border: 2px solid var(--green);
+    border-radius: 0;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.controls__hint {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0.82rem;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--green);
+}
+
+.controls__hint-label {
+    color: var(--text-muted);
+}
+
+.controls__hint-keys {
+    color: var(--text);
+    line-height: 1.9;
+}
+
+kbd {
+    display: inline-block;
+    padding: 2px 6px;
+    background: #000000;
+    border: 2px solid var(--green);
+    border-radius: 0;
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    color: var(--green);
+}
+
+.controls__slider {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.controls__slider label {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    word-break: break-word;
+}
+
+.controls__slider input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    background: var(--text-muted);
+    border-radius: 0;
+    outline: none;
+}
+
+.controls__slider input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 0;
+    background: var(--green);
+    border: 2px solid #000000;
+    cursor: pointer;
+}
+
+.controls__slider input[type="range"]::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 0;
+    background: var(--green);
+    border: 2px solid #000000;
+    cursor: pointer;
+}
+
+/* ====================================================
+   FULLSCREEN OVERLAY
+   ==================================================== */
+
+.fullscreen-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: #000000;
+    align-items: center;
+    justify-content: center;
+}
+
+.fullscreen-overlay.is-active {
+    display: flex;
+}
+
+.fullscreen-overlay .viewport__frame {
+    width: min(90vw, 90vh);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+        animation: none !important;
+    }
+}

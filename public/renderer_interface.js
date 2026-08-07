@@ -19,6 +19,22 @@ const Y = 1;
 
 
 //  ||====================================================
+//  || MODEL IDS |||||||||||||||||||||||||||||||||||||||||
+//  ||====================================================
+
+// Keep these in sync with the MODEL_* #defines in main.c - same
+// order, same numbers, or a button will switch to the wrong shape.
+
+const MODEL_CUBE = 0;
+const MODEL_PYRAMID = 1;
+const MODEL_SPHERE = 2;
+const MODEL_OCTAHEDRON = 3;
+const MODEL_TORUS = 4;
+const MODEL_SYNTHSCAPE = 5;
+const MODEL_PENGUIN = 6;
+
+
+//  ||====================================================
 //  || CUSTOMIZATIONS ||||||||||||||||||||||||||||||||||||
 //  ||====================================================
 
@@ -49,6 +65,26 @@ let FPS = 60; // Framerate.
 let TRANSLATION_SPEED = 2; // world units/s (i think)
 let ROTATION_SPEED = 2 // rad/s (i think)
 
+// Auto-rotate speeds, set by the sliders in the UI.
+// NOTE: not wired to a C-side hook yet - this is just recording the
+// values for now, until theres a WASM export to spin the model itself.
+let AUTO_ROTATE_HORIZONTAL_SPEED = 0;
+let AUTO_ROTATE_VERTICAL_SPEED = 0;
+
+// Client-side visual zoom (CSS scale on the canvas). Not the same as
+// a real FOV/viewport-distance zoom on the C side - just an easy win
+// for now until that gets wired up.
+let ZOOM = 1.0;
+const ZOOM_MIN = 0.5;
+const ZOOM_MAX = 2.5;
+const ZOOM_STEP = 0.1;
+
+// Fullscreen state - tracks where the viewport frame came from so it
+// can be moved back on exit.
+let isFullscreen = false;
+let fullscreenOriginalParent = null;
+let fullscreenOriginalNextSibling = null;
+
 
 //  ||====================================================
 //  || CONTROL CONSTANTS |||||||||||||||||||||||||||||||||
@@ -65,6 +101,13 @@ const UP = 6; const DOWN = 7; const LEFT = 8; const RIGHT = 9;
 let KEYS_PRESSED = [false, false, false, false, // W A S D 
                     false, false,               // SHIFT SPACE
                     false, false, false, false] // UP DOWN LEFT RIGHT
+
+// Every key that controls the camera - used to intercept these specific
+// keys so the browser doesn't also scroll the page with them.
+const CAPTURED_KEYS = new Set([
+    "w", "a", "s", "d", "shift", " ",
+    "arrowup", "arrowdown", "arrowleft", "arrowright"
+]);
 
 
 //  ||====================================================
@@ -275,7 +318,173 @@ function initialize_data() {
 }
 
 
+//  ||====================================================
+//  ||
+//  || MODEL SWITCHING |||||||||||||||||||||||||||||||||||
+//  || 
+//  ||====================================================
 
+
+// Calls into the C switchModel(int) export, then updates the active
+// gallery card to match.
+function switchModel(modelId, buttonEl) {
+
+    Module._switchModel(modelId);
+
+    document.querySelectorAll(".gallery__item").forEach((btn) => {
+        btn.classList.remove("is-active");
+    });
+
+    if (buttonEl) {
+        buttonEl.classList.add("is-active");
+    }
+
+}
+
+// Wires up every button in the gallery grid to call switchModel
+// with whatever model id is on its data attributes.
+function initialize_gallery() {
+
+    const buttons = document.querySelectorAll(".gallery__item");
+
+    buttons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const modelId = parseInt(btn.dataset.modelId, 10);
+            switchModel(modelId, btn);
+        });
+    });
+
+}
+
+
+//  ||====================================================
+//  ||
+//  || ZOOM (VISUAL, CSS-SIDE) |||||||||||||||||||||||||||
+//  || 
+//  ||====================================================
+
+
+function setZoom(newZoom) {
+
+    ZOOM = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, newZoom));
+
+    CANVAS.style.transform = `scale(${ZOOM})`;
+
+    const zoomValueEl = document.getElementById("zoomValue");
+    if (zoomValueEl) {
+        zoomValueEl.textContent = ZOOM.toFixed(2);
+    }
+
+}
+
+function initialize_zoom() {
+
+    const zoomInBtn = document.getElementById("zoomIn");
+    const zoomOutBtn = document.getElementById("zoomOut");
+
+    if (zoomInBtn) {
+        zoomInBtn.addEventListener("click", () => setZoom(ZOOM + ZOOM_STEP));
+    }
+
+    if (zoomOutBtn) {
+        zoomOutBtn.addEventListener("click", () => setZoom(ZOOM - ZOOM_STEP));
+    }
+
+    setZoom(1.0);
+
+}
+
+
+//  ||====================================================
+//  ||
+//  || FULLSCREEN ||||||||||||||||||||||||||||||||||||||||
+//  || 
+//  ||====================================================
+
+// Moves the actual viewport__frame node (canvas included) into the
+// overlay and back - this is a real DOM move, not a clone, so the
+// canvas's 2D context and everything currently rendered stays intact.
+
+function toggleFullscreen() {
+
+    const frame = document.getElementById("viewportFrame");
+    const overlay = document.getElementById("fullscreenOverlay");
+    const toggleBtn = document.getElementById("fullscreenToggle");
+
+    if (!isFullscreen) {
+
+        fullscreenOriginalParent = frame.parentElement;
+        fullscreenOriginalNextSibling = frame.nextElementSibling;
+
+        overlay.appendChild(frame);
+        overlay.classList.add("is-active");
+
+        if (toggleBtn) toggleBtn.textContent = "[ exit ]";
+        isFullscreen = true;
+
+    } else {
+
+        if (fullscreenOriginalNextSibling) {
+            fullscreenOriginalParent.insertBefore(frame, fullscreenOriginalNextSibling);
+        } else {
+            fullscreenOriginalParent.appendChild(frame);
+        }
+
+        overlay.classList.remove("is-active");
+
+        if (toggleBtn) toggleBtn.textContent = "[ fullscreen ]";
+        isFullscreen = false;
+
+    }
+
+}
+
+function initialize_fullscreen() {
+
+    const toggleBtn = document.getElementById("fullscreenToggle");
+    if (toggleBtn) {
+        toggleBtn.addEventListener("click", toggleFullscreen);
+    }
+
+    // escape exits fullscreen too
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && isFullscreen) {
+            toggleFullscreen();
+        }
+    });
+
+}
+
+
+//  ||====================================================
+//  ||
+//  || ROTATION SPEED SLIDERS ||||||||||||||||||||||||||||
+//  || 
+//  ||====================================================
+
+
+function initialize_sliders() {
+
+    const hSlider = document.getElementById("rotHorizontal");
+    const vSlider = document.getElementById("rotVertical");
+    const hValueEl = document.getElementById("rotHorizontalValue");
+    const vValueEl = document.getElementById("rotVerticalValue");
+
+    if (hSlider) {
+        hSlider.addEventListener("input", () => {
+            AUTO_ROTATE_HORIZONTAL_SPEED = parseFloat(hSlider.value);
+            if (hValueEl) hValueEl.textContent = AUTO_ROTATE_HORIZONTAL_SPEED.toFixed(2);
+        });
+    }
+
+    if (vSlider) {
+        vSlider.addEventListener("input", () => {
+            AUTO_ROTATE_VERTICAL_SPEED = parseFloat(vSlider.value);
+            if (vValueEl) vValueEl.textContent = AUTO_ROTATE_VERTICAL_SPEED.toFixed(2);
+        });
+    }
+
+}
 
 
 function updateCamera(dt) {
@@ -366,8 +575,15 @@ function simulationLoop() {
 
 
 function initialize_key_listeners() {
-  
+
   document.addEventListener("keydown", (event) => {
+
+    // stop WASD/arrows/space from scrolling the page or doing
+    // anything else the browser normally does with them.
+    if (CAPTURED_KEYS.has(event.key.toLowerCase())) {
+        event.preventDefault();
+    }
+
     switch(event.key.toLowerCase()) {
       case 'w': 
         KEYS_PRESSED[W] = true;
@@ -453,6 +669,10 @@ function main() {
 	initialize_canvas();
   initialize_data();
   initialize_key_listeners();
+  initialize_gallery();
+  initialize_zoom();
+  initialize_fullscreen();
+  initialize_sliders();
 
   // starting simulation loop
   lastTime = performance.now();
