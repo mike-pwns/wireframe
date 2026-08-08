@@ -115,11 +115,11 @@ void renderScene() {
 
 // Applies transformations to cam based on keyboard inputs on JS.
 void transformCamera(float x, float y, float z, float radX, float radY, float radZ) { 
-
-
+ 
+ 
   // APPLY ROTATION.
-
-
+ 
+ 
   // Clamp pitch to [-PI/2, PI/2].
   if ((world.camera.transformation.rotation.x + radX) >= (PI/2)) {
       world.camera.transformation.rotation.x = PI/2;
@@ -130,27 +130,29 @@ void transformCamera(float x, float y, float z, float radX, float radY, float ra
   else {
     world.camera.transformation.rotation.x += radX;
   }
-
+ 
   // Apply YAW (rotation around the Y axis).
   world.camera.transformation.rotation.y += radY;
-
+ 
   // Apply Roll (rotation around the Z axis).
   // NOT USED FOR THIS PROJECT. (Only included for mathematical formality).
   world.camera.transformation.rotation.z += radZ;
-
-
+ 
+ 
   // APPLY TRANSLATION
-
-
-  // gets movement to follow cam orientation
-  Vec3 tempTranslation = vec3(x, y, z);
+ 
+ 
+  // Only x/z (WASD) follow the camera's orientation - y (SPACE/SHIFT)
+  // is left out of the rotation on purpose, so vertical movement stays
+  // strictly world-up/down instead of tilting with pitch/yaw.
+  Vec3 tempTranslation = vec3(x, 0, z);
   rotateVec3(&tempTranslation,
              world.camera.transformation.rotation.x, 
              world.camera.transformation.rotation.y, 
              world.camera.transformation.rotation.z);
-
+ 
   world.camera.transformation.translation.x += tempTranslation.x;
-  world.camera.transformation.translation.y += tempTranslation.y;
+  world.camera.transformation.translation.y += y; // strictly vertical, unrotated
   world.camera.transformation.translation.z += tempTranslation.z;
   
 }
@@ -224,3 +226,12 @@ void connectCustomVertices(int startIndex, int endIndex) {
 void clearCustomModel() {
     clearWireframe(&model);
 }
+
+// Returns a pointer to the camera's LIVE transformation, so JS can
+// read the real state instead of tracking its own pseudo-copy of the
+// deltas it sends in. Memory layout (6 contiguous floats):
+// [ tx, ty, tz, rx (pitch), ry (yaw), rz (roll) ]
+Transformation* getCameraTransform() {
+    return &world.camera.transformation;
+}
+ 

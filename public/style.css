@@ -616,6 +616,49 @@ canvas {
     right: 10px;
 }
 
+/* --- middle strip: camera readout ---
+   flex-grow eats exactly whatever room is left between the viewport
+   and controls, so the gap above the viewport and the gap below the
+   controls stay equal no matter the screen height - no magic number
+   needed. */
+
+.readout {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex: 1 1 auto;
+    min-height: 32px;
+    gap: 12px;
+    padding: 0 16px;
+    background: #000000;
+    border: 2px solid var(--green);
+    border-radius: 0;
+    width: min(100%, 46vh);
+    align-self: center;
+    overflow: hidden;
+}
+
+.readout__group {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+    flex-wrap: wrap;
+}
+
+.readout__label {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+}
+
+.readout__value {
+    font-size: 0.78rem;
+    color: var(--green);
+    text-shadow: 0 0 6px rgba(32, 194, 14, 0.45);
+    white-space: nowrap;
+}
+
 /* --- bottom half: controls --- */
 
 .controls {

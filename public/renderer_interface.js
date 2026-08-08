@@ -106,6 +106,58 @@ let lastTime; // Used in simulation loop for calculating delta time.
 
 
 //  ||====================================================
+//  || CAMERA READOUT STATE ||||||||||||||||||||||||||||||
+//  ||====================================================
+
+// Camera readout now reads the REAL transformation straight from C
+// each frame (via Module._getCameraTransform) instead of accumulating
+// a pseudo-copy of the deltas sent to Module._transformCamera. This
+// stays correct even when C does something JS doesn't know about,
+// like clamping pitch or resetting the transform on switchModel().
+
+const READOUT_POS_X = document.getElementById("readoutPosX");
+const READOUT_POS_Y = document.getElementById("readoutPosY");
+const READOUT_POS_Z = document.getElementById("readoutPosZ");
+const READOUT_PITCH = document.getElementById("readoutPitch");
+const READOUT_YAW = document.getElementById("readoutYaw");
+
+// Reads the camera's real transformation straight from C.
+// Layout matches the Transformation struct: 6 contiguous floats
+// [ tx, ty, tz, rx (pitch), ry (yaw), rz (roll) ].
+function getCameraTransform() {
+
+    const ptr = Module._getCameraTransform();
+    const base = ptr >> 2; // HEAPF32 index (4 bytes per float)
+
+    return {
+        x: Module.HEAPF32[base],
+        y: Module.HEAPF32[base + 1],
+        z: Module.HEAPF32[base + 2],
+        pitch: Module.HEAPF32[base + 3],
+        yaw: Module.HEAPF32[base + 4],
+        roll: Module.HEAPF32[base + 5]
+    };
+
+}
+
+function updateCameraReadout() {
+
+    const cam = getCameraTransform();
+
+    if (READOUT_POS_X) READOUT_POS_X.textContent = `X ${cam.x.toFixed(1)}`;
+    if (READOUT_POS_Y) READOUT_POS_Y.textContent = `Y ${cam.y.toFixed(1)}`;
+    if (READOUT_POS_Z) READOUT_POS_Z.textContent = `Z ${cam.z.toFixed(1)}`;
+
+    const pitchDeg = Math.round(cam.pitch * (180 / Math.PI));
+    const yawDeg = Math.round(cam.yaw * (180 / Math.PI));
+
+    if (READOUT_PITCH) READOUT_PITCH.textContent = `PITCH ${pitchDeg}\u00B0`;
+    if (READOUT_YAW) READOUT_YAW.textContent = `YAW ${yawDeg}\u00B0`;
+
+}
+
+
+//  ||====================================================
 //  ||
 //  || FUNCTIONS |||||||||||||||||||||||||||||||||||||||||
 //  || 
@@ -476,14 +528,14 @@ function updateCamera(dt) {
     // roll here but we "forget about it"
     let roll = 0;
 
-    Module._transformCamera(
-        x * TRANSLATION_SPEED * dt,
-        y * TRANSLATION_SPEED * dt,
-        z * TRANSLATION_SPEED * dt,
-        pitch * ROTATION_SPEED * dt,
-        yaw * ROTATION_SPEED * dt,
-        roll * ROTATION_SPEED * dt
-    );
+    const dx = x * TRANSLATION_SPEED * dt;
+    const dy = y * TRANSLATION_SPEED * dt;
+    const dz = z * TRANSLATION_SPEED * dt;
+    const dPitch = pitch * ROTATION_SPEED * dt;
+    const dYaw = yaw * ROTATION_SPEED * dt;
+    const dRoll = roll * ROTATION_SPEED * dt;
+
+    Module._transformCamera(dx, dy, dz, dPitch, dYaw, dRoll);
 
 }
 
@@ -504,6 +556,9 @@ function simulationLoop() {
     // draw (by reading then drawing)
     // TODO separate getRender and draw
     draw();
+
+    // keep the camera readout strip current
+    updateCameraReadout();
 
     // 
     setTimeout(simulationLoop, (1/FPS)*1000);
