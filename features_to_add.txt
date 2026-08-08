@@ -21,17 +21,3 @@ show camera data; where it is and which way its pointing
 
 SAVE + IMPORT/EXPORT models
 just be able to import models and parse them.
-
-can you please help me this frontend?
-
-
-
-i dont like how the custom selector takes the whole bottom section, 
-
-im thinking it takes up the same space on the cube on the left, then the whole right side has a compact menu for managing points and edges
-
-
-
-think you can help?
-
-please just edit the files, no need to rewrite everything
