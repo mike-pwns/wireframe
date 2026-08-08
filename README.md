@@ -50,48 +50,83 @@ stick to `src/` and `include/`.
   
 ## Running the program  
   
-**note: why not just head on over to [link] and see for yourself?**  
+**note: why not just head on over to [the deployed page](https://mike-pwns.github.io/wireframe/) and see for yourself?**  
   
-if you REALLY wanna compile it on your own and play around, follow these steps:  
-  
-1. make sure you got the dependencies straight.  
-  
+ok ok!! if you REALLY wanna compile it on your own and play around, follow these steps:  
+
+### 1. clone this repo and go into it  
+```
+git clone https://github.com/mike-pwns/wireframe.git
+cd wireframe/ 
+```
+
+### 2. make sure you got the dependencies straight
+
 this project uses 2 main dependencies, everything else is written from scratch in C.  
+
+**EMSCRIPTEN** (compiler based on clang for compiling wasm and js files): 
+download instructions pulled from [emscripten docs](https://emscripten.org/docs/getting_started/downloads.html)
+
+```
+# Get the emsdk repo
+git clone https://github.com/emscripten-core/emsdk.git
+
+# Enter that directory
+cd emsdk
+
+# Fetch the latest version of the emsdk (not needed the first time you clone)
+git pull
+
+# Download and install the latest SDK tools.
+./emsdk install latest
+
+# Make the "latest" SDK "active" for the current user. (writes .emscripten file)
+./emsdk activate latest
+
+# Activate PATH and other environment variables in the current terminal
+source ./emsdk_env.sh
+```
+
+**PYTHON 3** (this is probably already installed, but you can check to be safe with `python3 --version`)  
+```
+# using apt
+sudo apt update
+sudo apt install -y python3
+```
+
+### 3. compile the files  
+make sure you're in the `wireframe/` directory, not the emscripten one (if you just set it up) - to go back just go `cd ..`
+
+now we gotta compile the files!
+
+its kinda messy but just cp it and you'll be good.
+
+```
+emcc src/main.c src/linlib.c src/renderlib.c \
+  -Iinclude \
+  -o public/renderer.js \
+  -s EXPORTED_FUNCTIONS='["_initialize","_renderScene","_getRenderResult","_transformCamera","_switchModel","_addCustomVertex","_connectCustomVertices","_clearCustomModel","_getCameraTransform"]' \
+  -s EXPORTED_RUNTIME_METHODS='["HEAP32","HEAPF32"]'
+```
+
+this should produce an `obj` and `build` directory - those can generally be ignored!
   
-Emscripten  
-'''  
-i forget how to install the sdk  
-then source ./thing to sdk  
-'''  
-  
-Python3 (this is probably already installed, just to be safe)  
-'''  
-install python3  
-i think thats it  
-'''  
-  
-2. clone this repo.  
-'''  
-git clone (whatever the heck this link is gonna be)  
-'''  
-  
-3. go into directory, compile the files  
-'''  
-cd wireframe  
-(put final command here)  
-'''  
-  
-4. go into the public directory, and start http server  
-'''  
-cd public  
+### 4. go into the public directory, and start http server  
+```
+cd public/
+
+# by default this opens the server on port 8000
 python3 -m http.server  
-'''  
-  
-5. head on over to localhost:8000/main_page on any browser and youre golden.  
+```
+
+### 5. head on over to `localhost:8000/index.html` (or whatever port you used) on any browser (preferably chromium-based) and youre golden.  
+
+just note that if you wanna make changes and play around with the C, you gotta recompile with the command from #3 each time, but no need to restart server
   
 ## Screenshots / Demo  
-  
-[fill in]  
+
+// ill put screeny here later
+
   
 ## Credits  
   
