@@ -1,43 +1,39 @@
+<!--
+████████████████████████████████████████████████████████████████████████████████████████
+███  THE FINAL VERSION OF THIS FILE WAS ALMOST ENTIRELY WRITTEN BY AI (CLAUDE; ~95%) ███
+████████████████████████████████████████████████████████████████████████████████████████
+-->
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wireframe Renderer</title>
-
+    <title>wireframe</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/jpeg" href="logo.jpeg">
 </head>
 
 <body>
-
     <div class="app">
-
-        <!-- ============================================ -->
-        <!-- INFO COLUMN (~2/3 width)                      -->
-        <!-- ============================================ -->
-
         <section class="info">
-
             <header class="brand">
                 <h1 class="brand__title">WIREFRAME</h1>
-
                 <p class="brand__byline">a curiousity project for learning the basics of 3d rendering from first
                     principles (linear algebra)</p>
-                <a class="brand__link" href="#" target="_blank" rel="noopener noreferrer">
-                    &gt; check out the github with the logic of how i made this!
+                <a class="brand__link" href="https://github.com/mike-pwns/wireframe" target="_">
+                    &gt; check out the github with the logic of how i made this! (with help from ai for this radical
+                    ui)
                 </a>
-
             </header>
 
             <div class="rule"></div>
 
             <nav class="gallery" aria-label="Model selector">
-
                 <p class="gallery__label">// select a model</p>
 
                 <div class="gallery__grid" id="gallery">
-
                     <button class="gallery__item gallery__item--big is-active" data-model-id="0" data-model-name="CUBE">
                         <svg class="gallery__icon" viewBox="0 0 48 48" fill="none" stroke="currentColor"
                             stroke-width="2">
@@ -129,7 +125,6 @@
                     </button>
 
                     <div class="gallery__panel" id="customPanel" aria-label="Custom model builder">
-
                         <div class="gallery__panel-locked" id="panelLocked" aria-hidden="true">
                             <span class="gallery__panel-locked-text">[ select
                                 <span class="gallery__panel-locked-accent">custom_model</span>
@@ -137,12 +132,10 @@
                         </div>
 
                         <div class="gallery__panel-content" id="panelContent">
-
                             <div class="gallery__panel-col">
                                 <div class="builder__section-head">
                                     <span class="builder__section-title">points</span>
                                 </div>
-
                                 <div class="builder__new-point">
                                     <input type="number" class="builder__coord" id="newPointX" step="0.1" value="0"
                                         aria-label="New point x coordinate" placeholder="x">
@@ -152,7 +145,6 @@
                                         aria-label="New point z coordinate" placeholder="z">
                                     <button class="builder__add-btn" id="addPointBtn">add</button>
                                 </div>
-
                                 <div class="builder__list" id="pointList"></div>
                             </div>
 
@@ -160,7 +152,6 @@
                                 <div class="builder__section-head">
                                     <span class="builder__section-title">edges</span>
                                 </div>
-
                                 <div class="builder__edge-form">
                                     <select class="builder__select" id="edgeStartSelect"
                                         aria-label="Start vertex"></select>
@@ -168,39 +159,22 @@
                                     <select class="builder__select" id="edgeEndSelect" aria-label="End vertex"></select>
                                     <button class="builder__add-btn" id="connectBtn">connect</button>
                                 </div>
-
                                 <div class="builder__list" id="edgeList"></div>
                             </div>
-
                         </div>
-
                     </div>
-
                 </div>
-
             </nav>
-
         </section>
 
-        <!-- ============================================ -->
-        <!-- SIMULATION COLUMN (~1/3 width)                -->
-        <!-- top half: viewport. bottom half: controls     -->
-        <!-- ============================================ -->
-
         <section class="simulation">
-
             <div class="viewport__frame" id="viewportFrame">
-
                 <canvas id="canvas" width="1024" height="1024"></canvas>
-
                 <button id="fullscreenToggle" class="viewport__btn viewport__btn--fullscreen">[ fullscreen ]</button>
-
             </div>
 
             <div class="readout" id="cameraReadout" aria-label="Camera position and rotation readout">
-
                 <p class="readout__title">// camera orientation</p>
-
                 <div class="readout__body">
                     <span class="readout__group">
                         <span class="readout__label">POS</span>
@@ -218,11 +192,9 @@
                         </span>
                     </span>
                 </div>
-
             </div>
 
             <div class="controls">
-
                 <p class="controls__title">// controls</p>
 
                 <div class="controls__section">
@@ -282,17 +254,11 @@
                         <span class="controls__row-label">down</span>
                     </div>
                 </div>
-
             </div>
-
         </section>
-
     </div>
 
-    <!-- fullscreen overlay target - viewport frame gets moved in by JS,
-         the guide below is static and just rides along with .is-active -->
     <div class="fullscreen-overlay" id="fullscreenOverlay">
-
         <div class="fullscreen-guide">
             <div class="fullscreen-guide__row">
                 <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>
@@ -311,12 +277,10 @@
                 <span class="fullscreen-guide__label">down</span>
             </div>
         </div>
-
     </div>
 
     <script src="renderer.js"></script>
     <script src="renderer_interface.js"></script>
-
 </body>
 
 </html>

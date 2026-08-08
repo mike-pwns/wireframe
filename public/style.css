@@ -1,6 +1,8 @@
-/* ====================================================
-   FONT
-   ==================================================== */
+/*
+█████████████████████████████████████████████████████████████████████████████████
+███  THE FINAL VERSION OF THIS FILE WAS WRITTEN ENTIRELY BY AI (CLAUDE); 100% ███
+█████████████████████████████████████████████████████████████████████████████████
+*/
 
 @font-face {
     font-family: 'VCR OSD Mono';
@@ -9,31 +11,18 @@
     font-style: normal;
 }
 
-/* ====================================================
-   TOKENS
-   ==================================================== */
-
 :root {
     --bg-page: #000000;
     --bg-panel: #0a0a0a;
     --bg-inset: #000000;
-
     --green: #20C20E;
     --border: #20C20E;
-
     --text: #20C20E;
     --text-muted: #0e7d05;
-
     --mono: 'VCR OSD Mono', ui-monospace, 'SF Mono', Consolas, monospace;
 }
 
-/* ====================================================
-   RESET / BASE - locked to viewport, no page scroll
-   ==================================================== */
-
-* {
-    box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 html, body {
     margin: 0;
@@ -49,25 +38,11 @@ body {
     letter-spacing: 0.02em;
 }
 
-a {
-    color: inherit;
-}
+a { color: inherit; }
+button { font-family: inherit; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
 
-button {
-    font-family: inherit;
-    cursor: pointer;
-}
-
-:focus-visible {
-    outline: 2px solid var(--green);
-    outline-offset: 2px;
-}
-
-/* ====================================================
-   LAYOUT: info column ~2/3, simulation column ~1/3
-   fixed to viewport height - nothing scrolls or grows
-   ==================================================== */
-
+/* [AI] LAYOUT */
 .app {
     display: grid;
     grid-template-columns: 7fr 3fr;
@@ -77,21 +52,11 @@ button {
 }
 
 @media (max-width: 900px) {
-    .app {
-        grid-template-columns: 1fr;
-        height: auto;
-        overflow: auto;
-    }
-
-    html, body {
-        overflow: auto;
-    }
+    .app { grid-template-columns: 1fr; height: auto; overflow: auto; }
+    html, body { overflow: auto; }
 }
 
-/* ====================================================
-   INFO COLUMN
-   ==================================================== */
-
+/* [AI] INFO COLUMN */
 .info {
     padding: 32px 40px;
     display: flex;
@@ -104,19 +69,10 @@ button {
 }
 
 @media (max-width: 900px) {
-    .info {
-        padding: 28px 20px;
-        order: 2;
-        height: auto;
-        overflow: visible;
-    }
+    .info { padding: 28px 20px; order: 2; height: auto; overflow: visible; }
 }
 
-/* --- brand / wordmark --- */
-
-.brand {
-    flex: 0 0 auto;
-}
+.brand { flex: 0 0 auto; }
 
 .brand__title {
     margin: 0 0 6px;
@@ -127,11 +83,7 @@ button {
     color: var(--green);
 }
 
-.brand__byline {
-    margin: 0 0 4px;
-    font-size: 0.85rem;
-    color: var(--text-muted);
-}
+.brand__byline { margin: 0 0 4px; font-size: 0.85rem; color: var(--text-muted); }
 
 .brand__link {
     display: inline-block;
@@ -141,16 +93,9 @@ button {
     color: var(--green);
 }
 
-/* --- divider --- */
+.rule { flex: 0 0 auto; height: 2px; background: var(--green); }
 
-.rule {
-    flex: 0 0 auto;
-    height: 2px;
-    background: var(--green);
-}
-
-/* --- gallery: 1 big square + 3x2 small squares + custom row --- */
-
+/* [AI] GALLERY */
 .gallery {
     flex: 1 1 auto;
     display: flex;
@@ -159,11 +104,7 @@ button {
     min-height: 0;
 }
 
-.gallery__label {
-    margin: 0 0 10px;
-    font-size: 0.85rem;
-    color: var(--text-muted);
-}
+.gallery__label { margin: 0 0 10px; font-size: 0.85rem; color: var(--text-muted); }
 
 .gallery__grid {
     display: grid;
@@ -187,51 +128,23 @@ button {
 .gallery__item:nth-of-type(7) { grid-area: f; }
 .gallery__item:nth-of-type(8) { grid-area: custom; margin-top: 14px; }
 
-/* small squares keep a 1:1 shape - the grid rows then size themselves
-   off that, instead of needing a fixed-height container. */
 .gallery__item:nth-of-type(2),
 .gallery__item:nth-of-type(3),
 .gallery__item:nth-of-type(4),
 .gallery__item:nth-of-type(5),
 .gallery__item:nth-of-type(6),
-.gallery__item:nth-of-type(7) {
-    aspect-ratio: 1 / 1;
-}
+.gallery__item:nth-of-type(7) { aspect-ratio: 1 / 1; }
 
-/* the bottom row (TORUS, SYNTHSCAPE, PENGUIN) would otherwise center
-   vertically in its grid row - pin it to the bottom so it lines up
-   with the CUBE button's bottom edge */
 .gallery__item:nth-of-type(5),
 .gallery__item:nth-of-type(6),
-.gallery__item:nth-of-type(7) {
-    align-self: end;
-}
+.gallery__item:nth-of-type(7) { align-self: end; }
 
 @media (max-width: 600px) {
-    .gallery__grid {
-        grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: none;
-        grid-template-areas: none;
-    }
-
-    .gallery__item:nth-of-type(n) {
-        grid-area: auto;
-    }
-
-    .gallery__item {
-        aspect-ratio: 1 / 1;
-    }
-
-    .gallery__item--big {
-        grid-column: span 2;
-        aspect-ratio: 2 / 1;
-        flex-direction: column;
-    }
-
-    .gallery__panel {
-        grid-column: span 2;
-        flex-direction: column;
-    }
+    .gallery__grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: none; grid-template-areas: none; }
+    .gallery__item:nth-of-type(n) { grid-area: auto; }
+    .gallery__item { aspect-ratio: 1 / 1; }
+    .gallery__item--big { grid-column: span 2; aspect-ratio: 2 / 1; flex-direction: column; }
+    .gallery__panel { grid-column: span 2; flex-direction: column; }
 }
 
 .gallery__item {
@@ -248,17 +161,13 @@ button {
     min-width: 0;
 }
 
-.gallery__item:hover {
-    background: #0a1f08;
-}
+.gallery__item:hover { background: #0a1f08; }
 
 .gallery__item.is-active {
     background: var(--green);
     border-color: var(--green);
     color: #000000;
 }
-
-/* --- compact points/edges panel, sits beside the CUSTOM tile --- */
 
 .gallery__panel {
     grid-area: panel;
@@ -282,9 +191,7 @@ button {
     padding: 10px;
 }
 
-.gallery__panel.is-unlocked .gallery__panel-locked {
-    display: none;
-}
+.gallery__panel.is-unlocked .gallery__panel-locked { display: none; }
 
 .gallery__panel-locked-text {
     font-size: 0.76rem;
@@ -312,9 +219,7 @@ button {
     min-height: 0;
 }
 
-.gallery__panel.is-unlocked .gallery__panel-content {
-    display: flex;
-}
+.gallery__panel.is-unlocked .gallery__panel-content { display: flex; }
 
 .gallery__panel-col {
     display: flex;
@@ -325,95 +230,25 @@ button {
     gap: 6px;
 }
 
-.gallery__panel .builder__section-title {
-    font-size: 0.7rem;
-}
-
-.gallery__panel .builder__new-point {
-    gap: 4px;
-}
-
+.gallery__panel .builder__section-title { font-size: 0.7rem; }
+.gallery__panel .builder__new-point { gap: 4px; }
 .gallery__panel .builder__coord,
-.gallery__panel .builder__select {
-    font-size: 0.68rem;
-    padding: 3px 4px;
-}
+.gallery__panel .builder__select { font-size: 0.68rem; padding: 3px 4px; }
+.gallery__panel .builder__add-btn { font-size: 0.66rem; padding: 3px 6px; }
+.gallery__panel .builder__row { padding: 4px 6px; gap: 6px; }
+.gallery__panel .builder__list { flex: 1 1 auto; min-height: 0; }
+.gallery__panel .builder__delete { width: 20px; height: 20px; font-size: 0.85rem; }
 
-.gallery__panel .builder__add-btn {
-    font-size: 0.66rem;
-    padding: 3px 6px;
-}
+.gallery__icon { width: 34%; height: auto; max-height: 40%; flex-shrink: 1; }
+.gallery__item--big .gallery__icon { max-height: 34%; }
+.gallery__caption { font-size: 0.8rem; letter-spacing: 0.05em; }
+.gallery__item--big .gallery__caption { font-size: 1.1rem; }
 
-.gallery__panel .builder__row {
-    padding: 4px 6px;
-    gap: 6px;
-}
-
-.gallery__panel .builder__list {
-    flex: 1 1 auto;
-    min-height: 0;
-}
-
-.gallery__panel .builder__delete {
-    width: 20px;
-    height: 20px;
-    font-size: 0.85rem;
-}
-
-.gallery__icon {
-    width: 34%;
-    height: auto;
-    max-height: 40%;
-    flex-shrink: 1;
-}
-
-.gallery__item--big .gallery__icon {
-    max-height: 34%;
-}
-
-.gallery__caption {
-    font-size: 0.8rem;
-    letter-spacing: 0.05em;
-}
-
-.gallery__item--big .gallery__caption {
-    font-size: 1.1rem;
-}
-
-/* ====================================================
-   BUILDER (make your own model)
-   ==================================================== */
-
-.builder {
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 auto;
-    min-height: 0;
-    gap: 10px;
-}
-
-.builder__panel {
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 auto;
-    min-height: 0;
-    gap: 14px;
-}
-
-.builder__section {
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 0;
-    min-height: 0;
-    gap: 8px;
-}
-
-.builder__section-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-}
+/* [AI] BUILDER */
+.builder { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; gap: 10px; }
+.builder__panel { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; gap: 14px; }
+.builder__section { display: flex; flex-direction: column; flex: 1 1 0; min-height: 0; gap: 8px; }
+.builder__section-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 
 .builder__section-title {
     font-size: 0.82rem;
@@ -422,11 +257,7 @@ button {
     letter-spacing: 0.05em;
 }
 
-.builder__new-point {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr auto;
-    gap: 8px;
-}
+.builder__new-point { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 8px; }
 
 .builder__add-btn {
     background: #000000;
@@ -439,10 +270,7 @@ button {
     white-space: nowrap;
 }
 
-.builder__add-btn:hover {
-    background: var(--green);
-    color: #000000;
-}
+.builder__add-btn:hover { background: var(--green); color: #000000; }
 
 .builder__list {
     display: flex;
@@ -453,12 +281,7 @@ button {
     overflow-y: auto;
 }
 
-.builder__empty {
-    margin: 0;
-    padding: 10px 0;
-    font-size: 0.82rem;
-    color: var(--text-muted);
-}
+.builder__empty { margin: 0; padding: 10px 0; font-size: 0.82rem; color: var(--text-muted); }
 
 .builder__row {
     display: grid;
@@ -471,17 +294,8 @@ button {
     flex: 0 0 auto;
 }
 
-.builder__row-label {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    white-space: nowrap;
-}
-
-/* edge rows only have a label + delete button, so let the label span
-   the coordinate columns instead of leaving them empty */
-#edgeList .builder__row {
-    grid-template-columns: 1fr auto;
-}
+.builder__row-label { font-size: 0.8rem; color: var(--text-muted); white-space: nowrap; }
+#edgeList .builder__row { grid-template-columns: 1fr auto; }
 
 .builder__coord {
     width: 100%;
@@ -495,9 +309,7 @@ button {
     padding: 4px 6px;
 }
 
-.builder__coord:focus {
-    border-color: var(--green);
-}
+.builder__coord:focus { border-color: var(--green); }
 
 .builder__delete {
     display: flex;
@@ -514,17 +326,8 @@ button {
     padding: 0;
 }
 
-.builder__delete:hover {
-    background: var(--green);
-    border-color: var(--green);
-    color: #000000;
-}
-
-.builder__edge-form {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
+.builder__delete:hover { background: var(--green); border-color: var(--green); color: #000000; }
+.builder__edge-form { display: flex; align-items: center; gap: 8px; }
 
 .builder__select {
     flex: 1;
@@ -538,19 +341,10 @@ button {
     padding: 5px 6px;
 }
 
-.builder__select:focus {
-    border-color: var(--green);
-}
+.builder__select:focus { border-color: var(--green); }
+.builder__edge-arrow { color: var(--text-muted); }
 
-.builder__edge-arrow {
-    color: var(--text-muted);
-}
-
-/* ====================================================
-   SIMULATION COLUMN
-   top half: viewport / bottom half: controls
-   ==================================================== */
-
+/* [AI] SIMULATION COLUMN */
 .simulation {
     background: var(--bg-panel);
     border-left: 2px solid var(--green);
@@ -565,16 +359,8 @@ button {
 }
 
 @media (max-width: 900px) {
-    .simulation {
-        border-left: none;
-        border-top: 2px solid var(--green);
-        order: 1;
-        height: auto;
-        overflow: visible;
-    }
+    .simulation { border-left: none; border-top: 2px solid var(--green); order: 1; height: auto; overflow: visible; }
 }
-
-/* --- top half: the viewport itself --- */
 
 .viewport__frame {
     position: relative;
@@ -587,13 +373,7 @@ button {
     align-self: center;
 }
 
-canvas {
-    display: block;
-    width: 100%;
-    height: 100%;
-    background: #000;
-    image-rendering: pixelated;
-}
+canvas { display: block; width: 100%; height: 100%; background: #000; image-rendering: pixelated; }
 
 .viewport__btn {
     background: #000000;
@@ -605,22 +385,8 @@ canvas {
     padding: 4px 8px;
 }
 
-.viewport__btn:hover {
-    background: var(--green);
-    color: #000000;
-}
-
-.viewport__btn--fullscreen {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-}
-
-/* --- middle strip: camera readout ---
-   flex-grow eats exactly whatever room is left between the viewport
-   and controls, so the gap above the viewport and the gap below the
-   controls stay equal no matter the screen height - no magic number
-   needed. */
+.viewport__btn:hover { background: var(--green); color: #000000; }
+.viewport__btn--fullscreen { position: absolute; bottom: 10px; right: 10px; }
 
 .readout {
     display: flex;
@@ -636,12 +402,7 @@ canvas {
     align-self: center;
 }
 
-.readout__title {
-    flex: 0 0 auto;
-    margin: 0;
-    font-size: 0.78rem;
-    color: var(--text-muted);
-}
+.readout__title { flex: 0 0 auto; margin: 0; font-size: 0.78rem; color: var(--text-muted); }
 
 .readout__body {
     display: flex;
@@ -653,28 +414,9 @@ canvas {
     flex-wrap: wrap;
 }
 
-.readout__group {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    min-width: 0;
-}
-
-.readout__label {
-    font-size: 0.72rem;
-    color: var(--text-muted);
-    letter-spacing: 0.08em;
-}
-
-/* X/Y/Z (or PITCH/YAW) stack in a column under their POS/ROT label
-   instead of running inline - keeps each group compact so it wraps
-   as a single unit on narrow screens rather than getting clipped. */
-.readout__values {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2px;
-}
+.readout__group { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.readout__label { font-size: 0.72rem; color: var(--text-muted); letter-spacing: 0.08em; }
+.readout__values { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
 
 .readout__value {
     font-size: 0.78rem;
@@ -682,8 +424,6 @@ canvas {
     text-shadow: 0 0 6px rgba(32, 194, 14, 0.45);
     white-space: nowrap;
 }
-
-/* --- bottom half: controls --- */
 
 .controls {
     display: flex;
@@ -701,11 +441,7 @@ canvas {
     align-self: center;
 }
 
-.controls__title {
-    margin: 0 0 2px;
-    font-size: 0.78rem;
-    color: var(--text-muted);
-}
+.controls__title { margin: 0 0 2px; font-size: 0.78rem; color: var(--text-muted); }
 
 .controls__section {
     display: flex;
@@ -716,18 +452,8 @@ canvas {
     border-bottom: 2px solid var(--green);
 }
 
-.controls__section--last {
-    padding-bottom: 0;
-    border-bottom: none;
-}
-
-.controls__section-head {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex: 0 0 auto;
-    min-width: 66px;
-}
+.controls__section--last { padding-bottom: 0; border-bottom: none; }
+.controls__section-head { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; min-width: 66px; }
 
 .controls__icon {
     width: 18px;
@@ -744,30 +470,10 @@ canvas {
     letter-spacing: 0.06em;
 }
 
-.controls__keypad {
-    display: grid;
-    grid-template-columns: repeat(3, 24px);
-    grid-auto-rows: 24px;
-    gap: 3px;
-}
-
-.controls__key-slot {
-    width: 24px;
-    height: 24px;
-}
-
-.controls__row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.controls__row-label {
-    font-size: 0.78rem;
-    color: var(--text-muted);
-    margin-right: 6px;
-}
+.controls__keypad { display: grid; grid-template-columns: repeat(3, 24px); grid-auto-rows: 24px; gap: 3px; }
+.controls__key-slot { width: 24px; height: 24px; }
+.controls__row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.controls__row-label { font-size: 0.78rem; color: var(--text-muted); margin-right: 6px; }
 
 kbd,
 .controls__key {
@@ -785,24 +491,13 @@ kbd,
     box-shadow: 0 0 10px rgba(32, 194, 14, 0.12) inset;
 }
 
-.controls__key--wide {
-    grid-column: auto;
-    width: auto;
-    height: auto;
-    padding: 8px 16px;
-    letter-spacing: 0.05em;
-}
+.controls__key--wide { grid-column: auto; width: auto; height: auto; padding: 8px 16px; letter-spacing: 0.05em; }
 
 @media (max-width: 900px) {
-    .controls__section {
-        flex-wrap: wrap;
-    }
+    .controls__section { flex-wrap: wrap; }
 }
 
-/* ====================================================
-   FULLSCREEN OVERLAY
-   ==================================================== */
-
+/* [AI] FULLSCREEN OVERLAY */
 .fullscreen-overlay {
     display: none;
     position: fixed;
@@ -813,13 +508,8 @@ kbd,
     justify-content: center;
 }
 
-.fullscreen-overlay.is-active {
-    display: flex;
-}
-
-.fullscreen-overlay .viewport__frame {
-    width: min(96vw, 96vh);
-}
+.fullscreen-overlay.is-active { display: flex; }
+.fullscreen-overlay .viewport__frame { width: min(96vw, 96vh); }
 
 .fullscreen-guide {
     position: absolute;
@@ -834,11 +524,7 @@ kbd,
     border: 2px solid var(--green);
 }
 
-.fullscreen-guide__row {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
+.fullscreen-guide__row { display: flex; align-items: center; gap: 6px; }
 
 .fullscreen-guide__label {
     font-size: 0.78rem;
@@ -847,13 +533,8 @@ kbd,
     margin-right: 10px;
 }
 
-.fullscreen-guide__row kbd {
-    padding: 4px 8px;
-}
+.fullscreen-guide__row kbd { padding: 4px 8px; }
 
 @media (prefers-reduced-motion: reduce) {
-    * {
-        transition: none !important;
-        animation: none !important;
-    }
+    * { transition: none !important; animation: none !important; }
 }

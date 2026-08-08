@@ -142,17 +142,14 @@ void transformCamera(float x, float y, float z, float radX, float radY, float ra
   // APPLY TRANSLATION
  
  
-  // Only x/z (WASD) follow the camera's orientation - y (SPACE/SHIFT)
-  // is left out of the rotation on purpose, so vertical movement stays
-  // strictly world-up/down instead of tilting with pitch/yaw.
   Vec3 tempTranslation = vec3(x, 0, z);
   rotateVec3(&tempTranslation,
-             world.camera.transformation.rotation.x, 
-             world.camera.transformation.rotation.y, 
-             world.camera.transformation.rotation.z);
- 
+             0,                                          // ignore pitch
+             world.camera.transformation.rotation.y,     // yaw only
+             world.camera.transformation.rotation.z);    // roll (unused anyway)
+  
   world.camera.transformation.translation.x += tempTranslation.x;
-  world.camera.transformation.translation.y += y; // strictly vertical, unrotated
+  world.camera.transformation.translation.y += y;
   world.camera.transformation.translation.z += tempTranslation.z;
   
 }

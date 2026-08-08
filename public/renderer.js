@@ -1549,6 +1549,7 @@ var _transformCamera = Module['_transformCamera'] = makeInvalidEarlyAccess('_tra
 var _switchModel = Module['_switchModel'] = makeInvalidEarlyAccess('_switchModel');
 var _addCustomVertex = Module['_addCustomVertex'] = makeInvalidEarlyAccess('_addCustomVertex');
 var _connectCustomVertices = Module['_connectCustomVertices'] = makeInvalidEarlyAccess('_connectCustomVertices');
+var _clearCustomModel = Module['_clearCustomModel'] = makeInvalidEarlyAccess('_clearCustomModel');
 var _getCameraTransform = Module['_getCameraTransform'] = makeInvalidEarlyAccess('_getCameraTransform');
 var _fflush = makeInvalidEarlyAccess('_fflush');
 var _strerror = makeInvalidEarlyAccess('_strerror');
@@ -1571,6 +1572,7 @@ function assignWasmExports(wasmExports) {
   assert(typeof wasmExports['switchModel'] != 'undefined', 'missing Wasm export: switchModel');
   assert(typeof wasmExports['addCustomVertex'] != 'undefined', 'missing Wasm export: addCustomVertex');
   assert(typeof wasmExports['connectCustomVertices'] != 'undefined', 'missing Wasm export: connectCustomVertices');
+  assert(typeof wasmExports['clearCustomModel'] != 'undefined', 'missing Wasm export: clearCustomModel');
   assert(typeof wasmExports['getCameraTransform'] != 'undefined', 'missing Wasm export: getCameraTransform');
   assert(typeof wasmExports['fflush'] != 'undefined', 'missing Wasm export: fflush');
   assert(typeof wasmExports['strerror'] != 'undefined', 'missing Wasm export: strerror');
@@ -1590,6 +1592,7 @@ function assignWasmExports(wasmExports) {
   _switchModel = Module['_switchModel'] = createExportWrapper('switchModel', 1);
   _addCustomVertex = Module['_addCustomVertex'] = createExportWrapper('addCustomVertex', 3);
   _connectCustomVertices = Module['_connectCustomVertices'] = createExportWrapper('connectCustomVertices', 2);
+  _clearCustomModel = Module['_clearCustomModel'] = createExportWrapper('clearCustomModel', 0);
   _getCameraTransform = Module['_getCameraTransform'] = createExportWrapper('getCameraTransform', 0);
   _fflush = createExportWrapper('fflush', 1);
   _strerror = createExportWrapper('strerror', 1);

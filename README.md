@@ -1,6 +1,8 @@
 # WIREFRAME (SUMMER 2026)
 
-Pretty chill project for me to apply math i learned for graphics.
+Pretty chill project for me to apply some math i learned and understand computer graphics (only the basics).
+
+Note that this aint a triple A renderer, just bare bones for learning - it prolly has bugs that graphics developers fixed over half a century - i just derived some logic from intuition (and some inspiration, but not like "follow these steps and youll have your own working thing!" more like i looked at some photos in guides, not really reading anything, and was like "right thats why i was learning how to intersect planes and lines") and put this together.
 
 ## Running the program
 
