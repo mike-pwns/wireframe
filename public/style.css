@@ -624,32 +624,56 @@ canvas {
 
 .readout {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 6px;
     flex: 1 1 auto;
     min-height: 32px;
-    gap: 12px;
-    padding: 0 16px;
+    padding: 10px 16px;
     background: #000000;
     border: 2px solid var(--green);
     border-radius: 0;
     width: min(100%, 46vh);
     align-self: center;
-    overflow: hidden;
+}
+
+.readout__title {
+    flex: 0 0 auto;
+    margin: 0;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
+.readout__body {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    justify-content: space-between;
+    row-gap: 10px;
+    column-gap: 20px;
+    flex-wrap: wrap;
 }
 
 .readout__group {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 10px;
     min-width: 0;
-    flex-wrap: wrap;
 }
 
 .readout__label {
     font-size: 0.72rem;
     color: var(--text-muted);
     letter-spacing: 0.08em;
+}
+
+/* X/Y/Z (or PITCH/YAW) stack in a column under their POS/ROT label
+   instead of running inline - keeps each group compact so it wraps
+   as a single unit on narrow screens rather than getting clipped. */
+.readout__values {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
 }
 
 .readout__value {

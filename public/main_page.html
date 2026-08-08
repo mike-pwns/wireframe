@@ -21,10 +21,13 @@
 
             <header class="brand">
                 <h1 class="brand__title">WIREFRAME</h1>
-                <p class="brand__byline">a project made for fun and games.</p>
+
+                <p class="brand__byline">a curiousity project for learning the basics of 3d rendering from first
+                    principles (linear algebra)</p>
                 <a class="brand__link" href="#" target="_blank" rel="noopener noreferrer">
-                    &gt; check out the math and more info here
+                    &gt; check out the github with the logic of how i made this!
                 </a>
+
             </header>
 
             <div class="rule"></div>
@@ -195,17 +198,27 @@
             </div>
 
             <div class="readout" id="cameraReadout" aria-label="Camera position and rotation readout">
-                <span class="readout__group">
-                    <span class="readout__label">POS</span>
-                    <span class="readout__value" id="readoutPosX">X&nbsp;0.0</span>
-                    <span class="readout__value" id="readoutPosY">Y&nbsp;0.0</span>
-                    <span class="readout__value" id="readoutPosZ">Z&nbsp;0.0</span>
-                </span>
-                <span class="readout__group">
-                    <span class="readout__label">ROT</span>
-                    <span class="readout__value" id="readoutPitch">PITCH&nbsp;0&deg;</span>
-                    <span class="readout__value" id="readoutYaw">YAW&nbsp;0&deg;</span>
-                </span>
+
+                <p class="readout__title">// camera orientation</p>
+
+                <div class="readout__body">
+                    <span class="readout__group">
+                        <span class="readout__label">POS</span>
+                        <span class="readout__values">
+                            <span class="readout__value" id="readoutPosX">X&nbsp;0.0</span>
+                            <span class="readout__value" id="readoutPosY">Y&nbsp;0.0</span>
+                            <span class="readout__value" id="readoutPosZ">Z&nbsp;0.0</span>
+                        </span>
+                    </span>
+                    <span class="readout__group">
+                        <span class="readout__label">ROT</span>
+                        <span class="readout__values">
+                            <span class="readout__value" id="readoutPitch">PITCH&nbsp;0&deg;</span>
+                            <span class="readout__value" id="readoutYaw">YAW&nbsp;0&deg;</span>
+                        </span>
+                    </span>
+                </div>
+
             </div>
 
             <div class="controls">
