@@ -66,14 +66,6 @@ let FPS = 60; // Framerate.
 let TRANSLATION_SPEED = 2; // world units/s (i think)
 let ROTATION_SPEED = 2 // rad/s (i think)
 
-// Client-side visual zoom (CSS scale on the canvas). Not the same as
-// a real FOV/viewport-distance zoom on the C side - just an easy win
-// for now until that gets wired up.
-let ZOOM = 1.0;
-const ZOOM_MIN = 0.5;
-const ZOOM_MAX = 2.5;
-const ZOOM_STEP = 0.1;
-
 // Fullscreen state - tracks where the viewport frame came from so it
 // can be moved back on exit.
 let isFullscreen = false;
@@ -326,10 +318,12 @@ function initialize_data() {
 // the builder's local point/edge state too.
 function switchModel(modelId, buttonEl) {
 
-    if (modelId === MODEL_CUSTOM) {
-        customPoints = [];
-        customEdges = [];
-    }
+    // The custom build only exists while CUSTOM is the active model -
+    // switching to it starts fresh, and switching away clears it out
+    // too, so the panel is always a blank slate the next time CUSTOM
+    // is selected.
+    customPoints = [];
+    customEdges = [];
 
     Module._switchModel(modelId);
 
@@ -341,10 +335,13 @@ function switchModel(modelId, buttonEl) {
         buttonEl.classList.add("is-active");
     }
 
-    if (modelId === MODEL_CUSTOM) {
-        renderPointList();
-        renderEdgeOptions();
-        renderEdgeList();
+    renderPointList();
+    renderEdgeOptions();
+    renderEdgeList();
+
+    const panel = document.getElementById("customPanel");
+    if (panel) {
+        panel.classList.toggle("is-unlocked", modelId === MODEL_CUSTOM);
     }
 
 }
@@ -361,44 +358,6 @@ function initialize_gallery() {
             switchModel(modelId, btn);
         });
     });
-
-}
-
-
-//  ||====================================================
-//  ||
-//  || ZOOM (VISUAL, CSS-SIDE) |||||||||||||||||||||||||||
-//  || 
-//  ||====================================================
-
-
-function setZoom(newZoom) {
-
-    ZOOM = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, newZoom));
-
-    CANVAS.style.transform = `scale(${ZOOM})`;
-
-    const zoomValueEl = document.getElementById("zoomValue");
-    if (zoomValueEl) {
-        zoomValueEl.textContent = ZOOM.toFixed(2);
-    }
-
-}
-
-function initialize_zoom() {
-
-    const zoomInBtn = document.getElementById("zoomIn");
-    const zoomOutBtn = document.getElementById("zoomOut");
-
-    if (zoomInBtn) {
-        zoomInBtn.addEventListener("click", () => setZoom(ZOOM + ZOOM_STEP));
-    }
-
-    if (zoomOutBtn) {
-        zoomOutBtn.addEventListener("click", () => setZoom(ZOOM - ZOOM_STEP));
-    }
-
-    setZoom(1.0);
 
 }
 
@@ -886,7 +845,6 @@ function main() {
   initialize_data();
   initialize_key_listeners();
   initialize_gallery();
-  initialize_zoom();
   initialize_fullscreen();
   initialize_builder();
 
