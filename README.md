@@ -1,7 +1,11 @@
 # WIREFRAME (SUMMER 2026)  
   
 Pretty chill project for me to apply math i learned for graphics.  
-  
+
+note that this aint no triple A game studio renderer, just sticks and stones put together cuz i wanned to know how 3d stuff shows up on a 2d screen. soo... dont go thinking this is gonna be bug-free - I aint got 50 years of graphics programming experience to work out every intricate detail
+
+i kinda just looked at some pictures, fell asleep trying to read some "overly complicated" tutorials, and with my genius intuition came to whatever this project was (shoutout Ms. D for teaching line-plane intersection, that was the key to me coming up with the logic!!!) 
+
 ## What is this actually  
   
 Its a wireframe 3D renderer that runs in browser via WASM. under the hood theres a `Wireframe model`, `Camera cam`, and `Scene world` sitting in main.c doing the heavy lifting, and renderlib.c does all the projection/clipping math. frontend just pokes a `RenderedResult` pointer out of WASM memory (`getRenderResult()`) and draws whatever it finds onto a canvas. the pointer arithmetic is simple in theory, but because of nested structs i was too lazy to keep track of it all, hence that part was AI's problem not mine.  
@@ -96,7 +100,12 @@ python3 -m http.server
 ## What's next  
   
 stuff im (maybe) getting around to eventually, tracked in `features_to_add.txt`:  
-  
+
+most likely addition: 
+- an "info" tab where i write MY OWN tutorial / understanding of rendering logic in my own unique style (analogies, and genuinely just straightforward and ZERO overcomplicating cuz i know it sucks when its... yapadapadoo etc you get the gist). 
+- also just a document of my experience learning this with pretty pictures and whatnot
+
+other stuff that could be cool but im too lazy to implement at this moment:
 - rotation - spin the model around its center point  
 - axes toggle - see the x/y/z axes  
 - ui color options - not everything has to be hacker green  
