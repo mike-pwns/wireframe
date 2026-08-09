@@ -1,10 +1,12 @@
+**full disclosure:** the front end is basically 100% AI. im not a frontend guy; aint a react wizard (*yet*), aint gonna pretend to be one for *this* project. if youre here to actually look at code i wrote, stick to `src/` and `include/`. Enjoy!
+
 # WIREFRAME (SUMMER 2026)  
   
 Pretty chill project for me to apply math i learned for graphics.  
 
-note that this aint no triple A game studio renderer, just sticks and stones put together cuz i wanned to know how 3d stuff shows up on a 2d screen. soo... dont go thinking this is gonna be bug-free - I aint got 50 years of graphics programming experience to work out every intricate detail
+note that this aint no triple A game studio renderer, just sticks and stones put together cuz i wanned to know how 3d stuff shows up on a 2d screen. soo... dont go thinking this is gonna be bug-free - I aint got 50 years of graphics programming experience to work out every intricate bug. here for the general idea first, then later if i wanna do something bigger, i already have this base knowledge
 
-i kinda just looked at some pictures, fell asleep trying to read some "overly complicated" tutorials, and with my genius intuition came to whatever this project was (shoutout Ms. D for teaching line-plane intersection, that was the key to me coming up with the logic!!!) 
+i kinda just looked at some pictures, fell asleep trying to read some "overly complicated" tutorials, and with my genius intuition came to whatever this project was (shoutout vectors teacher (wont name drop for privacy sake) for teaching line-plane intersection, that was the key to me coming up with the logic!!!) 
 
 ## What is this actually  
   
@@ -19,34 +21,13 @@ ships with 7 built in models you can flip through in the gallery -
 6. SYNTHSCAPE (<-- my personal favorite), and
 7. PENGUIN.
 
-theres also a custom builder where you can place your own verts/edges  
-and it just nukes and rebuilds the whole C-side model from scratch every time  
-you touch it. meh, sure, but it works.  
-  
-**full disclosure:** the front end (html/css, ui chrome, buttons, all the "make  
-it look nice" stuff) is basically 100% AI. im not a frontend guy, wasnt gonna  
-pretend to be one for this. if youre here to actually look at code i wrote,  
-stick to `src/` and `include/`.  
-  
-## Inspiration  
-  
-[fill in]  
-  
-## Why C + WASM (and not just... three.js)  
-  
-[fill in]  
-  
-## How rendering actually works  
-  
-[fill in]
-  
-## Challenges / things that broke my brain  
-  
-[fill in]  
-  
-## What I'd do differently  
-  
-[fill in]  
+theres also a custom builder where you can place your own verts/edges.
+
+didnt make a save feature, it so just admire and if you really wanna save it, note the points and edges on paper or on a text file.
+
+## Screenshots / Demo  
+
+// ill put screeny here later
   
 ## Running the program  
   
@@ -122,16 +103,34 @@ python3 -m http.server
 ### 5. head on over to `localhost:8000/index.html` (or whatever port you used) on any browser (preferably chromium-based) and youre golden.  
 
 just note that if you wanna make changes and play around with the C, you gotta recompile with the command from #3 each time, but no need to restart server
-  
-## Screenshots / Demo  
 
-// ill put screeny here later
+## inspiration  
+  
+graphics as a whole have been pretty interesting to me for years, but when i did `vector_vr` i was much more intrigued by using virtual space to show things: concepts, ideas, etc. i was super hyped to start learning linear algebra in the vectors sub-course in my math class because it would enable me to understand the fundamentals of computers as we know em now (not ai, but screens); not just blocks in a room that interact with some physical medium rather than a digitized multi-purpose interface. 
 
+(kids excited about linear algebra aint something you hear everyday, right? - well, in reality skipped like 80% of those classes lmao, no diss vectors teacher (again, wont name drop for privacy sake), you're top 3 best math teachers i got - not #1, but please dont be discouraged, my top 3 are like way way way way way way higher than the rest, so its like "among the best" yknow? My skipping was plain senioritis, nothing personal; ay i made this though; I applied linear algebra!)
+
+anyways, i really liked the aesthetic too - hacker green, numbers flyin everywhere; *abstracting space itself*, i mean that just sounds cool, no? Also, a question i got while making this a few times was **why c and wasm instead of just using js for the whole thing?** which did make me think and remember getting some experience in C itself was an inspiration for this project. The main factors with that were:
+
+1. js makes no sense and is quite frankly pretty stupid!!!!!!! (translation: im too lazy to get an ide that catches syntax of js and its super inconsistent and it is also just plain doesnt say what is wrong!! Like gee whiz i dont wanna use ai for everything but js doesnt make it easy!!!! "oh but just use typescript" - good point, but i aint on that stack yet, maybe another time)
+
+2. i attended some systems programming lectures in the spring. i found the concepts super cool, and was inspired to learn a bit and work on something even more bare bones; to have a have a full "build it yourself" experience rather than just use already hella abstracted libraries (btw shoutout prof - if youre reading this i didnt do pointer arithmetic in this proj cuz my ai agent really wanted to do it, but i promise i understand the idea). Also i heard c is faster and is used with wasm for higher performance on web apps/games, so just some cool tech to be familiar with.
   
-## Credits  
+## challenges 
   
-[fill in]  
+// fill in 
   
+## what id do differently (and change for future projects)  
+  
+// fill in
+  
+## Credits / Sources
+
+- AI - chatgpt (early on for confirming my understanding), claude (for ui)
+- some websites, i genuinely forget what they are, but they were cool tutorials, ill put them here if i find them
+- people (theres a lot of people, for privacy sake i wont just name drop) - for advice on dynamic array implementation, some sources for research, linear algebra knowledge, and encouragement/positive words
+- [3Blue1Brown](https://www.youtube.com/@3blue1brown) - for extended linear algebra research
+
 ## What's next  
   
 stuff im (maybe) getting around to eventually, tracked in `features_to_add.txt`:  
