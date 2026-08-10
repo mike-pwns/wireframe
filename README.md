@@ -25,7 +25,7 @@ didnt make a save feature, it so just admire and if you really wanna save it, no
 
 ## screenshots 
 
-// main screen + fullscreen with custom model of quadratic (22 verts)
+// main screen + fullscreen with custom model of a "quadratic" (22 verts)
 
 <img width="1920" height="953" alt="Screenshot_2026-08-10_07-54-40" src="https://github.com/user-attachments/assets/4d641848-c891-47e7-a728-63ec5a34906b" />
 <img width="1920" height="953" alt="Screenshot_2026-08-10_07-54-29" src="https://github.com/user-attachments/assets/4596e046-7321-48dd-9f13-d14da102e23e" />
@@ -101,7 +101,7 @@ cd public/
 python3 -m http.server  
 ```
 
-### 5. head on over to `localhost:8000/index.html` (or whatever port you used) on any browser (preferably chromium-based) and youre golden.  
+### 5. head on over to `localhost:8000/index.html` (or whatever port you used) on any browser and youre golden.  
 
 just note that if you wanna make changes and play around with the C, you gotta recompile with the command from #3 each time, but theres no need to restart this server
 
@@ -116,13 +116,41 @@ anyways, i really liked the aesthetic too - hacker green, numbers flyin everywhe
 2. i attended some systems programming lectures in the spring. i found the concepts super cool, and was inspired to learn a bit and work on something even more bare bones; to have a have a full "build it yourself" experience rather than just use already hella abstracted libraries (btw shoutout prof - if youre reading this i didnt do pointer arithmetic in this proj cuz my ai agent really wanted to do it, but i promise i understand the idea). Also i heard c is faster and is used with wasm for higher performance on web apps/games, so just some cool tech to be familiar with.
   
 ## challenges 
+
+honestly i wanted to start this project back in april, back when i was a jit and still had no idea anything past what a vector was - my biggest mistake was making this (3d rendering) out to be some monster, i was stressed this would be some "omagah this is gonna be so hard!!". It was, and it wasnt.
+
+you know the saying "you gotta learn the thing twice to understand it"? for OOP i had to learn it like 4 times over half a year to actually get it. similar case here: though here i was going for more of an intuition-based influence on the programming logic rather than someone telling me "this is how we do it so youre gonna do it like this too", so the challenge was in deriving the idea from scratch rather than just reading and doing - which made the challenge more interesting. 
+
+i kid you not this picture was the only thing i needed to see to get the idea; this is what caused everything to click
+<img width="1180" height="632" alt="Screenshot_2026-07-23_12-52-05" src="https://github.com/user-attachments/assets/449377a0-0ee5-4d47-82f0-78c677eeb2d1" />
+
+in april i came up with some version of orthographic projection that genuinely might as well be from hell, and frankly looking back i can only laugh at myself then - but then again, i tried and i made it here. frankly, i dont know any of the formal terms (i think what im doing is called rasterization with perspective projection, even after all this im still uncertain - thats the extent to how self-derived this stuff was)
+
+so my success was mainly just seeing different pieces over time until everything linked. i read some journals / guides on computer graphics (id link them but i cant find them), but a lot of them were talking about some bs for 3 entries or overcomplicated the math (i say that, having done the math), generally a lot of them didnt get to the point i was looking for. maybe ill write my own "no bs guide"
+
+after i finally got the logic down, implementing was super ez - C wasnt that different from java syntax-wise - yeah had to get used to structs and the lack of convenient features i took for granted, but not too bad. the extra math i didnt know was easy enough to figure out, so not much of a challenge there. ui and ai was hella annoying - ai tried to argue with me at one point, get that? 
+
+the smaller details like camera movement, transformations (reverse order, etc) were all just extra learning moments which i used resources to learn how to fix (since at that point i got the big idea and was cool on leaning on other people's solutions to the problems muwahahaha). 
+
+Whatever, it was a fun experience nonetheless. 8/10 would recommend
   
-// fill in 
-  
-## what id do differently (and change for future projects)  
-  
-// fill in
-  
+## what id do differently (project-planning wise for future projects)  
+
+i dont think learning can be "rushed" for something like this - prior to this final product, i made
+1. "wasm_test" --> just to learn how wasm is compiled and how to call c methods from js
+<img width="1920" height="953" alt="Screenshot_2026-08-10_08-48-07" src="https://github.com/user-attachments/assets/e745d026-3180-462d-8b78-c9dc12d40d04" />
+
+2. "clockz" --> get better with C, write basic vector math library (+ learn rotation), and understand the canvas apis
+<img width="1920" height="953" alt="Screenshot_2026-08-10_08-49-43" src="https://github.com/user-attachments/assets/be716c5c-536e-450a-a454-0cb85f4a7560" />
+
+this is the same procedure i have for other learning projects: break up into components and do individual mini projects. that way i have some experience with the chisels before i work on the good marble yknow? Time was a bit of a pain though.. focused effort is certainly a better idea i suppose
+
+it took like 3 months of ruminating directionlessly on this topic (1.5 if you consider me being capable of this only after i learned planes and lines) before anything came about - it wasnt focused per se - more so that this was just something i wanted to do. Only after i had the "how" could i chase doing the "what".
+
+for future projects, if there is something to learn - maybe not for curiousity sake, but because its an assignment and i need to submit it - there should be focus; ie consistent effort put into understanding the concepts(rather than what i was doing, just sitting around until the idea came to me). 
+
+so the immediate actionable steps for the next project is to **commit daily to the *learning* process (not necessarily to the final project in mind) regardless of how much you know**
+
 ## Credits / Sources
 
 - AI - chatgpt (early on for confirming my understanding), claude (for ui)
