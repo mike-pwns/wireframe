@@ -140,7 +140,7 @@ i dont think learning can be "rushed" for something like this - prior to this fi
 1. "wasm_test" --> just to learn how wasm is compiled and how to call c methods from js
 <img width="1920" height="953" alt="Screenshot_2026-08-10_08-48-07" src="https://github.com/user-attachments/assets/e745d026-3180-462d-8b78-c9dc12d40d04" />
 
-2. "clockz" --> get better with C, write basic vector math library (+ learn rotation), and understand the canvas apis
+2. "clockz" --> get better with C, write basic vector math library (+ learn rotation), and understand the canvas apis (also learned lerping!!)
 <img width="1920" height="953" alt="Screenshot_2026-08-10_08-49-43" src="https://github.com/user-attachments/assets/be716c5c-536e-450a-a454-0cb85f4a7560" />
 
 this is the same procedure i have for other learning projects: break up into components and do individual mini projects. that way i have some experience with the chisels before i work on the good marble yknow? Time was a bit of a pain though.. focused effort is certainly a better idea i suppose
