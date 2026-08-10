@@ -23,9 +23,12 @@ theres also a custom builder where you can place your own verts/edges.
 
 didnt make a save feature, it so just admire and if you really wanna save it, note the points and edges on paper or on a text file.
 
-## Screenshots / Demo  
+## screenshots 
 
-// ill put screeny here later
+// main screen + fullscreen with custom model of quadratic (22 verts)
+
+<img width="1920" height="953" alt="Screenshot_2026-08-10_07-54-40" src="https://github.com/user-attachments/assets/4d641848-c891-47e7-a728-63ec5a34906b" />
+<img width="1920" height="953" alt="Screenshot_2026-08-10_07-54-29" src="https://github.com/user-attachments/assets/4596e046-7321-48dd-9f13-d14da102e23e" />
   
 ## Running the program  
   
