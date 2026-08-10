@@ -175,3 +175,8 @@ other stuff that could be cool but im too lazy to implement at this moment:
 - coordinate display - show point coords + camera position/orientation  
 - save/import/export - actually persist your custom models instead of losing  
   them on refresh
+
+## bonus: concept sketch (what i wanted this to look like when i started)
+<img width="1920" height="1080" alt="gimpy" src="https://github.com/user-attachments/assets/f6ee97da-4ee5-4257-ba20-34e866cc2591" />
+
+
