@@ -1,9 +1,11 @@
 // Bienvenue a ma bibliotheque d'algebra liniaire!!
 
+
 #include <stdio.h>
 #include "../include/linlib.h"
 #include <math.h> 
 #include <stdlib.h>
+
 
 //  ||====================================================
 //  ||
@@ -47,8 +49,6 @@ Pt3 pt3(float x, float y, float z) {
   };
 }
 
-
-
 // Line in 3D.
 Line3 line3(Vec3 dirVec, Pt3 pt) {
   return (Line3) {
@@ -74,7 +74,6 @@ Transformation transformation(Vec3 translation, Vec3 rotation) {
 }
 
 
-
 //  ||----------------------------------------------------
 //  ||
 //  || DYNAMIC ARRAYS & FRIENDS (METHODS)  |||||||||||||||
@@ -83,7 +82,6 @@ Transformation transformation(Vec3 translation, Vec3 rotation) {
 //  || their respective add/remove/etc implementations. 
 //  || 
 //  ||----------------------------------------------------
-
 
 
 // Constructor.
@@ -610,7 +608,6 @@ Pt3 intersectionLinePlane(Line3 line, Plane plane) {
 //  ||====================================================
 
 
-
 // Note:  Not gonna use cuz when I need to apply translations its actually an inverse transformation and is backwards of this (woah!)
 void transformPt(Transformation transformation, Pt3* pt) {
 
@@ -713,4 +710,3 @@ void printMat3(Vec3 mat3[]) {
 void printPt3(Pt3 pt) {
 	printf("(%f, %f, %f)\n", pt.x, pt.y, pt.z);		
 }
-

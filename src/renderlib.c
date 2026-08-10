@@ -445,7 +445,7 @@ void connectVertices(Wireframe* wireframePtr, int startIndex, int endIndex) {
 
 }
 
-// TODO write this func
+// TODO write this func?
 // void removeEdge(Wireframe* wireframePtr, Edge3 edge) 
 
 // Resets the wireframe.
@@ -791,7 +791,7 @@ void render(Scene* scenePtr, RenderedResult* outputPtr) {
 //  || These funcs just create premade models for user
 //  || to play around with.
 //  || 
-//  ||====================================================
+//  ||=========================================[AI-GEN]===
 
 
 void CUBE(Wireframe* model) {

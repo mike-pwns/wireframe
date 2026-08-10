@@ -1,1 +1,2 @@
-public/renderer.js linguist-detectable=false
+# removes the binary "renderer.js" from the language calculation
+public/renderer.js linguist-detectable=false 

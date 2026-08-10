@@ -58,7 +58,7 @@ void clearEdge3Array(DynamicEdge3Array *arr);
 //  ||====================================================
 
 
-// *Fun fact* This structure - wireframe - was the whole inspiration of this project.
+// *Fun fact* This struct - wireframe - was the whole inspiration of this project.
 
 // Wireframe is just a collection of verts and edges.
 // This makes up a shape with connected edges.
@@ -213,7 +213,7 @@ typedef struct {
 } Camera;
 Camera camera(Pt3 camOrigin, float viewportDistance, Viewport viewport, Transformation transformation);
 
-// Scene; composition of everything in "vectorspace".
+// Scene; composition of everything in "space".
 typedef struct {
 
   Wireframe *wireframe;

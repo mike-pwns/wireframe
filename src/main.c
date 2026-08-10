@@ -1,8 +1,23 @@
 /*
 
----
+  WHAT IS TEAMWORK REALLY WHEN YOU GET RIGHT DOWN TO IT?
 
+  IS IT JUST ABOUT PROTECTING EACH OTHER AND HELPING EACH OTHER OUT?
+  I GUESS MOST PEOPLE WOULD SAY SO, BUT THEY’RE JUST FOOLING THEMSELVES.
 
+  I THINK TEAMWORK IS MORE THAN THAT IN THE END.
+  IT’S ABOUT INDIVIDUALS TAKING INDIVIDUAL RISKS, IF YOU ASK ME.
+
+  WE WORK TOGETHER BY WORKING SEPARATELY.
+
+  YOU STAND UP TO RISK YOUR OWN LIFE.
+  YOU DO WHAT YOU CAN, THE BEST THAT YOU CAN,
+  THEN YOU TURN TO THE OTHERS AND EXPECT THE SAME FROM THEM.
+
+  ---------------------------------------------------------------------
+
+  "wireframe"
+  @mike-pwns on GitHub
 
 */
 
@@ -11,6 +26,7 @@
 #include "../include/renderlib.h"
 #include <math.h>
 #include <stdio.h>
+
 
 //  ||====================================================
 //  ||
@@ -41,7 +57,6 @@ Scene world;
 //  ||----------------------------------------------------
 
 
-
 void initializeSceneData() {
 
     // Initialize wireframe (cube by default).
@@ -65,7 +80,6 @@ void initializeSceneData() {
         cam
     );
 
-    printf("did it");
 }
 
 
@@ -79,7 +93,6 @@ void initializeSceneData() {
 //  ||----------------------------------------------------
 
 
-
 //  ||====================================================
 //  || OUTPUT DATA ACCESS VIA POINTER ||||||||||||||||||||
 //  ||====================================================
@@ -90,6 +103,7 @@ void initializeSceneData() {
 RenderedResult* getRenderResult() {
     return &output;
 }
+
 
 //  ||====================================================
 //  || INITIALIZE PROGRAM ||||||||||||||||||||||||||||||||
@@ -155,6 +169,12 @@ void transformCamera(float x, float y, float z, float radX, float radY, float ra
 }
 
 
+//  ||====================================================
+//  || SWITCH MODELS |||||||||||||||||||||||||||||||||||||
+//  ||====================================================
+
+
+// (claude showed me i can define like this, super cool!)
 #define MODEL_CUBE       0
 #define MODEL_PYRAMID    1
 #define MODEL_SPHERE     2
@@ -166,44 +186,45 @@ void transformCamera(float x, float y, float z, float radX, float radY, float ra
 // Switches model to the associated id provided.
 void switchModel(int modelId) {
 
+    // Clear the existing model.
     clearWireframe(&model);
 
+    // Construct the new model.
     switch (modelId) {
-        case MODEL_CUBE:       CUBE(&model);       break;
-        case MODEL_PYRAMID:    PYRAMID(&model);    break;
-        case MODEL_SPHERE:     SPHERE(&model);     break;
-        case MODEL_OCTAHEDRON: OCTAHEDRON(&model); break;
-        case MODEL_TORUS:      TORUS(&model);      break;
-        case MODEL_SYNTHSCAPE: SYNTHSCAPE(&model); break;
-        case MODEL_PENGUIN:    PENGUIN(&model);    break;
-        default:               break;
+        case MODEL_CUBE:       
+          CUBE(&model);       
+          break;
+        case MODEL_PYRAMID:    
+          PYRAMID(&model);    
+          break;
+        case MODEL_SPHERE:     
+          SPHERE(&model);     
+          break;
+        case MODEL_OCTAHEDRON: 
+          OCTAHEDRON(&model); 
+          break;
+        case MODEL_TORUS:      
+          TORUS(&model);      
+          break;
+        case MODEL_SYNTHSCAPE: 
+          SYNTHSCAPE(&model); 
+          break;
+        case MODEL_PENGUIN:    
+          PENGUIN(&model);    
+          break;
+        default:               
+          break;
     }
 
+    // Reset camera transformation.
     world.camera.transformation = transformation(vec3(0, 0, 0), vec3(0, 0, 0));
 
 }
 
+
 //  ||====================================================
-//  || CUSTOM MODEL BUILDER (JS API) |||||||||||||||||||||
-//  || 
-//  || Thin wrappers so the "make your own model" UI in JS
-//  || can add vertices/edges to the currently active model
-//  || one at a time. The JS side keeps its own list of
-//  || points/edges and always rebuilds from scratch (via
-//  || switchModel(MODEL_CUSTOM) + these calls), so there's
-//  || no need for index-aware removal here.
-//  ||====================================================
- 
-//  ||====================================================
-//  || CUSTOM MODEL BUILDER (JS API) |||||||||||||||||||||
-//  || 
-//  || Thin wrappers so the "make your own model" UI in JS
-//  || can add vertices/edges to the currently active model
-//  || one at a time. The JS side keeps its own list of
-//  || points/edges and always rebuilds from scratch (via
-//  || switchModel(MODEL_CUSTOM) + these calls), so there's
-//  || no need for index-aware removal here.
-//  ||====================================================
+//  || CUSTOM MODEL BUILDER ||||||||||||||||||||||||||||||
+//  ||==========================================[AI-GEN]==
  
  
 // Adds a vertex to the active model. Returns its index.
