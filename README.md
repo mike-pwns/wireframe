@@ -4,15 +4,13 @@
   
 Pretty chill project for me to apply math i learned for graphics.  
 
-note that this aint no triple A game studio renderer, just sticks and stones put together cuz i wanned to know how 3d stuff shows up on a 2d screen. soo... dont go thinking this is gonna be bug-free - I aint got 50 years of graphics programming experience to work out every intricate bug. here for the general idea first, then later if i wanna do something bigger, i already have this base knowledge
-
-i kinda just looked at some pictures, fell asleep trying to read some "overly complicated" tutorials, and with my genius intuition came to whatever this project was (shoutout vectors teacher (wont name drop for privacy sake) for teaching line-plane intersection, that was the key to me coming up with the logic!!!) 
+note that this isnt a triple A game studio renderer, just sticks and stones put together cuz i wanned to know how 3d stuff shows up on a 2d screen. soo... dont go thinking this is gonna be bug-free - I aint got 50 years of graphics programming experience to work out every intricate bug. here for the general idea first, then later if i wanna do something bigger, i already have this base knowledge
 
 ## What is this actually  
   
-Its a wireframe 3D renderer that runs in browser via WASM. under the hood theres a `Wireframe model`, `Camera cam`, and `Scene world` sitting in main.c doing the heavy lifting, and renderlib.c does all the projection/clipping math. frontend just pokes a `RenderedResult` pointer out of WASM memory (`getRenderResult()`) and draws whatever it finds onto a canvas. the pointer arithmetic is simple in theory, but because of nested structs i was too lazy to keep track of it all, hence that part was AI's problem not mine.  
-  
-ships with 7 built in models you can flip through in the gallery - 
+this project is a 3d wireframe renderer with logic derived from vector math. you can float around and explore the "world". more on the inspiration later in this readme.
+
+it has 7 built in models you can explore 
 1. CUBE,
 2. PYRAMID,
 3. SPHERE,
@@ -90,7 +88,7 @@ emcc src/main.c src/linlib.c src/renderlib.c \
   -s EXPORTED_RUNTIME_METHODS='["HEAP32","HEAPF32"]'
 ```
 
-this should produce an `obj` and `build` directory - those can generally be ignored!
+since this repo (which you probably cloned) already has `renderer.js`, it will just be overwritten with any changes made to the source files - note that if you add a function you want js to use, you must add it to `EXPORTED_FUNCTIONS`
   
 ### 4. go into the public directory, and start http server  
 ```
@@ -102,17 +100,15 @@ python3 -m http.server
 
 ### 5. head on over to `localhost:8000/index.html` (or whatever port you used) on any browser (preferably chromium-based) and youre golden.  
 
-just note that if you wanna make changes and play around with the C, you gotta recompile with the command from #3 each time, but no need to restart server
+just note that if you wanna make changes and play around with the C, you gotta recompile with the command from #3 each time, but theres no need to restart this server
 
 ## inspiration  
   
-graphics as a whole have been pretty interesting to me for years, but when i did `vector_vr` i was much more intrigued by using virtual space to show things: concepts, ideas, etc. i was super hyped to start learning linear algebra in the vectors sub-course in my math class because it would enable me to understand the fundamentals of computers as we know em now (not ai, but screens); not just blocks in a room that interact with some physical medium rather than a digitized multi-purpose interface. 
+graphics as a whole have been pretty interesting to me for years, but when i did `vector_vr` i was much more intrigued by using virtual space to show things: concepts, ideas, etc. i was super hyped to start learning linear algebra in the vectors "sub-course" in my math class (which i ended up skipping like 80% of anyways) because it would enable me to understand the fundamentals of computers as we know em now (not ai, but screens); not just blocks in a room that interact with some physical medium but rather with a digitized multi-purpose interface. 
 
-(kids excited about linear algebra aint something you hear everyday, right? - well, in reality skipped like 80% of those classes lmao, no diss vectors teacher (again, wont name drop for privacy sake), you're top 3 best math teachers i got - not #1, but please dont be discouraged, my top 3 are like way way way way way way higher than the rest, so its like "among the best" yknow? My skipping was plain senioritis, nothing personal; ay i made this though; I applied linear algebra!)
+anyways, i really liked the aesthetic too - hacker green, numbers flyin everywhere; abstracting space itself, i mean that just sounds cool, no? Also, a question i got while making this a few times was **why c and wasm instead of just using js for the whole thing?** which did make me think and remember getting some experience in C itself was an inspiration for this project. The main factors with that were:
 
-anyways, i really liked the aesthetic too - hacker green, numbers flyin everywhere; *abstracting space itself*, i mean that just sounds cool, no? Also, a question i got while making this a few times was **why c and wasm instead of just using js for the whole thing?** which did make me think and remember getting some experience in C itself was an inspiration for this project. The main factors with that were:
-
-1. js makes no sense and is quite frankly pretty stupid!!!!!!! (translation: im too lazy to get an ide that catches syntax of js and its super inconsistent and it is also just plain doesnt say what is wrong!! Like gee whiz i dont wanna use ai for everything but js doesnt make it easy!!!! "oh but just use typescript" - good point, but i aint on that stack yet, maybe another time)
+1. js makes no sense and is quite frankly pretty stupid!!!!!!! (in reality im too lazy to get an ide that catches syntax of js + js is super inconsistent + it is also just plain doesnt say what is wrong!! Like gee whiz i dont wanna use ai for everything but js doesnt make it easy!!!! "oh but just use typescript" - good point, but im not on that stack yet, maybe another time)
 
 2. i attended some systems programming lectures in the spring. i found the concepts super cool, and was inspired to learn a bit and work on something even more bare bones; to have a have a full "build it yourself" experience rather than just use already hella abstracted libraries (btw shoutout prof - if youre reading this i didnt do pointer arithmetic in this proj cuz my ai agent really wanted to do it, but i promise i understand the idea). Also i heard c is faster and is used with wasm for higher performance on web apps/games, so just some cool tech to be familiar with.
   
