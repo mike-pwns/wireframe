@@ -290,12 +290,4 @@ void SYNTHSCAPE(Wireframe* model);
 void PENGUIN(Wireframe* model);
 
 
-//  ||----------------------------------------------------
-//  ||
-//  || CUSTOM MODELLER FUNCS  ||||||||||||||||||||||||||||
-//  || 
-//  || For custom model making.
-//  || 
-//  ||----------------------------------------------------
-    
 #endif
