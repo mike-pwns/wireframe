@@ -1,10 +1,10 @@
-**full disclosure:** the front end is basically 100% AI. im not a frontend guy; aint a react wizard (*yet*), aint gonna pretend to be one for *this* project. if youre here to actually look at code i wrote, stick to `src/` and `include/`. Enjoy!
+**full disclosure:** the front end is basically 100% AI. im not a frontend guy; aint a react wizard (yet), aint gonna pretend to be one for project. if youre here to actually look at code i wrote, stick to `src/` and `include/`. 
 
 # WIREFRAME (SUMMER 2026)  
   
 Pretty chill project for me to apply math i learned for graphics.  
 
-note that this isnt a triple A game studio renderer, just sticks and stones put together cuz i wanned to know how 3d stuff shows up on a 2d screen. soo... dont go thinking this is gonna be bug-free - I aint got 50 years of graphics programming experience to work out every intricate bug. here for the general idea first, then later if i wanna do something bigger, i already have this base knowledge
+note that this isnt a triple A game studio renderer, just sticks and stones put together cuz i wanted to know how 3d stuff shows up on a 2d screen. soo... dont go thinking this is gonna be bug-free - I aint got 50 years of graphics programming experience to work out every intricate bug. This is for me to get the general idea of graphics, then later if i wanna do something bigger, i already have this base knowledge
 
 ## What is this actually  
   
@@ -21,7 +21,7 @@ it has 7 built in models you can explore
 
 theres also a custom builder where you can place your own verts/edges.
 
-didnt make a save feature, it so just admire and if you really wanna save it, note the points and edges on paper or on a text file.
+didnt make a save feature. if you really wanna save it, note the points and edges on paper or on a text file.
 
 ## screenshots 
 
@@ -32,7 +32,7 @@ didnt make a save feature, it so just admire and if you really wanna save it, no
   
 ## Running the program  
   
-**note: why not just head on over to [the deployed page](https://mike-pwns.github.io/wireframe/) and see for yourself?**  
+**note: why not just head on over to [the deployed page](https://mike-pwns.github.io/wireframe/) and see it for yourself?**  
   
 ok ok!! if you REALLY wanna compile it on your own and play around, follow these steps:  
 
@@ -160,7 +160,7 @@ so the immediate actionable steps for the next project is to **commit daily to t
 
 ## What's next  
   
-stuff im (maybe) getting around to eventually, tracked in `features_to_add.txt`:  
+stuff im (maybe) getting around to eventually:
 
 most likely addition: 
 - an "info" tab where i write MY OWN tutorial / understanding of rendering logic in my own unique style (analogies, and genuinely just straightforward and ZERO overcomplicating cuz i know it sucks when its... yapadapadoo etc you get the gist). 
