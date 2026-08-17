@@ -107,13 +107,15 @@ just note that if you wanna make changes and play around with the C, you gotta r
 
 ## inspiration  
   
-graphics as a whole have been pretty interesting to me for years, but when i did `vector_vr` i was much more intrigued by using virtual space to show things: concepts, ideas, etc. i was super hyped to start learning linear algebra in the vectors "sub-course" in my math class (which i ended up skipping like 80% of anyways) because it would enable me to understand the fundamentals of computers as we know em now (not ai, but screens); not just blocks in a room that interact with some physical medium but rather with a digitized multi-purpose interface. 
+graphics as a whole have been pretty interesting to me for years, but when i did `vector_vr` i was much more intrigued by using virtual space to show things: concepts, ideas, etc. i was super hyped to start learning linear algebra in the vectors "sub-course" in my math class (which i ended up skipping like 80% of anyways - sorry!) because it would enable me to understand something as fundamental as graphics and rendering (even if it is just a bit). 
 
-anyways, i really liked the aesthetic too - hacker green, numbers flyin everywhere; abstracting space itself, i mean that just sounds cool, no? Also, a question i got while making this a few times was **why c and wasm instead of just using js for the whole thing?** which did make me think and remember getting some experience in C itself was an inspiration for this project. The main factors with that were:
+anyways, i really liked the aesthetic too - hacker green, numbers flyin everywhere; abstracting space itself. That's about it, I was curious and liked the vibe..
 
-1. js makes no sense and is quite frankly pretty stupid!!!!!!! (in reality im too lazy to get an ide that catches syntax of js + js is super inconsistent + it is also just plain doesnt say what is wrong!! Like gee whiz i dont wanna use ai for everything but js doesnt make it easy!!!! "oh but just use typescript" - good point, but im not on that stack yet, maybe another time)
+A question i got while making this a few times was **why c and wasm instead of just using js (ex. threejs) for the whole thing?** which did make me think and remember getting some experience in C was in itself an inspiration for this project. The main factors with that were:
 
-2. i attended some systems programming lectures in the spring. i found the concepts super cool, and was inspired to learn a bit and work on something even more bare bones; to have a have a full "build it yourself" experience rather than just use already hella abstracted libraries (btw shoutout prof - if youre reading this i didnt do pointer arithmetic in this proj cuz my ai agent really wanted to do it, but i promise i understand the idea). Also i heard c is faster and is used with wasm for higher performance on web apps/games, so just some cool tech to be familiar with.
+1. js makes no sense and is quite frankly pretty stupid!!!!!!! (in reality im too lazy to get an ide that catches syntax of js + js is super inconsistent + it is also just plain doesnt say what is wrong!! Like gee whiz i dont wanna use ai for everything but js doesnt make it easy!!!! "oh but just use typescript" - good point, maybe itll be better, but im not on that stack yet, maybe another time)
+
+2. i attended some systems programming lectures in the spring. i found the concepts super cool, and was inspired to learn a bit and work on something even more bare bones; to have a have a full "build it yourself" experience rather than just use already hella abstracted libraries (btw shoutout prof - if youre reading this i didnt do pointer arithmetic in this proj cuz my ai agent really wanted to do it, but i promise i understand the idea). Also i heard C is faster and is used with wasm for higher performance on web apps/games, so just some cool tech to be familiar with.
   
 ## challenges 
 
@@ -124,13 +126,13 @@ you know the saying "you gotta learn the thing twice to understand it"? for OOP 
 i kid you not this picture was the only thing i needed to see to get the idea; this is what caused everything to click
 <img width="1180" height="632" alt="Screenshot_2026-07-23_12-52-05" src="https://github.com/user-attachments/assets/449377a0-0ee5-4d47-82f0-78c677eeb2d1" />
 
-in april i came up with some version of orthographic projection that genuinely might as well be from hell, and frankly looking back i can only laugh at myself then - but then again, i tried and i made it here. frankly, i dont know any of the formal terms (i think what im doing is called rasterization with perspective projection, even after all this im still uncertain - thats the extent to how self-derived this stuff was)
+in april i came up with some version of orthographic projection that genuinely might as well be from hell, and looking back i can only laugh at myself then - but then again, i tried and i made it here. frankly, i still dont know any of the formal terms (i think what im doing is called rasterization with perspective projection, even after all this im still uncertain - thats the extent to how self-derived this stuff was)
 
-so my success was mainly just seeing different pieces over time until everything linked. i read some journals / guides on computer graphics (id link them but i cant find them), but a lot of them were talking about some bs for 3 entries or overcomplicated the math (i say that, having done the math), generally a lot of them didnt get to the point i was looking for. maybe ill write my own "no bs guide"
+so my success was mainly just seeing different pieces over time until everything linked. i read some journals / guides on computer graphics (id link them but i cant find them, they were good though), but a lot of them were talking about some bs for 3 entries or overcomplicated the math (i say that, having done the math), generally a lot of them didnt get to the point i was looking for. maybe ill write my own "no bs guide"
 
-after i finally got the logic down, implementing was super ez - C wasnt that different from java syntax-wise - yeah had to get used to structs and the lack of convenient features i took for granted, but not too bad. the extra math i didnt know was easy enough to figure out, so not much of a challenge there. ui and ai was hella annoying - ai tried to argue with me at one point, get that? 
+after i finally got the logic down, implementing was super ez pz - C wasnt that different from java syntax-wise - yeah had to get used to structs and the lack of convenient features i took for granted, but not too bad. the extra math i didnt know was easy enough to figure out, so not much of a challenge there. ui and ai was hella annoying - ai tried to argue with me at one point, get that? 
 
-the smaller details like camera movement, transformations (reverse order, etc) were all just extra learning moments which i used resources to learn how to fix (since at that point i got the big idea and was cool on leaning on other people's solutions to the problems muwahahaha). 
+the smaller details like camera movement, transformations (reverse order, etc) were all just extra learning moments which i used resources to learn how to implement existing fixes (since at that point i got the big idea and was cool on leaning on other people's solutions to the problems muwahahaha). 
 
 Whatever, it was a fun experience nonetheless. 8/10 would recommend
   
